@@ -200,5 +200,5 @@ void Mesh3D::loadObj(char* filename){
 		}
 		else {}
 	}
-
+	infile.close();
 }
