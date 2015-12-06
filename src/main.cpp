@@ -13,14 +13,14 @@
 #include <math.h>
 #include "../lib/Camera/camera.h"
 #include "../lib/Hitbox/Hitbox.h"
-#include "../lib/SceneGraph/structs.h"
+//#include "../lib/SceneGraph/structs.h"
 #include "../lib/Math/math3D.h"
 
 //sceneGraph
-#include "../lib/SceneGraph/sceneGraph.h"
-#include "../lib/SceneGraph/nodeGroup.h"
-#include "../lib/SceneGraph/nodeModel.h"
-#include "../lib/SceneGraph/nodeTransform.h"
+//#include "../lib/SceneGraph/sceneGraph.h"
+//#include "../lib/SceneGraph/nodeGroup.h"
+//#include "../lib/SceneGraph/nodeModel.h"
+//#include "../lib/SceneGraph/nodeTransform.h"
 #include "../lib/Mesh3D/Mesh3D.h"
 #include <vector>
 
@@ -38,10 +38,10 @@ Camera camera;
 //node ids
 int masterID = 0;
 
-Vector3D ip;
-Vector3D translation;
-Vector4D rotation; 
-Vector3D scale;
+//Vector3D ip;
+//Vector3D translation;
+//Vector4D rotation; 
+//Vector3D scale;
 
 int getID()
 {
@@ -51,7 +51,7 @@ int getID()
 double* start = new double[3];
 double* finish = new double[3];
 
-SceneGraph *SG;
+//SceneGraph *SG;
 
 float light_pos[] = {0.0, 5.0, 0.0, 1.0};
 float amb0[4] = {1, 1, 1, 1};
@@ -89,6 +89,7 @@ void initLighting()
 }
 
 //function which will populate a sample graph 
+/*
 void initGraph()
 {
 	//Initial Transformation node
@@ -101,18 +102,19 @@ void initGraph()
 	SG->insertChildNodeHere(new NodeGroup());
 	printf("\nFIRST NODE %i\n", SG->currentNode->nodeType);
 }
+*/
 
 void init(void)
 {	
-	GLuint id = 1;
+	//GLuint id = 1;
 	camera = Camera();
 
 	//init our scenegraph
-	SG = new SceneGraph();
+	//SG = new SceneGraph();
 
 	//add various nodes
 	//initializing our world
-	initGraph();
+	//initGraph();
 }
 
 /*********************************INIT FUNCTION*********************************/
@@ -165,7 +167,7 @@ void reshape(int w, int h)
 	globalH = h;
 	mouseX = w/2;
 	mouseY = h/2;
-	gluLookAt(2.5, 2.5, 2.5, 0, 0, 0, 0, 1, 0);
+	gluLookAt(30, 30, 30, 0, 0, 0, 0, 1, 0);
 }
 
 void keyboard(unsigned char key, int x, int y)
