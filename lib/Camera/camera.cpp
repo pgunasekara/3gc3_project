@@ -127,7 +127,6 @@ void Camera::Move(CameraDirection dir, Mesh3D* mesh) {
 			break;
 			*/
 		case LEFT:
-			if ()
 				camera_position_delta = camera_position_delta - camera_direction.cross(camera_up).vectorMultiplyr(camera_scale);
 			break;
 		case RIGHT:
