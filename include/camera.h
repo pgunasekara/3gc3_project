@@ -13,6 +13,8 @@ We both informed Dr. Gwosdz and recieved his approval in using this code
 
 // classes uses 3D math class
 #include "math3D.h"
+#include "Mesh3D.h"
+#include "Hitbox.h"
 
 // camera direction for which direction you are moving
 enum CameraDirection {
@@ -38,7 +40,7 @@ class Camera {
 
 		// translate the camera in a set direction
 		// add float for amount
-		void Move(CameraDirection dir);
+		void Move(CameraDirection dir, Mesh3D* mesh);
 		// rotate the camera in a set direction by a certain amount of degrees
 		void Spin(CameraSpinDirection dir,float degrees);
 

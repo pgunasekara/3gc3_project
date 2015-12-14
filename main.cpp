@@ -1,9 +1,8 @@
-/*TODO
+/*
+THIS IS NOT THE ACTUAL MAIN, MAKE ALL CHANGES IN SOURCE MAIN
 
-When clicked, switch currentNode
 
-With ray casting, once an object is selected, search for it's ID
-Then switch current node based on the ID*/
+ */
 
 #ifdef __APPLE__
 #  include <OpenGL/gl.h>

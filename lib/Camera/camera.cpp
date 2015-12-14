@@ -8,6 +8,8 @@ We both informed Dr. Gwosdz and recieved his approval in using this code
 -----------------------------------------------------------------------------*/
 
 #include "camera.h"
+#include "Mesh3D.h"
+#include "Hitbox.h"
 #include "stdio.h"
 #include <cmath>
 #ifdef __APPLE__
@@ -115,16 +117,18 @@ void Camera::Update() {
 }
 
 // Move the camera forward depending on your scale
-void Camera::Move(CameraDirection dir) {
+void Camera::Move(CameraDirection dir, Mesh3D* mesh) {
 	switch (dir) {
-		case UP:
+		/*case UP:
 			camera_position_delta = camera_position_delta + camera_up.vectorMultiplyr(camera_scale);
 			break;
 		case DOWN:
 			camera_position_delta = camera_position_delta - camera_up.vectorMultiplyr(camera_scale);
 			break;
+			*/
 		case LEFT:
-			camera_position_delta = camera_position_delta - camera_direction.cross(camera_up).vectorMultiplyr(camera_scale);
+			if ()
+				camera_position_delta = camera_position_delta - camera_direction.cross(camera_up).vectorMultiplyr(camera_scale);
 			break;
 		case RIGHT:
 			camera_position_delta = camera_position_delta + camera_direction.cross(camera_up).vectorMultiplyr(camera_scale);

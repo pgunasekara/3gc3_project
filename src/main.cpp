@@ -32,7 +32,6 @@ float pos[] = {11.5,0.7,-10};
 float lookAt[] = {11.5,0.7,0};
 float angle = 0.005f;
 bool PlaneExist = false;
-Hitbox *hit;
 Camera camera;
 
 //node ids
@@ -62,7 +61,7 @@ float m_amb[] = {0.33, 0.22, 0.03, 1.0};
 float m_diff[] = {0.78, 0.57, 0.11, 1.0};
 float m_spec[] = {0.99, 0.91, 0.81, 1.0};
 float shiny = 27.8; 
-Mesh3D test;
+Mesh3D* test;
 
 
 void display();
@@ -139,7 +138,7 @@ void display()
 	//optionally draw the axis
 	// drawAxis();
 
-	test.drawMesh();
+	test->drawMesh();
 
 	//swap buffers - rendering is done to the back buffer, bring it forward to display
 	glutSwapBuffers();
@@ -174,27 +173,19 @@ void keyboard(unsigned char key, int x, int y)
 	switch (key)
 	{
 		case 'W':
-			camera.Move(FORWARD);
+			camera.Move(FORWARD,test);
 			glutPostRedisplay();
 			break;
 		case 'A':
-			camera.Move(LEFT);
+			camera.Move(LEFT,test);
 			glutPostRedisplay();
 			break;
 		case 'S':
-			camera.Move(BACK);
+			camera.Move(BACK,test);
 			glutPostRedisplay();
 			break;
 		case 'D':
-			camera.Move(RIGHT);
-			glutPostRedisplay();
-			break;
-		case 'Q':
-			camera.Move(DOWN);
-			glutPostRedisplay();
-			break;
-		case 'E':
-			camera.Move(UP);
+			camera.Move(RIGHT,test);
 			glutPostRedisplay();
 			break;
 		case 'q':
@@ -272,8 +263,8 @@ int main(int argc, char **argv)
 	glutCallbacks();
 	initLighting();
 
-	test = Mesh3D();
-	test.loadObj("src/map.obj");
+	test = new Mesh3D();
+	test->loadObj("src/map.obj");
 	//start the program!
 	glutMainLoop();
 
