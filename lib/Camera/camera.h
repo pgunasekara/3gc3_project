@@ -62,6 +62,7 @@ class Camera {
 		vec3D camera_up;
 		vec3D light_position;
 		vec3D spot_direction;
+		float cameraYMove;
 };
 
 

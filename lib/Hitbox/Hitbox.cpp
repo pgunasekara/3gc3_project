@@ -1,4 +1,5 @@
 #include "../Math/math3D.h"
+#include "../Mesh3D/Mesh3D.h"
 #include "Hitbox.h"
 #include <cmath>
 #include <stdio.h>
@@ -33,6 +34,17 @@ Plane::Plane(vert3D a, vert3D b, vert3D c, vert3D d,bool xPlane, bool yPlane, bo
 	this->xPlane = xPlane;
 	this->yPlane = yPlane;
 	this->zPlane = zPlane;
+	norm = v1.cross(v2);
+}
+
+// if in doubt, make function to convert from vertex3D to vert3D 
+Plane::Plane(vertex3D a, vertex3D b, vertex3D c, vertex3D d){
+	this->a = vert3D((float) a.x,(float) a.y,(float) a.z);
+	this->b = vert3D((float) b.x,(float) b.y,(float) b.z);
+	this->c = vert3D((float) c.x,(float) c.y,(float) c.z);
+	this->d = vert3D((float) d.x,(float) d.y,(float) d.z);
+	vec3D v1 = vec3D(this->a,this->d);
+	vec3D v2 = vec3D(this->a,this->b);
 	norm = v1.cross(v2);
 }
 

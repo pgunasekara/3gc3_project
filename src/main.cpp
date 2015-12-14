@@ -28,8 +28,8 @@ using namespace std;
 // global variables for scene graph and camera
 float mouseX,mouseY,globalW,globalH;
 bool buttonDown = false;
-float pos[] = {0,1,0};
-float camPos[] = {30, 30, 30};
+float pos[] = {11.5,0.7,-10};
+float lookAt[] = {11.5,0.7,0};
 float angle = 0.005f;
 bool PlaneExist = false;
 Hitbox *hit;
@@ -73,7 +73,6 @@ void mouse(int btn, int state, int x, int y);
 void motion(int x, int y);
 void passive(int x, int y);
 void special(int key, int x, int y);
-
 
 /*********************************INIT FUNCTION*********************************/
 void initLighting()
@@ -167,7 +166,7 @@ void reshape(int w, int h)
 	globalH = h;
 	mouseX = w/2;
 	mouseY = h/2;
-	gluLookAt(30, 30, 30, 0, 0, 0, 0, 1, 0);
+	gluLookAt(pos[0], pos[1], pos[2], lookAt[0], lookAt[1], lookAt[2], 0, 1, 0);
 }
 
 void keyboard(unsigned char key, int x, int y)
@@ -218,17 +217,21 @@ void motion(int x, int y)
 void passive(int x,int y){
 	if ((x - mouseX) > 0){
 		camera.Spin(SRIGHT,(x-mouseX)/globalW);
+		//camera.Spin(SRIGHT,angle);
 		mouseX = x;
 	}
 	else if ((x - mouseX) < 0){ 
 		camera.Spin(SLEFT,-1*(x-mouseX)/globalW);
+		//camera.Spin(SLEFT,angle);
 		mouseX = x;
 	}
 	if ((y - mouseY) > 0){
 		camera.Spin(SDOWN,(y-mouseY)/globalH);
+		//camera.Spin(SDOWN,angle);
 		mouseY = y;
 	}else if ((y - mouseY) < 0){
 		camera.Spin(SUP,-1*(y-mouseY)/globalH);
+		//camera.Spin(SRIGHT,angle);
 		mouseY = y;
 	} 
 	glutPostRedisplay();
@@ -262,8 +265,8 @@ int main(int argc, char **argv)
 
 	//enable Z buffer test, otherwise things appear in the order they're drawn
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
+	//glEnable(GL_CULL_FACE);
+	//glCullFace(GL_BACK);
 
 	//register glut callbacks
 	glutCallbacks();
@@ -271,7 +274,6 @@ int main(int argc, char **argv)
 
 	test = Mesh3D();
 	test.loadObj("src/map.obj");
-
 	//start the program!
 	glutMainLoop();
 

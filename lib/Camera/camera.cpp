@@ -22,15 +22,16 @@ We both informed Dr. Gwosdz and recieved his approval in using this code
 
 
 Camera::Camera(){
-	camera_position = vec3D(30,30,30);
-	camera_look_at = vec3D(0,0,0);
+	camera_position = vec3D(11.5,0.7,-10);
+	camera_look_at = vec3D(11.5,0.7,-5);
+	cameraYMove = 0.7f;
 	camera_up = vec3D(0, 1, 0);
 	camera_position_delta = vec3D();
 
 	//light_position = vec3D(0,0,0);
 	//spot_direction = vec3D(camera_look_at - camera_position);
 
-	camera_scale = 1.0f;
+	camera_scale = 0.1f;
 	camera_pitch = 0.0;
 	camera_heading = 0.0;
 	rotate_camera = false;
@@ -107,6 +108,8 @@ void Camera::Update() {
 	float *cp = camera_position.returnArray();
 	float *cl = camera_look_at.returnArray();
 	float *cu = camera_up.returnArray();
+
+	//printf("%f %f %f %f %f %f %f %f %f\n",cp[0],cp[1],cp[2],cl[0],cl[1],cl[2],cu[0],cu[1],cu[2]);
 
 	gluLookAt(cp[0],cp[1],cp[2],cl[0],cl[1],cl[2],cu[0],cu[1],cu[2]);
 }

@@ -18,6 +18,7 @@
 #include <iostream>
 #include "splitter.h"
 #include <stdlib.h> 
+#include "../Hitbox/Hitbox.h"
 
 using namespace std;
 
@@ -187,6 +188,8 @@ void Mesh3D::loadObj(char* filename){
 				f.v2 = atoi(vertexElements2[0].c_str());
 				f.v3 = atoi(vertexElements3[0].c_str());
 				f.v4 = atoi(vertexElements4[0].c_str());
+				// remember to clear memory
+				f.hit = new Plane(verts[f.v1],verts[f.v2],verts[f.v3],verts[f.v4]);
 
 				fvn.vn1 = atoi(vertexElements1[2].c_str());		//atoi is string to int
 				fvn.vn2 = atoi(vertexElements2[2].c_str());
@@ -202,3 +205,35 @@ void Mesh3D::loadObj(char* filename){
 	}
 	infile.close();
 }
+/*
+bool Mesh3D::Intersect(int x, int y){
+	//grab the matricies
+	glGetDoublev(GL_MODELVIEW_MATRIX, matModelView); 
+	glGetDoublev(GL_PROJECTION_MATRIX, matProjection); 
+	glGetIntegerv(GL_VIEWPORT, viewport); 
+
+	start = near.returnDoubleArray();
+	finish = far.returnDoubleArray();
+
+	//unproject the values
+	double winX = (double)x; 
+	double winY = viewport[3] - (double)y; 
+
+	// get point on the 'near' plane (third param is set to 0.0)
+	gluUnProject(winX, winY, 0.0, matModelView, matProjection, 
+		 viewport, &start[0], &start[1], &start[2]); 
+
+	// get point on the 'far' plane (third param is set to 1.0)
+	gluUnProject(winX, winY, 1.0, matModelView, matProjection, 
+		 viewport, &finish[0], &finish[1], &finish[2]); 
+
+	near.update(start);
+	far.update(finish);
+	distance = (far - near).normalize();
+/*
+	for (int i =0; i < faces.size(); i++){
+		if (faces.hit->Intersect)
+	}
+}
+
+*/
