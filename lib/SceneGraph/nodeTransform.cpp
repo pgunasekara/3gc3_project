@@ -10,7 +10,7 @@
 #  include <GL/freeglut.h>
 #endif
 
-#include "../Math/math3D.h"
+#include "math3D.h"
 
 //for gltranslate and gl scale
 NodeTransform::NodeTransform(transformType whatType, Vector3D vec3){

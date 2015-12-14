@@ -1,5 +1,5 @@
-#include "../Math/math3D.h"
-#include "../Mesh3D/Mesh3D.h"
+#include "math3D.h"
+#include "Mesh3D.h"
 #include "Hitbox.h"
 #include <cmath>
 #include <stdio.h>

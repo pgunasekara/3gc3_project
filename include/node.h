@@ -7,8 +7,8 @@
 
 #include <vector>
 #include "structs.h"
-#include "../Hitbox/Hitbox.h"
-#include "../Math/math3D.h"
+#include "Hitbox.h"
+#include "math3D.h"
 using namespace std;
 
 extern int getID();

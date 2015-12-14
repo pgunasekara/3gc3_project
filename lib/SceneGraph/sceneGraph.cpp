@@ -10,8 +10,8 @@
 
 #include "sceneGraph.h"
 #include "node.h"
-#include "../Math/math3D.h"
-#include "../Hitbox/Hitbox.h"
+#include "math3D.h"
+#include "Hitbox.h"
 #include <stdio.h>
 #include <math.h>
 

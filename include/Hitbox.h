@@ -1,7 +1,7 @@
 #ifndef HITBOX_H
 #define HITBOX_H
 #include <vector>
-#include "../Math/math3D.h"
+#include "math3D.h"
 using namespace std;
 
 class Plane;

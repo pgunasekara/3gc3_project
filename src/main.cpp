@@ -11,17 +11,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include "../lib/Camera/camera.h"
-#include "../lib/Hitbox/Hitbox.h"
+#include "camera.h"
+#include "Hitbox.h"
 //#include "../lib/SceneGraph/structs.h"
-#include "../lib/Math/math3D.h"
+#include "math3D.h"
 
 //sceneGraph
 //#include "../lib/SceneGraph/sceneGraph.h"
 //#include "../lib/SceneGraph/nodeGroup.h"
 //#include "../lib/SceneGraph/nodeModel.h"
 //#include "../lib/SceneGraph/nodeTransform.h"
-#include "../lib/Mesh3D/Mesh3D.h"
+#include "Mesh3D.h"
 #include <vector>
 
 using namespace std;

@@ -18,7 +18,7 @@
 #include <iostream>
 #include "splitter.h"
 #include <stdlib.h> 
-#include "../Hitbox/Hitbox.h"
+#include "Hitbox.h"
 
 using namespace std;
 

@@ -10,11 +10,12 @@ CFLAGS=-g -Wall -std=c++11
 CC=g++
 EXEEXT= .x
 RM=rm
-SGL=lib/SceneGraph/
-ML=lib/Math/
-CL=lib/Camera/
-HBL=lib/Hitbox/
-M3D=lib/Mesh3D/
+SGL=lib/SceneGraph
+ML=lib/Math
+CL=lib/Camera
+HBL=lib/Hitbox
+M3D=lib/Mesh3D
+INCLUDE=-I include
 
 # Windows (cygwin)
 ifeq "$(OS)" "Windows_NT"
@@ -30,7 +31,7 @@ else
 endif
 
 #change the 't1' name to the name you want to call your application
-PROGRAM_NAME= Project.x
+PROGRAM_NAME=Project.x
 
 #run target to compile and build, and then launch the executable
 run: $(PROGRAM_NAME)
@@ -41,8 +42,44 @@ run: $(PROGRAM_NAME)
 #ie. boilerplateClass.o and yourFile.o
 #make will automatically know that the objectfile needs to be compiled
 #form a cpp source file and find it itself :)
-$(PROGRAM_NAME): src/main.o $(SGL)node.o $(SGL)nodeGroup.o $(SGL)nodeModel.o $(SGL)nodeTransform.o $(SGL)sceneGraph.o $(ML)math3D.o $(CL)camera.o $(HBL)Hitbox.o $(M3D)Mesh3D.o $(M3D)splitter.o
-	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS)
+
+main.o: src/main.cpp
+	g++ $(INCLUDE) -c -o src/main.o src/main.cpp
+
+node.o: $(SGL)/node.cpp
+	g++ $(INCLUDE) -c -o $(SGL)/node.o $(SGL)/node.cpp
+
+nodeGroup.o: $(SGL)/nodeGroup.cpp
+	g++ $(INCLUDE) -c -o $(SGL)/nodeGroup.o $(SGL)/nodeGroup.cpp
+
+nodeModel.o: $(SGL)/nodeModel.cpp
+	g++ $(INCLUDE) -c -o $(SGL)/nodeModel.o $(SGL)/nodeModel.cpp
+
+nodeTransform.o: $(SGL)/nodeTransform.cpp
+	g++ $(INCLUDE) -c -o $(SGL)/nodeTransform.o $(SGL)/nodeTransform.cpp
+
+sceneGraph.o: $(SGL)/sceneGraph.cpp
+	g++ $(INCLUDE) -c -o $(SGL)/sceneGraph.o $(SGL)/sceneGraph.cpp
+
+math3D.o: $(ML)/math3D.cpp
+	g++ $(INCLUDE) -c -o $(ML)/math3D.o $(ML)/math3D.cpp
+
+camera.o: $(CL)/camera.cpp
+	g++ $(INCLUDE) -c -o $(CL)/camera.o $(CL)/camera.cpp
+
+Hitbox.o: $(HBL)/Hitbox.cpp
+	g++ $(INCLUDE) -c -o $(HBL)/Hitbox.o $(HBL)/Hitbox.cpp
+
+Mesh3D.o: $(M3D)/Mesh3D.cpp
+	g++ $(INCLUDE) -c -o $(M3D)/Mesh3D.o $(M3D)/Mesh3D.cpp
+
+splitter.o: $(M3D)/splitter.cpp
+	g++ $(INCLUDE) -c -o $(M3D)/splitter.o $(M3D)/splitter.cpp
+
+$(PROGRAM_NAME): main.o node.o math3D.o camera.o Hitbox.o Mesh3D.o splitter.o nodeGroup.o nodeModel.o nodeTransform.o sceneGraph.o compile
+
+compile: src/main.o $(SGL)/node.o $(ML)/math3D.o $(CL)/camera.o $(HBL)/Hitbox.o $(M3D)/Mesh3D.o $(M3D)/splitter.o $(SGL)/nodeGroup.o $(SGL)/nodeModel.o $(SGL)/nodeTransform.o $(SGL)/sceneGraph.o 
+	$(CC) -o $(PROGRAM_NAME) $^ $(CFLAGS) $(LDFLAGS) $(INCLUDE)
 
 clean:
-	$(RM) *.o $(SGL)*.o $(ML)*.o $(CL)*.o $(HBL)*.o $(M3D)*.o $(PROGRAM_NAME)$(EXEEXT)
+	$(RM) $(SGL)/*.o $(ML)/*.o $(CL)/*.o $(HBL)/*.o $(M3D)/*.o $(PROGRAM_NAME)

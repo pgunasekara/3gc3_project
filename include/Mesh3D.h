@@ -5,7 +5,7 @@
 #include <fstream>
 #include <iostream>
 #include <stdlib.h> 
-#include "../HitBox/Hitbox.h"
+#include "Hitbox.h"
 
 using namespace std;
 

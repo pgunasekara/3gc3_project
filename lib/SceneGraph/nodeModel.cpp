@@ -11,7 +11,7 @@
 #  include <GL/freeglut.h>
 #endif
 
-#include "../Math/math3D.h"
+#include "math3D.h"
 
 
 NodeModel::NodeModel(ModelType whatType){	//constructor

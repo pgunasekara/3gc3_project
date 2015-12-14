@@ -3,8 +3,8 @@
 
 #include "node.h"
 #include "nodeModel.h"
-#include "../Math/math3D.h"
-#include "../Hitbox/Hitbox.h"
+#include "math3D.h"
+#include "Hitbox.h"
 #include <vector>
 
 class SceneGraph{

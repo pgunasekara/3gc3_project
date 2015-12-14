@@ -12,7 +12,7 @@ We both informed Dr. Gwosdz and recieved his approval in using this code
 #define CAMERA_H
 
 // classes uses 3D math class
-#include "../Math/math3D.h"
+#include "math3D.h"
 
 // camera direction for which direction you are moving
 enum CameraDirection {
