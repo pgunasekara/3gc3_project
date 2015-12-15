@@ -76,13 +76,13 @@ void Camera::Update() {
 		float pitchAngle = tan(height/length);
 
 		// allows or doesnt allow rotation around x and applies both rotations together to new quaternion
-		//if ((pitchAngle > 1.0  && camera_pitch >= 0) || (pitchAngle < -1.0 && camera_pitch <= 0)){
-		//	temp = angleAxis(camera_heading, camera_up).normalize();
-		//}else{
-		pitch_quat = angleAxis(camera_pitch, axis);
-		heading_quat = angleAxis(camera_heading, camera_up);
-		temp = pitch_quat.cross(heading_quat).normalize();
-		//}
+		if ((pitchAngle > 1.0  && camera_pitch >= 0) || (pitchAngle < -1.0 && camera_pitch <= 0)){
+			temp = angleAxis(camera_heading, camera_up).normalize();
+		}else{
+			pitch_quat = angleAxis(camera_pitch, axis);
+			heading_quat = angleAxis(camera_heading, camera_up);
+			temp = pitch_quat.cross(heading_quat).normalize();
+		}
 
 		// updates rotation matrix stored by quaternion
 		temp.updateRotationMatrix();
@@ -143,6 +143,9 @@ void Camera::Move(CameraDirection dir, Mesh3D* mesh) {
 			checkHitboxes(mesh);
 			break;
 	}
+	if (camera_position_delta.y != cameraYMove){
+		camera_position_delta.y = 0.0;
+	}
 	// update camera
 	Update();
 }
@@ -198,7 +201,7 @@ bool Camera::checkHitboxes(Mesh3D* m){
 			// check distance between current position and hitbox's z val
 			if (abs(camera_position.z - m->faces[i].hit->minP.z) <= camera_position_delta.z){
 				// ??
-				printf("%f\n",abs(camera_position.z - m->faces[i].hit->minP.z));
+				//printf("%f\n",abs(camera_position.z - m->faces[i].hit->minP.z));
 			}
 		}else if (m->faces[i].hit->zPlane && m->faces[i].hit->yPlane){
 
