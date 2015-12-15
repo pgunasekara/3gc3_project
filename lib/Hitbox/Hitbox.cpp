@@ -38,14 +38,19 @@ Plane::Plane(vert3D a, vert3D b, vert3D c, vert3D d,bool xPlane, bool yPlane, bo
 }
 
 // if in doubt, make function to convert from vertex3D to vert3D 
-Plane::Plane(vertex3D a, vertex3D b, vertex3D c, vertex3D d){
+Plane::Plane(vertex3D a, vertex3D b, vertex3D c, vertex3D d,bool xPlane, bool yPlane, bool zPlane){
 	this->a = vert3D((float) a.x,(float) a.y,(float) a.z);
 	this->b = vert3D((float) b.x,(float) b.y,(float) b.z);
 	this->c = vert3D((float) c.x,(float) c.y,(float) c.z);
 	this->d = vert3D((float) d.x,(float) d.y,(float) d.z);
 	vec3D v1 = vec3D(this->a,this->d);
 	vec3D v2 = vec3D(this->a,this->b);
+	this->xPlane = xPlane;
+	this->yPlane = yPlane;
+	this->zPlane = zPlane;
 	norm = v1.cross(v2);
+	minP = this->b;
+	maxP = this->d;
 }
 
 
@@ -58,7 +63,6 @@ void Plane::draw(){
 		    glVertex3dv(d.returnDoubleArray());
 	glEnd();
 }
-//FIX THIS FJSDOAIJFDSIOAJFISDO
 bool Plane::Intersect(vec3D v0,vec3D vD, float* tNear, float* tFar, vert3D minP, vert3D maxP){
 	float t1,t2;
 	if (yPlane && zPlane){
@@ -145,6 +149,92 @@ bool Plane::Intersect(vec3D v0,vec3D vD, float* tNear, float* tFar, vert3D minP,
 	return true;
 }
 
+bool Plane::Intersect(vec3D v0,vec3D vD, float tNear, float tFar){
+	float t1,t2;
+	if (yPlane && zPlane){
+		if (vD.isOrthogonal(norm)) { //ray is parallel to the planes 
+			if (v0.x < minP.x || v0.x > maxP.x) {    
+				return false; // outside slab
+			}
+		}else{
+			t1 = (minP.x-v0.x)/vD.x;
+			t2 = (maxP.x-v0.x)/vD.x;
+		}
+		if (t1 > t2) {
+			float temp = t1;
+			t1 = t2;
+			t2 = temp;
+
+		}
+		if (t1 > tNear){
+			tNear = t1; // want largest tNear
+		}
+		if (t2 < tFar){
+			tFar = t2; // want smallest tFar
+		}
+		if (tNear > tFar){
+			return false; //box is missed
+		}
+		if (tFar < 0){
+			return false; //Slab behind origion of ray
+		}
+	}else if (xPlane && yPlane){
+		if (vD.isOrthogonal(norm)) { //ray is parallel to the planeS
+			if (v0.z < minP.z || v0.z > maxP.z) {    
+				return false; // outside slab
+			}
+		}else{
+			t1 = (minP.z-v0.z)/vD.z;
+			t2 = (maxP.z-v0.z)/vD.z;
+		}
+		if (t1 > t2) {
+			float temp = t1;
+			t1 = t2;
+			t2 = temp;
+		}
+		if (t1 > tNear){
+			tNear = t1; // want largest tNear
+		}
+		if (t2 < tFar){
+			tFar = t2; // want smallest tFar
+		}
+		if (tNear > tFar){
+			return false; //box is missed
+		}
+		if (tFar < 0){
+			return false; //Slab behind origion of ray
+		}
+	}else if (xPlane && zPlane){
+		if (vD.isOrthogonal(norm)) { //ray is parallel to the planes 
+			if (v0.y < minP.y || v0.y > maxP.y) {    
+				return false; // outside slab
+			}
+		}else{
+			t1 = (minP.y-v0.y)/vD.y;
+			t2 = (maxP.y-v0.y)/vD.y;
+		}
+		if (t1 > t2) {
+			float temp = t1;
+			t1 = t2;
+			t2 = temp;
+
+		}
+		if (t1 > tNear){
+			tNear = t1; // want largest tNear
+		}
+		if (t2 < tFar){
+			tFar = t2; // want smallest tFar
+		}
+		if (tNear > tFar){
+			return false; //box is missed
+		}
+		if (tFar < 0){
+			return false; //Slab behind origion of ray
+		}
+	}
+	return true;
+}
+
 
 void Plane::Scale(vec3D transform){
 	a.scalePoint(transform);
@@ -220,6 +310,12 @@ Hitbox::Hitbox(vert3D low, vert3D high, int ID){
 	zaxis = vec3D(0,0,1);
 }
 
+Hitbox::~Hitbox(){
+	for (int i=0; i < Planes.size();i++){
+		delete Planes[i];
+	}
+}
+
 void Hitbox::draw(){
 	for (int i = 0; i <Planes.size(); i++){
 		Planes[i]->draw();
@@ -282,10 +378,6 @@ void Hitbox::Rotate(quaternion quat){
 	}
 	minP.rotatePoint(quat.rotationMatrix);
 	maxP.rotatePoint(quat.rotationMatrix);
-}
-
-void applyAxesChanges(vec3D transform){
-	// implement maybe ??
 }
 
 

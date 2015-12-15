@@ -12,11 +12,11 @@ using namespace std;
 class Mesh3D{
 public:
 	Mesh3D();
+	~Mesh3D();
 	void drawMesh();
 	void load();
 	void loadObj(char* filename);
-
-private:
+//private:
 	vector<vertex3D> verts;
 	vector<faces3D> faces;
 	vector<faceVertNorms3D> faceVertNorms;

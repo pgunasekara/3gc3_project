@@ -127,15 +127,19 @@ void Camera::Move(CameraDirection dir, Mesh3D* mesh) {
 			break;
 			*/
 		case LEFT:
-				camera_position_delta = camera_position_delta - camera_direction.cross(camera_up).vectorMultiplyr(camera_scale);
+			checkHitboxes(mesh);
+			camera_position_delta = camera_position_delta - camera_direction.cross(camera_up).vectorMultiplyr(camera_scale);
 			break;
 		case RIGHT:
+			checkHitboxes(mesh);
 			camera_position_delta = camera_position_delta + camera_direction.cross(camera_up).vectorMultiplyr(camera_scale);
 			break;
 		case FORWARD:
+			checkHitboxes(mesh);
 			camera_position_delta = camera_position_delta + camera_direction.vectorMultiplyr(camera_scale);
 			break;
 		case BACK:
+			checkHitboxes(mesh);
 			camera_position_delta = camera_position_delta - camera_direction.vectorMultiplyr(camera_scale);
 			break;
 	}
@@ -185,5 +189,15 @@ void Camera::ChangeHeading(float degrees) {
 		camera_heading -= degrees;
 	} else {
 		camera_heading += degrees;
+	}
+}
+
+bool Camera::checkHitboxes(Mesh3D* m){
+	for (int i = 0; i < m->faces.size();i++){
+		if(m->faces[i].hit->Intersect(camera_position,camera_direction,-1000000,1000000)){
+			printf("hit\n");
+		}else{
+			//printf("miss\n");
+		}
 	}
 }

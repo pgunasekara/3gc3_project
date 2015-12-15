@@ -75,6 +75,7 @@ void vec3D::reset(){
 }
 
 float* vec3D::returnArray(){
+	// deallocate pls
 	float *vert = new float[3];
 
 	vert[0] = static_cast<float>(x);

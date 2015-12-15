@@ -190,6 +190,9 @@ void keyboard(unsigned char key, int x, int y)
 			break;
 		case 'q':
 		case 27:
+			delete start;
+			delete finish;
+			delete test;
 			exit (0);
 			break;
 		}
@@ -207,22 +210,18 @@ void motion(int x, int y)
 
 void passive(int x,int y){
 	if ((x - mouseX) > 0){
-		camera.Spin(SRIGHT,(x-mouseX)/globalW);
-		//camera.Spin(SRIGHT,angle);
+		camera.Spin(SRIGHT,0.5*(x-mouseX)/globalW);
 		mouseX = x;
 	}
 	else if ((x - mouseX) < 0){ 
-		camera.Spin(SLEFT,-1*(x-mouseX)/globalW);
-		//camera.Spin(SLEFT,angle);
+		camera.Spin(SLEFT,-0.5*(x-mouseX)/globalW);
 		mouseX = x;
 	}
 	if ((y - mouseY) > 0){
-		camera.Spin(SDOWN,(y-mouseY)/globalH);
-		//camera.Spin(SDOWN,angle);
+		camera.Spin(SDOWN,0.5*(y-mouseY)/globalH);
 		mouseY = y;
 	}else if ((y - mouseY) < 0){
-		camera.Spin(SUP,-1*(y-mouseY)/globalH);
-		//camera.Spin(SRIGHT,angle);
+		camera.Spin(SUP,-0.5*(y-mouseY)/globalH);
 		mouseY = y;
 	} 
 	glutPostRedisplay();
@@ -249,7 +248,7 @@ int main(int argc, char **argv)
 	//glut initialization stuff:
 	// set the window size, display mode, and create the window
 	glutInit(&argc, argv);
-	glutInitWindowSize(600, 600);
+	glutInitWindowSize(1200, 1200);
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
 	init();
 	glutCreateWindow("Spinning Cube");

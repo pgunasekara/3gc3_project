@@ -30,6 +30,16 @@ Mesh3D::Mesh3D(){
 	vector<colour3D> colours;
 }
 
+Mesh3D::~Mesh3D(){
+	for (int i = 0; i < faces.size(); i++){
+		delete faces[i].hit;
+	}
+	faces.clear();
+	verts.clear();
+	faceVertNorms.clear();
+	vertNorms.clear();
+}
+
 void Mesh3D::drawMesh(){
 	if (verts.size() == 0){
 		cout << "vertex size is zero";
@@ -189,7 +199,17 @@ void Mesh3D::loadObj(char* filename){
 				f.v3 = atoi(vertexElements3[0].c_str());
 				f.v4 = atoi(vertexElements4[0].c_str());
 				// remember to clear memory
-				f.hit = new Plane(verts[f.v1],verts[f.v2],verts[f.v3],verts[f.v4]);
+				//printf("v1: %f %f %f\n",verts[f.v1-1].x,verts[f.v1-1].y,verts[f.v1-1].z);
+				//printf("v2: %f %f %f\n",verts[f.v2-1].x,verts[f.v2-1].y,verts[f.v2-1].z);
+				//printf("v3: %f %f %f\n",verts[f.v3-1].x,verts[f.v3-1].y,verts[f.v3-1].z);
+				//printf("v4: %f %f %f\n",verts[f.v4-1].x,verts[f.v4-1].y,verts[f.v4-1].z);
+				if (verts[f.v1-1].x == verts[f.v2-1].x && verts[f.v1-1].z != verts[f.v2-1].z){
+					f.hit = new Plane(verts[f.v1-1],verts[f.v2-1],verts[f.v3-1],verts[f.v4-1],false,true,true);
+				}else if (verts[f.v1-1].x != verts[f.v2-1].x && verts[f.v1-1].z == verts[f.v2-1].z){
+					f.hit = new Plane(verts[f.v1-1],verts[f.v2-1],verts[f.v3-1],verts[f.v4-1],true,true,false);
+				}else{
+					printf("It's not a xy or a yz plane?\n");
+				}
 
 				fvn.vn1 = atoi(vertexElements1[2].c_str());		//atoi is string to int
 				fvn.vn2 = atoi(vertexElements2[2].c_str());
@@ -205,35 +225,3 @@ void Mesh3D::loadObj(char* filename){
 	}
 	infile.close();
 }
-/*
-bool Mesh3D::Intersect(int x, int y){
-	//grab the matricies
-	glGetDoublev(GL_MODELVIEW_MATRIX, matModelView); 
-	glGetDoublev(GL_PROJECTION_MATRIX, matProjection); 
-	glGetIntegerv(GL_VIEWPORT, viewport); 
-
-	start = near.returnDoubleArray();
-	finish = far.returnDoubleArray();
-
-	//unproject the values
-	double winX = (double)x; 
-	double winY = viewport[3] - (double)y; 
-
-	// get point on the 'near' plane (third param is set to 0.0)
-	gluUnProject(winX, winY, 0.0, matModelView, matProjection, 
-		 viewport, &start[0], &start[1], &start[2]); 
-
-	// get point on the 'far' plane (third param is set to 1.0)
-	gluUnProject(winX, winY, 1.0, matModelView, matProjection, 
-		 viewport, &finish[0], &finish[1], &finish[2]); 
-
-	near.update(start);
-	far.update(finish);
-	distance = (far - near).normalize();
-/*
-	for (int i =0; i < faces.size(); i++){
-		if (faces.hit->Intersect)
-	}
-}
-
-*/
