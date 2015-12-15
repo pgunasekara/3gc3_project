@@ -127,20 +127,20 @@ void Camera::Move(CameraDirection dir, Mesh3D* mesh) {
 			break;
 			*/
 		case LEFT:
-			checkHitboxes(mesh);
 			camera_position_delta = camera_position_delta - camera_direction.cross(camera_up).vectorMultiplyr(camera_scale);
+			checkHitboxes(mesh);
 			break;
 		case RIGHT:
-			checkHitboxes(mesh);
 			camera_position_delta = camera_position_delta + camera_direction.cross(camera_up).vectorMultiplyr(camera_scale);
+			checkHitboxes(mesh);
 			break;
 		case FORWARD:
-			checkHitboxes(mesh);
 			camera_position_delta = camera_position_delta + camera_direction.vectorMultiplyr(camera_scale);
+			checkHitboxes(mesh);
 			break;
 		case BACK:
-			checkHitboxes(mesh);
 			camera_position_delta = camera_position_delta - camera_direction.vectorMultiplyr(camera_scale);
+			checkHitboxes(mesh);
 			break;
 	}
 	// update camera
@@ -194,10 +194,14 @@ void Camera::ChangeHeading(float degrees) {
 
 bool Camera::checkHitboxes(Mesh3D* m){
 	for (int i = 0; i < m->faces.size();i++){
-		if(m->faces[i].hit->Intersect(camera_position,camera_direction,-1000000,1000000)){
-			printf("hit\n");
-		}else{
-			//printf("miss\n");
+		if (m->faces[i].hit->xPlane && m->faces[i].hit->yPlane){
+			// check distance between current position and hitbox's z val
+			if (abs(camera_position.z - m->faces[i].hit->minP.z) <= camera_position_delta.z){
+				// ??
+				printf("%f\n",abs(camera_position.z - m->faces[i].hit->minP.z));
+			}
+		}else if (m->faces[i].hit->zPlane && m->faces[i].hit->yPlane){
+
 		}
 	}
 }

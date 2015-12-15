@@ -36,7 +36,7 @@ public:
 	Plane(vertex3D a, vertex3D b, vertex3D c, vertex3D d,bool xPlane, bool yPlane, bool zPlane);
 	void draw();
 	bool Intersect(vec3D v0,vec3D vD, float* tNear, float* tFar,vert3D minP, vert3D maxP);
-	bool Intersect(vec3D v0,vec3D vD,float tNear, float tFar);
+	bool Intersect(vec3D v0,vec3D vD);
 	void Scale(vec3D transform);
 	void Translate(vec3D transform);
 	void Rotate(quaternion transform);
