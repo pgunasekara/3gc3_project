@@ -49,18 +49,21 @@ Plane::Plane(vertex3D a, vertex3D b, vertex3D c, vertex3D d,bool xPlane, bool yP
 	this->yPlane = yPlane;
 	this->zPlane = zPlane;
 	norm = v1.cross(v2);
-	minP = this->b;
-	maxP = this->d;
+	minP = this->a;
+	maxP = this->c;
+	selected = false;
 }
 
 
 void Plane::draw(){
+	if (selected){
+  		glColor3f(1.0f,0.0f,0.0f);
+  	}
 	glBegin(GL_LINE_LOOP);
-			glColor3f(1.0f,0.0f,0.0f);
-		    glVertex3dv(a.returnDoubleArray());
-		    glVertex3dv(b.returnDoubleArray());
-		    glVertex3dv(c.returnDoubleArray());
-		    glVertex3dv(d.returnDoubleArray());
+	  	glVertex3dv(a.returnDoubleArray());
+	    glVertex3dv(b.returnDoubleArray());
+	    glVertex3dv(c.returnDoubleArray());
+	    glVertex3dv(d.returnDoubleArray());
 	glEnd();
 }
 bool Plane::Intersect(vec3D v0,vec3D vD, float* tNear, float* tFar, vert3D minP, vert3D maxP){

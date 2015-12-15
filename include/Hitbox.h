@@ -43,7 +43,7 @@ public:
 
 	vert3D a,b,c,d,minP,maxP;
 	vec3D norm;
-	bool xPlane,yPlane,zPlane;
+	bool xPlane,yPlane,zPlane,selected;
 };
 
 class Hitbox{

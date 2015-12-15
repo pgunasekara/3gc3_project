@@ -32,7 +32,9 @@ Mesh3D::Mesh3D(){
 
 Mesh3D::~Mesh3D(){
 	for (int i = 0; i < faces.size(); i++){
-		delete faces[i].hit;
+		if (faces[i].hit){
+			delete faces[i].hit;
+		}
 	}
 	faces.clear();
 	verts.clear();
@@ -76,6 +78,10 @@ void Mesh3D::drawMesh(){
 		 vertexNormIndex3 = faceVertNorms[i].vn3;
 		 vertexNormIndex4 = faceVertNorms[i].vn4;
 
+		//if (faces[i].hit){
+		//	faces[i].hit->draw();
+		//}
+
 		glBegin(GL_QUADS);
 
 			
@@ -106,22 +112,23 @@ void Mesh3D::drawMesh(){
 
 		glEnd();
 
-		glBegin(GL_QUADS);
+		if (!faces[i].hit->selected){
+			glBegin(GL_QUADS);
 
-			glPushMatrix();
-			glNormal3f(vertNorms[vertexNormIndex1].x,vertNorms[vertexNormIndex1].y, vertNorms[vertexNormIndex1].z);
-			glVertex3f(verts[vertexIndex1].x,verts[vertexIndex1].y,verts[vertexIndex1].z);
-			glNormal3f(vertNorms[vertexNormIndex2].x,vertNorms[vertexNormIndex2].y, vertNorms[vertexNormIndex2].z);
-			glVertex3f(verts[vertexIndex2].x,verts[vertexIndex2].y,verts[vertexIndex2].z);
-			glNormal3f(vertNorms[vertexNormIndex3].x,vertNorms[vertexNormIndex3].y, vertNorms[vertexNormIndex3].z);
-			glVertex3f(verts[vertexIndex3].x,verts[vertexIndex3].y,verts[vertexIndex3].z);
-			glNormal3f(vertNorms[vertexNormIndex4].x,vertNorms[vertexNormIndex4].y, vertNorms[vertexNormIndex4].z);
-			glVertex3f(verts[vertexIndex4].x,verts[vertexIndex4].y,verts[vertexIndex4].z);
+				glPushMatrix();
+				glNormal3f(vertNorms[vertexNormIndex1].x,vertNorms[vertexNormIndex1].y, vertNorms[vertexNormIndex1].z);
+				glVertex3f(verts[vertexIndex1].x,verts[vertexIndex1].y,verts[vertexIndex1].z);
+				glNormal3f(vertNorms[vertexNormIndex2].x,vertNorms[vertexNormIndex2].y, vertNorms[vertexNormIndex2].z);
+				glVertex3f(verts[vertexIndex2].x,verts[vertexIndex2].y,verts[vertexIndex2].z);
+				glNormal3f(vertNorms[vertexNormIndex3].x,vertNorms[vertexNormIndex3].y, vertNorms[vertexNormIndex3].z);
+				glVertex3f(verts[vertexIndex3].x,verts[vertexIndex3].y,verts[vertexIndex3].z);
+				glNormal3f(vertNorms[vertexNormIndex4].x,vertNorms[vertexNormIndex4].y, vertNorms[vertexNormIndex4].z);
+				glVertex3f(verts[vertexIndex4].x,verts[vertexIndex4].y,verts[vertexIndex4].z);
 
-			glPopMatrix();
+				glPopMatrix();
 
-		glEnd();
-
+			glEnd();
+		}
 	}
 
 }
@@ -129,6 +136,7 @@ void Mesh3D::drawMesh(){
 void Mesh3D::load(){
 
 }
+
 void Mesh3D::loadObj(char* filename){
 
 	srand(time(NULL));
@@ -199,16 +207,19 @@ void Mesh3D::loadObj(char* filename){
 				f.v3 = atoi(vertexElements3[0].c_str());
 				f.v4 = atoi(vertexElements4[0].c_str());
 				// remember to clear memory
-				//printf("v1: %f %f %f\n",verts[f.v1-1].x,verts[f.v1-1].y,verts[f.v1-1].z);
-				//printf("v2: %f %f %f\n",verts[f.v2-1].x,verts[f.v2-1].y,verts[f.v2-1].z);
-				//printf("v3: %f %f %f\n",verts[f.v3-1].x,verts[f.v3-1].y,verts[f.v3-1].z);
-				//printf("v4: %f %f %f\n",verts[f.v4-1].x,verts[f.v4-1].y,verts[f.v4-1].z);
-				if (verts[f.v1-1].x == verts[f.v2-1].x && verts[f.v1-1].z != verts[f.v2-1].z){
+				if (verts[f.v1-1].x == verts[f.v2-1].x && verts[f.v1-1].z != verts[f.v2-1].z && verts[f.v1-1].y != verts[f.v3-1].y){
 					f.hit = new Plane(verts[f.v1-1],verts[f.v2-1],verts[f.v3-1],verts[f.v4-1],false,true,true);
-				}else if (verts[f.v1-1].x != verts[f.v2-1].x && verts[f.v1-1].z == verts[f.v2-1].z){
+				}else if (verts[f.v1-1].x != verts[f.v2-1].x && verts[f.v1-1].z == verts[f.v2-1].z && verts[f.v1-1].y != verts[f.v3-1].y){
 					f.hit = new Plane(verts[f.v1-1],verts[f.v2-1],verts[f.v3-1],verts[f.v4-1],true,true,false);
+				}else if (verts[f.v1-1].x != verts[f.v2-1].x && verts[f.v1-1].z != verts[f.v3-1].z && verts[f.v1-1].y == verts[f.v3-1].y){
+					f.hit = new Plane(verts[f.v1-1],verts[f.v2-1],verts[f.v3-1],verts[f.v4-1],true,false,true);
 				}else{
-					printf("It's not a xy or a yz plane?\n");
+					//printf("v1:%f %f %f\n",verts[f.v1-1].x,verts[f.v1-1].y,verts[f.v1-1].z);
+					//printf("v2:%f %f %f\n",verts[f.v2-1].x,verts[f.v2-1].y,verts[f.v2-1].z);
+					//printf("v3:%f %f %f\n",verts[f.v3-1].x,verts[f.v3-1].y,verts[f.v3-1].z);
+					//printf("v4:%f %f %f\n",verts[f.v4-1].x,verts[f.v4-1].y,verts[f.v4-1].z);
+					// these are problem cases
+					f.hit = new Plane(verts[f.v1-1],verts[f.v2-1],verts[f.v3-1],verts[f.v4-1],true,false,true);
 				}
 
 				fvn.vn1 = atoi(vertexElements1[2].c_str());		//atoi is string to int

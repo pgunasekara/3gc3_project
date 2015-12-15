@@ -50,6 +50,25 @@ int getID()
 double* start = new double[3];
 double* finish = new double[3];
 
+/* drawAxis() -- draws an axis at the origin of the coordinate system
+ *   red = +X axis, green = +Y axis, blue = +Z axis
+ */
+void drawAxis()
+{
+	glBegin(GL_LINES);
+	glColor3f(1, 0, 0);
+	glVertex3f(0,0,0);
+	glVertex3f(50,0,0);
+	glColor3f(0,1,0);
+	glVertex3f(0,0,0);
+	glVertex3f(0,50,0);
+	glColor3f(0,0,1);
+	glVertex3f(0,0,0);
+	glVertex3f(0,0,50);
+	glEnd();
+}
+
+
 //SceneGraph *SG;
 
 float light_pos[] = {0.0, 5.0, 0.0, 1.0};
@@ -136,7 +155,7 @@ void display()
 	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shiny);  
 
 	//optionally draw the axis
-	// drawAxis();
+	drawAxis();
 
 	test->drawMesh();
 
@@ -163,9 +182,8 @@ void reshape(int w, int h)
 
 	globalW = w;
 	globalH = h;
-	mouseX = w/2;
-	mouseY = h/2;
 	gluLookAt(pos[0], pos[1], pos[2], lookAt[0], lookAt[1], lookAt[2], 0, 1, 0);
+	//gluLookAt(50, 50, 50, 0, 0, 0, 0, 1, 0);
 }
 
 void keyboard(unsigned char key, int x, int y)
@@ -200,7 +218,10 @@ void keyboard(unsigned char key, int x, int y)
 
 void mouse(int btn, int state, int x, int y)
 {
-
+	if (btn == GLUT_LEFT_BUTTON && state == GLUT_DOWN){
+		mouseX = x;
+		mouseY = y;
+	}
 }
 
 void motion(int x, int y)
@@ -209,22 +230,24 @@ void motion(int x, int y)
 }
 
 void passive(int x,int y){
-	if ((x - mouseX) > 0){
-		camera.Spin(SRIGHT,0.5*(x-mouseX)/globalW);
-		mouseX = x;
+	if (mouseX != 0 && mouseY != 0){
+		if ((x - mouseX) > 0){
+			camera.Spin(SRIGHT,2.5*(x-mouseX)/globalW);
+			mouseX = x;
+		}
+		else if ((x - mouseX) < 0){ 
+			camera.Spin(SLEFT,-2.5*(x-mouseX)/globalW);
+			mouseX = x;
+		}
+		if ((y - mouseY) > 0){
+			camera.Spin(SDOWN,2.5*(y-mouseY)/globalH);
+			mouseY = y;
+		}else if ((y - mouseY) < 0){
+			camera.Spin(SUP,-2.5*(y-mouseY)/globalH);
+			mouseY = y;
+		} 
+		glutPostRedisplay();
 	}
-	else if ((x - mouseX) < 0){ 
-		camera.Spin(SLEFT,-0.5*(x-mouseX)/globalW);
-		mouseX = x;
-	}
-	if ((y - mouseY) > 0){
-		camera.Spin(SDOWN,0.5*(y-mouseY)/globalH);
-		mouseY = y;
-	}else if ((y - mouseY) < 0){
-		camera.Spin(SUP,-0.5*(y-mouseY)/globalH);
-		mouseY = y;
-	} 
-	glutPostRedisplay();
 }
 
 void special(int key, int x, int y)

@@ -48,7 +48,7 @@ class Camera {
 		void ChangeHeading(float degrees);
 		// temporarily changes angle around x
 		void ChangePitch(float degrees);
-		bool checkHitboxes(Mesh3D* m);
+		bool checkInvalidMove(Mesh3D* m,bool forwardBack);
 
 		// amount that you scale
 		float camera_scale;
