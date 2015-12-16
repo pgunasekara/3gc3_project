@@ -2,6 +2,8 @@
 #ifndef __PARTICLE_H_
 #define __PARTICLE_H_
 
+#define MAX_PARTICLES 1000;
+
 typedef struct
 {
 	bool life;//is the particle currently active
@@ -11,14 +13,14 @@ typedef struct
 	float r,g,b;//Colour, replace with texture information
 	float x,y,z;//position of the particle
 
-	float speedx, speedy, speedz;//speed of the particle about each axis
-	float gravityx, gravityy, gravityz;//gravity values in each direction
+	float speed;//speed of the particle about each axis
+	float gravity;//gravity value of the particle
 }particle;
 
 class ParticleSystem
 {
-	float xspeed, yspeed, slowdown;
-	particle system[1000];//max number of particles is 1000
+	float ySpeed, slowdown;
+	particle system[MAX_PARTICLES];//max number of particles is 1000
 	
 	int width;//width of texture
 	int height;//height of texture
