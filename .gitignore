@@ -1,3 +1,6 @@
 Project.x
 .DS_Store
 .o
+.build-tools.cson
+.tags
+.tags1

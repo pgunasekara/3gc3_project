@@ -37,12 +37,33 @@ Plane::Plane(vert3D a, vert3D b, vert3D c, vert3D d,bool xPlane, bool yPlane, bo
 	norm = v1.cross(v2);
 }
 
-// if in doubt, make function to convert from vertex3D to vert3D 
-Plane::Plane(vertex3D a, vertex3D b, vertex3D c, vertex3D d,bool xPlane, bool yPlane, bool zPlane){
-	this->a = vert3D((float) a.x,(float) a.y,(float) a.z);
-	this->b = vert3D((float) b.x,(float) b.y,(float) b.z);
-	this->c = vert3D((float) c.x,(float) c.y,(float) c.z);
-	this->d = vert3D((float) d.x,(float) d.y,(float) d.z);
+// if in doubt, make function to convert from vertex3D to vert3D
+Plane::Plane(vertex3D a, vertex3D b, vertex3D c, vertex3D d,bool xPlane, bool yPlane, bool zPlane,bool leftWall){
+	float scaleFactor;
+	if (leftWall){
+		scaleFactor = 0.5;
+	}else{
+		scaleFactor = -0.5;
+	}
+	if (xPlane && yPlane){
+		this->a = vert3D((float) a.x,(float) a.y,(float) a.z).scalePointR(vec3D(2,2,2));
+		this->b = vert3D((float) b.x,(float) b.y,(float) b.z).scalePointR(vec3D(2,2,2));
+		this->c = vert3D((float) c.x,(float) c.y,(float) c.z).scalePointR(vec3D(2,2,2));
+		this->d = vert3D((float) d.x,(float) d.y,(float) d.z).scalePointR(vec3D(2,2,2));
+		Translate(vec3D(0,0,scaleFactor));
+	}else if (zPlane && yPlane){
+		this->a = vert3D((float) a.x,(float) a.y,(float) a.z).scalePointR(vec3D(2,2,2));
+		this->b = vert3D((float) b.x,(float) b.y,(float) b.z).scalePointR(vec3D(2,2,2));
+		this->c = vert3D((float) c.x,(float) c.y,(float) c.z).scalePointR(vec3D(2,2,2));
+		this->d = vert3D((float) d.x,(float) d.y,(float) d.z).scalePointR(vec3D(2,2,2));
+		Translate(vec3D(scaleFactor,0,0));
+	}else {
+		this->a = vert3D((float) a.x,(float) a.y,(float) a.z).scalePointR(vec3D(2,2,2));
+		this->b = vert3D((float) b.x,(float) b.y,(float) b.z).scalePointR(vec3D(2,2,2));
+		this->c = vert3D((float) c.x,(float) c.y,(float) c.z).scalePointR(vec3D(2,2,2));
+		this->d = vert3D((float) d.x,(float) d.y,(float) d.z).scalePointR(vec3D(2,2,2));
+	}
+
 	vec3D v1 = vec3D(this->a,this->d);
 	vec3D v2 = vec3D(this->a,this->b);
 	this->xPlane = xPlane;
@@ -51,7 +72,6 @@ Plane::Plane(vertex3D a, vertex3D b, vertex3D c, vertex3D d,bool xPlane, bool yP
 	norm = v1.cross(v2);
 	minP = this->a;
 	maxP = this->c;
-	selected = false;
 }
 
 
@@ -69,8 +89,8 @@ void Plane::draw(){
 bool Plane::Intersect(vec3D v0,vec3D vD, float* tNear, float* tFar, vert3D minP, vert3D maxP){
 	float t1,t2;
 	if (yPlane && zPlane){
-		if (vD.isOrthogonal(norm)) { //ray is parallel to the planes 
-			if (v0.x < minP.x || v0.x > maxP.x) {    
+		if (vD.isOrthogonal(norm)) { //ray is parallel to the planes
+			if (v0.x < minP.x || v0.x > maxP.x) {
 				return false; // outside slab
 			}
 		}else{
@@ -97,7 +117,7 @@ bool Plane::Intersect(vec3D v0,vec3D vD, float* tNear, float* tFar, vert3D minP,
 		}
 	}else if (xPlane && yPlane){
 		if (vD.isOrthogonal(norm)) { //ray is parallel to the planeS
-			if (v0.z < minP.z || v0.z > maxP.z) {    
+			if (v0.z < minP.z || v0.z > maxP.z) {
 				return false; // outside slab
 			}
 		}else{
@@ -122,8 +142,8 @@ bool Plane::Intersect(vec3D v0,vec3D vD, float* tNear, float* tFar, vert3D minP,
 			return false; //Slab behind origion of ray
 		}
 	}else if (xPlane && zPlane){
-		if (vD.isOrthogonal(norm)) { //ray is parallel to the planes 
-			if (v0.y < minP.y || v0.y > maxP.y) {    
+		if (vD.isOrthogonal(norm)) { //ray is parallel to the planes
+			if (v0.y < minP.y || v0.y > maxP.y) {
 				return false; // outside slab
 			}
 		}else{
@@ -301,5 +321,3 @@ void Hitbox::Rotate(quaternion quat){
 	minP.rotatePoint(quat.rotationMatrix);
 	maxP.rotatePoint(quat.rotationMatrix);
 }
-
-

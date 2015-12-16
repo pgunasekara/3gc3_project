@@ -28,8 +28,8 @@ using namespace std;
 // global variables for scene graph and camera
 float mouseX,mouseY,globalW,globalH;
 bool buttonDown = false;
-float pos[] = {11.5,0.7,-10};
-float lookAt[] = {11.5,0.7,0};
+float pos[] = {23,1.0,-20};
+float lookAt[] = {23,1.0,0};
 float angle = 0.005f;
 bool PlaneExist = false;
 Camera camera;
@@ -40,7 +40,7 @@ int masterID = 0;
 
 //Vector3D ip;
 //Vector3D translation;
-//Vector4D rotation; 
+//Vector4D rotation;
 //Vector3D scale;
 
 int getID()
@@ -80,7 +80,7 @@ float spec0[4] = {1, 1, 1, 1};
 float m_amb[] = {0.33, 0.22, 0.03, 1.0};
 float m_diff[] = {0.78, 0.57, 0.11, 1.0};
 float m_spec[] = {0.99, 0.91, 0.81, 1.0};
-float shiny = 27.8; 
+float shiny = 27.8;
 Mesh3D* test;
 
 
@@ -100,20 +100,20 @@ void initLighting()
 	glEnable(GL_LIGHT0);
 
 	glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
-	
+
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, diff0);
 	glLightfv(GL_LIGHT0, GL_AMBIENT, amb0);
 	glLightfv(GL_LIGHT0, GL_SPECULAR, spec0);
 }
 
-//function which will populate a sample graph 
+//function which will populate a sample graph
 /*
 void initGraph()
 {
 	//Initial Transformation node
 	//This is node 1, every time a node is created the masterId will incremenet by 2
 	//NODE 0 is Root
-		
+
 	//DELETE THE ENTIRE GROUP NODE, WHEN CLEARING THE SCENE
 	//The masterID for this first node will always be 1
 	//When clearing, reset masterID to 0
@@ -123,7 +123,7 @@ void initGraph()
 */
 
 void init(void)
-{	
+{
 	//GLuint id = 1;
 	camera = Camera();
 
@@ -144,21 +144,27 @@ void display()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	//clear the screen
-	glLightfv(GL_LIGHT0, GL_POSITION, light_pos); 
+	glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
 
 	glLightfv(GL_LIGHT0, GL_AMBIENT, amb0);
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, diff0);
-	glLightfv(GL_LIGHT0, GL_SPECULAR, spec0); 
+	glLightfv(GL_LIGHT0, GL_SPECULAR, spec0);
 
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, m_amb);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, m_diff);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, m_spec);
-	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shiny);  
+	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shiny);
 
 	//optionally draw the axis
 	drawAxis();
-
+	glPushMatrix();
+	glScalef(2.0,2.0,2.0);
 	test->drawMesh();
+	glPopMatrix();
+	//for (int i =0; i < test->faces.size();i++){
+	//	test->faces[i].lHit->draw();
+	//	test->faces[i].rHit->draw();
+	//}
 
 	//swap buffers - rendering is done to the back buffer, bring it forward to display
 	glutSwapBuffers();
@@ -239,7 +245,7 @@ void passive(int x,int y){
 			camera.Spin(SRIGHT,4.0*(x-mouseX)/globalW);
 			mouseX = x;
 		}
-		else if ((x - mouseX) < 0){ 
+		else if ((x - mouseX) < 0){
 			camera.Spin(SLEFT,-4.0*(x-mouseX)/globalW);
 			mouseX = x;
 		}
@@ -249,7 +255,7 @@ void passive(int x,int y){
 		}else if ((y - mouseY) < 0){
 			camera.Spin(SUP,-4.0*(y-mouseY)/globalH);
 			mouseY = y;
-		} 
+		}
 		glutPostRedisplay();
 	}
 }

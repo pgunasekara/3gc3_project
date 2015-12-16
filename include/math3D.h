@@ -26,6 +26,8 @@ public:
 	float dot(vec3D other);
 	// flips direction of vector
 	void flipVector();
+	// flipVector method that returns value
+	vec3D flipVectorR();
 	// reset vector to 0,0,0
 	void reset();
 	// returns the vector components as a pointer to a float array of size 3
@@ -49,7 +51,7 @@ public:
 	// constructors
 	vert3D();
 	vert3D(float x, float y,float z);
-	
+
 	// destructor
 	~vert3D();
 
@@ -62,6 +64,8 @@ public:
 	void movePoint(vec3D v);
 	// scale point by vector
 	void scalePoint(vec3D v);
+	// scale point with return
+	vert3D scalePointR(vec3D v);
 	// rotate point by quaternion
 	void rotatePoint(float* matrix);
 	// returns the vertex components as a pointer to a float array of size 3
