@@ -1,8 +1,8 @@
 /* ----------------README-----------------------------------------------------
-This camera was originally developed for the final project along 
-with Pasindu Gunasekara(1412115). 
+This camera was originally developed for the final project along
+with Pasindu Gunasekara(1412115).
 
-The code for the camera used for this assignment might look similar because 
+The code for the camera used for this assignment might look similar because
 we developed it together.
 
 We both informed Dr. Gwosdz and recieved his approval in using this code
@@ -24,6 +24,10 @@ enum CameraDirection {
 // camera direction for which way you are spinning
 enum CameraSpinDirection {
 	SUP, SDOWN, SLEFT, SRIGHT
+};
+
+struct compass3D{
+	vec3D n,e,s,w;
 };
 
 // class for the camera
@@ -48,7 +52,8 @@ class Camera {
 		void ChangeHeading(float degrees);
 		// temporarily changes angle around x
 		void ChangePitch(float degrees);
-		bool checkInvalidMove(Mesh3D* m,bool forwardBack);
+		void checkCompassDirection();
+		bool checkInvalidMove(Mesh3D* m,CameraDirection dir);
 
 		// amount that you scale
 		float camera_scale;
@@ -62,11 +67,11 @@ class Camera {
 		vec3D camera_position_delta;
 		vec3D camera_look_at;
 		vec3D camera_direction;
+		vec3D* universal_camera_direction;
 		vec3D camera_up;
 		vec3D light_position;
 		vec3D spot_direction;
+		compass3D compass;
 		float cameraYMove;
 };
-
-
 #endif

@@ -30,12 +30,12 @@ float spec0[4] = {1, 1, 1, 1};
 float m_amb[] = {0.33, 0.22, 0.03, 1.0};
 float m_diff[] = {0.78, 0.57, 0.11, 1.0};
 float m_spec[] = {0.99, 0.91, 0.81, 1.0};
-float shiny = 27.8; 
+float shiny = 27.8;
 Mesh3D test;
 void display()
 {
-	 
-	
+
+
 
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -46,26 +46,26 @@ void display()
 	//increment the rotation angle every 100th display cycle
 
 	//clear the screen
-	glLightfv(GL_LIGHT0, GL_POSITION, light_pos); 
+	glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
 
 	glLightfv(GL_LIGHT0, GL_AMBIENT, amb0);
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, diff0);
-	glLightfv(GL_LIGHT0, GL_SPECULAR, spec0); 
+	glLightfv(GL_LIGHT0, GL_SPECULAR, spec0);
 
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, m_amb);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, m_diff);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, m_spec);
-	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shiny);  
+	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shiny);
 
 	//optionally draw the axis
 	// drawAxis();
 
 	test.drawMesh();
 
-	
 
 
-	
+
+
 	//swap buffers - rendering is done to the back buffer, bring it forward to display
 	glutSwapBuffers();
 
@@ -73,7 +73,7 @@ void display()
 	glutPostRedisplay();
 }
 
-/* kbd -- the GLUT keyboard function 
+/* kbd -- the GLUT keyboard function
  *  key -- the key pressed
  *  x and y - mouse x and y coordinates at the time the function is called
  */
@@ -95,13 +95,13 @@ void special(int key, int x, int y){
 			break;
 		case GLUT_KEY_RIGHT:
 			eye[2]+=0.5;
-			break; 
+			break;
 		case GLUT_KEY_UP:
 			eye[0]+=0.5; eye[1]+=0.5; eye[2]+=0.5;
-			break; 
+			break;
 		case GLUT_KEY_DOWN:
 			eye[0]-=0.5; eye[1]-=0.5; eye[2]-=0.5;
-			break; 
+			break;
 	}
 }
 
@@ -125,7 +125,7 @@ int main(int argc, char** argv)
 	glLoadIdentity();
 	//glOrtho(-2.5, 2.5, -2.5, 2.5, -2.5, 2.5);
 	gluPerspective(45,1,1,200);
-	
+
 
 	//set clear colour to white
 	glClearColor(1, 1, 1, 0);
@@ -139,7 +139,7 @@ int main(int argc, char** argv)
 	glutKeyboardFunc(kbd);
 	glutSpecialFunc(special);
 	glutDisplayFunc(display);
-	
+
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
 

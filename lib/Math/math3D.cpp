@@ -68,6 +68,11 @@ void vec3D::flipVector(){
 	z *= -1;
 }
 
+vec3D vec3D::flipVectorR(){
+// make note of -0
+	return vec3D(-1*x,-1*y,-1*z);
+}
+
 void vec3D::reset(){
 	x=0;
 	y=0;
@@ -150,6 +155,10 @@ void vert3D::scalePoint(vec3D v){
 	x *= v.x;
 	y *= v.y;
 	z *= v.z;
+}
+
+vert3D vert3D::scalePointR(vec3D v){
+	return vert3D(this->x*v.x,this->y*v.y,this->z*v.z);
 }
 
 void vert3D::rotatePoint(float* matrix){
@@ -250,7 +259,7 @@ quaternion quaternion::cross(quaternion other) {
 quaternion angleAxis(float angle, vec3D axis){
 	// axis has to be unit vector
 	quaternion newQuat = quaternion();
-	
+
 	newQuat.w  = cosf(angle/2);
 	newQuat.x = axis.x * sinf(angle/2);
 	newQuat.y = axis.y * sinf(angle/2);
