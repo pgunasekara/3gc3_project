@@ -1,8 +1,21 @@
-//Particle.h
-#ifndef __PARTICLE_H_
+//ParticleSystem.h
+//This Partcle System was created with the help of a tutorial from NeHe
+//http://nehe.gamedev.net/tutorial/particle_engine_using_triangle_strips/21001/
+#ifndef __PARTICLE_H_//Guard against cyclical dependancies
 #define __PARTICLE_H_
 
-#define MAX_PARTICLES 1000;
+//GLUT and OpenGL includes
+#ifdef __APPLE__
+#  include <OpenGL/gl.h>
+#  include <OpenGL/glu.h>
+#  include <GLUT/glut.h>
+#else
+#  include <GL/gl.h>
+#  include <GL/glu.h>
+#  include <GL/freeglut.h>
+#endif
+
+#define MAX_PARTICLES 1000//the maximum amount of particles being rendered
 
 typedef struct
 {
@@ -27,10 +40,12 @@ class ParticleSystem
 	int k;//max value for loadPPM
 	GLubyte *image;//holds the texture for each particle
 
-	ParticleSystem();
-	~ParticleSystem();
-	GLubyte *LoadPPM(char *filename, int *width, int *height, int*max);
-	void drawParticles();
+	ParticleSystem();//default constructor
+	~ParticleSystem();//destructor
+	//GLubyte *LoadPPM(char *filename, int *width, int *height, int*max);//loading textures
+	void drawParticles();//draw particles
+	void initialize(int i);//initialize a particle and set it's position
+	void drawRainParticles();//Draw lines for rain particles
 };
 
 #endif
