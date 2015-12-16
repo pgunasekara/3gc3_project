@@ -33,6 +33,7 @@ float lookAt[] = {11.5,0.7,0};
 float angle = 0.005f;
 bool PlaneExist = false;
 Camera camera;
+bool moveable = false;
 
 //node ids
 int masterID = 0;
@@ -218,9 +219,12 @@ void keyboard(unsigned char key, int x, int y)
 
 void mouse(int btn, int state, int x, int y)
 {
-	if (btn == GLUT_LEFT_BUTTON && state == GLUT_DOWN){
+	if (btn == GLUT_LEFT_BUTTON && state == GLUT_DOWN && !moveable){
 		mouseX = x;
 		mouseY = y;
+		moveable = true;
+	}else if (btn == GLUT_LEFT_BUTTON && state == GLUT_DOWN && moveable){
+		moveable = false;
 	}
 }
 
@@ -230,20 +234,20 @@ void motion(int x, int y)
 }
 
 void passive(int x,int y){
-	if (mouseX != 0 && mouseY != 0){
+	if (moveable){
 		if ((x - mouseX) > 0){
-			camera.Spin(SRIGHT,2.5*(x-mouseX)/globalW);
+			camera.Spin(SRIGHT,4.0*(x-mouseX)/globalW);
 			mouseX = x;
 		}
 		else if ((x - mouseX) < 0){ 
-			camera.Spin(SLEFT,-2.5*(x-mouseX)/globalW);
+			camera.Spin(SLEFT,-4.0*(x-mouseX)/globalW);
 			mouseX = x;
 		}
 		if ((y - mouseY) > 0){
-			camera.Spin(SDOWN,2.5*(y-mouseY)/globalH);
+			camera.Spin(SDOWN,4.0*(y-mouseY)/globalH);
 			mouseY = y;
 		}else if ((y - mouseY) < 0){
-			camera.Spin(SUP,-2.5*(y-mouseY)/globalH);
+			camera.Spin(SUP,-4.0*(y-mouseY)/globalH);
 			mouseY = y;
 		} 
 		glutPostRedisplay();

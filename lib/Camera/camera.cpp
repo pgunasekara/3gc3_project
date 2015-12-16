@@ -6,7 +6,6 @@ The code for the camera might look similar because we developed it together.
 
 We both informed Dr. Gwosdz and recieved his approval in using this code
 -----------------------------------------------------------------------------*/
-
 #include "camera.h"
 #include "Mesh3D.h"
 #include "Hitbox.h"
@@ -118,6 +117,7 @@ void Camera::Update() {
 
 // Move the camera forward depending on your scale
 void Camera::Move(CameraDirection dir, Mesh3D* mesh) {
+	bool FDir = true;
 	switch (dir) {
 		/*case UP:
 			camera_position_delta = camera_position_delta + camera_up.vectorMultiplyr(camera_scale);
@@ -127,28 +127,25 @@ void Camera::Move(CameraDirection dir, Mesh3D* mesh) {
 			break;
 			*/
 		case LEFT:
-			if (!checkInvalidMove(mesh,false)){
 				camera_position_delta = camera_position_delta - camera_direction.cross(camera_up).vectorMultiplyr(camera_scale);
-			}
+				FDir = false;
 			break;
 		case RIGHT:
-			if (!checkInvalidMove(mesh,false)){
 				camera_position_delta = camera_position_delta + camera_direction.cross(camera_up).vectorMultiplyr(camera_scale);
-			}
+				FDir = false;
 			break;
 		case FORWARD:
-			if (!checkInvalidMove(mesh,true)){
-				camera_position_delta = camera_position_delta + camera_direction.vectorMultiplyr(camera_scale);
-			}
+			camera_position_delta = camera_position_delta + camera_direction.vectorMultiplyr(camera_scale);
 			break;
 		case BACK:
-			if (!checkInvalidMove(mesh,true)){
 				camera_position_delta = camera_position_delta - camera_direction.vectorMultiplyr(camera_scale);
-			}
 			break;
 	}
 	if (camera_position_delta.y != cameraYMove){
 		camera_position_delta.y = 0.0;
+	}
+	if (checkInvalidMove(mesh,FDir)){
+		camera_position_delta.reset();
 	}
 	// update camera
 	Update();
@@ -201,19 +198,44 @@ void Camera::ChangeHeading(float degrees) {
 
 bool Camera::checkInvalidMove(Mesh3D* m,bool forwardBack){
 	bool lowerBounds,upperBounds;
+	vec3D cP = camera_position + camera_direction;
+	//printf("pos:%f %f %f\n",cP.x,cP.y,cP.z);
+	//printf("forward:%f %f %f\n",camera_direction.x,camera_direction.y,camera_direction.z);
+	//printf("side:%f %f %f\n",camera_direction.cross(camera_up).x,camera_direction.cross(camera_up).y,camera_direction.cross(camera_up).z);
 	for (int i = 0; i < m->faces.size();i++){
 		if (m->faces[i].hit->xPlane && m->faces[i].hit->yPlane && forwardBack){
-			lowerBounds = (m->faces[i].hit->minP.x < (camera_position.x + camera_direction.x) && m->faces[i].hit->minP.y < (camera_position.y + camera_direction.y));
-			upperBounds = (m->faces[i].hit->maxP.x > (camera_position.x + camera_direction.x) && m->faces[i].hit->maxP.y > (camera_position.y + camera_direction.y));
+			lowerBounds = (min(m->faces[i].hit->minP.x,m->faces[i].hit->maxP.x) < cP.x && min(m->faces[i].hit->minP.y,m->faces[i].hit->maxP.y) < cP.y);
+			upperBounds = (max(m->faces[i].hit->minP.x,m->faces[i].hit->maxP.x) > cP.x && max(m->faces[i].hit->minP.y,m->faces[i].hit->maxP.y) > cP.y);
+			//printf("min:%f %f %f\nmax:%f %f %f\n",m->faces[i].hit->minP.x,m->faces[i].hit->minP.y,m->faces[i].hit->minP.z,m->faces[i].hit->maxP.x,m->faces[i].hit->maxP.y,m->faces[i].hit->maxP.z);
 			// check distance between current position and hitbox's z val
-			if(abs(m->faces[i].hit->minP.z - (camera_position.z + camera_direction.z)) <= camera_scale && lowerBounds && upperBounds){
+			if((abs(m->faces[i].hit->minP.z - cP.z) <= 2*camera_scale) && lowerBounds && upperBounds){
+				return true;
+			}
+		}else if (m->faces[i].hit->zPlane && m->faces[i].hit->yPlane && forwardBack){
+			lowerBounds = (min(m->faces[i].hit->minP.z,m->faces[i].hit->maxP.z) < cP.z && min(m->faces[i].hit->minP.y,m->faces[i].hit->maxP.y) < cP.y);
+			upperBounds = (max(m->faces[i].hit->minP.z,m->faces[i].hit->maxP.z) > cP.z && max(m->faces[i].hit->minP.y,m->faces[i].hit->maxP.y) > cP.y);
+			//printf("min:%f %f %f\nmax:%f %f %f\n",m->faces[i].hit->minP.x,m->faces[i].hit->minP.y,m->faces[i].hit->minP.z,m->faces[i].hit->maxP.x,m->faces[i].hit->maxP.y,m->faces[i].hit->maxP.z);
+			// check distance between current position and hitbox's z val
+			if((abs(m->faces[i].hit->minP.x - cP.x) <= 2*camera_scale) && lowerBounds && upperBounds){
+				return true;
+			}
+		}
+		else if (m->faces[i].hit->xPlane && m->faces[i].hit->yPlane && !forwardBack){
+			cP = camera_position + camera_direction.cross(camera_up);
+			lowerBounds = (min(m->faces[i].hit->minP.x,m->faces[i].hit->maxP.x) < cP.x && min(m->faces[i].hit->minP.y,m->faces[i].hit->maxP.y) < cP.y);
+			upperBounds = (max(m->faces[i].hit->minP.x,m->faces[i].hit->maxP.x) > cP.x && max(m->faces[i].hit->minP.y,m->faces[i].hit->maxP.y) > cP.y);
+			//printf("min:%f %f %f\nmax:%f %f %f\n",m->faces[i].hit->minP.x,m->faces[i].hit->minP.y,m->faces[i].hit->minP.z,m->faces[i].hit->maxP.x,m->faces[i].hit->maxP.y,m->faces[i].hit->maxP.z);
+			// check distance between current position and hitbox's z val
+			if((abs(m->faces[i].hit->minP.z - cP.z) <= 4*camera_scale) && lowerBounds && upperBounds){
 				return true;
 			}
 		}else if (m->faces[i].hit->zPlane && m->faces[i].hit->yPlane && !forwardBack){
-			lowerBounds = (m->faces[i].hit->minP.z < (camera_position.z + camera_direction.z) && m->faces[i].hit->minP.y < (camera_position.y + camera_direction.y));
-			upperBounds = (m->faces[i].hit->maxP.z > (camera_position.z + camera_direction.z) && m->faces[i].hit->maxP.y > (camera_position.y + camera_direction.y));
-			// check distance between current position and hitbox x val
-			if(abs(m->faces[i].hit->minP.x - (camera_position.x + camera_direction.x)) <= camera_scale && lowerBounds && upperBounds){
+			cP = camera_position + camera_direction.cross(camera_up);
+			lowerBounds = (min(m->faces[i].hit->minP.z,m->faces[i].hit->maxP.z) < cP.z && min(m->faces[i].hit->minP.y,m->faces[i].hit->maxP.y) < cP.y);
+			upperBounds = (max(m->faces[i].hit->minP.z,m->faces[i].hit->maxP.z) > cP.z && max(m->faces[i].hit->minP.y,m->faces[i].hit->maxP.y) > cP.y);
+			//printf("min:%f %f %f\nmax:%f %f %f\n",m->faces[i].hit->minP.x,m->faces[i].hit->minP.y,m->faces[i].hit->minP.z,m->faces[i].hit->maxP.x,m->faces[i].hit->maxP.y,m->faces[i].hit->maxP.z);
+			// check distance between current position and hitbox's z val
+			if((abs(m->faces[i].hit->minP.x - cP.x) <= 4*camera_scale) && lowerBounds && upperBounds){
 				return true;
 			}
 		}
