@@ -47,9 +47,19 @@ void ParticleSystem::initialize(int i)
 
 void ParticleSystem::drawRainParticles()
 {
+	float amb[4] = {0.1f, 0.18725f, 0.1745f, 1.0f};
+	float diff[4] = {0.396f, 0.74151f, 0.69102f, 1.0f};
+	float spec[4] = {0.297254f, 0.30829f, 0.306678f, 1.0f};
+	float shine = 0.1f;
 	//Make slightly thicker lines
 	glLineWidth(1.5f);
 	glPushMatrix();
+
+	glMaterialfv(GL_FRONT, GL_AMBIENT, amb);
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, diff);
+	glMaterialfv(GL_FRONT, GL_SPECULAR, spec);
+	glMaterialf(GL_FRONT, GL_SHININESS, shine * 128.0);
+
 	for(int i = 0; i < MAX_PARTICLES; i++)
 	{
 		//Draw and update if current particle is alive
