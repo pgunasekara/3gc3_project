@@ -22,6 +22,7 @@
 //#include "../lib/SceneGraph/nodeModel.h"
 //#include "../lib/SceneGraph/nodeTransform.h"
 #include "Mesh3D.h"
+#include "ParticleSystem.h"
 #include <vector>
 
 using namespace std;
@@ -50,6 +51,8 @@ int getID()
 // for the unprojection
 double* start = new double[3];
 double* finish = new double[3];
+
+ParticleSystem rain;
 
 /* drawAxis() -- draws an axis at the origin of the coordinate system
  *   red = +X axis, green = +Y axis, blue = +Z axis
@@ -126,6 +129,7 @@ void init(void)
 {
 	//GLuint id = 1;
 	camera = Camera();
+	rain = ParticleSystem();
 
 	//init our scenegraph
 	//SG = new SceneGraph();
@@ -161,6 +165,7 @@ void display()
 	glScalef(2.0,2.0,2.0);
 	test->drawMesh();
 	glPopMatrix();
+	rain.drawRainParticles();
 	//for (int i =0; i < test->faces.size();i++){
 	//	test->faces[i].lHit->draw();
 	//	test->faces[i].rHit->draw();

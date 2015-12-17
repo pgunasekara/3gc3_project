@@ -40,13 +40,15 @@ void ParticleSystem::initialize(int i)
 	system[i].x = float((rand()%(12+12))-12);///Pick any point between 0 and 50 for the x axis
 	system[i].y = 7.0f;//Every particle will start at a constant height
 	system[i].z = float((rand()%(12+12))-12);///pick any point on the z axis
-	system[i].gravity = -9.8f;//the drops will fall at random speeds
+	system[i].gravity = -0.8f;//the drops will fall at random speeds
+	system[i].speed = ySpeed;
 }
 
 void ParticleSystem::drawRainParticles()
 {
 	//Make slightly thicker lines
 	glLineWidth(1.5f);
+	glPushMatrix();
 	for(int i = 0; i < MAX_PARTICLES; i++)
 	{
 		//Draw and update if current particle is alive
@@ -55,24 +57,26 @@ void ParticleSystem::drawRainParticles()
 			glColor3f(0.0f, 0.0f, 1.0f);//Sample colour, until texturing is worked out
 			glBegin(GL_LINES);
 				glVertex3f(system[i].x, system[i].y, system[i].z);
-				glVertex3f(system[i].x, system[i].y+1.0f, system[i].z);
+				glVertex3f(system[i].x, system[i].y+0.7f, system[i].z);
 			glEnd();
 
 			//Move the particles after drawing them
 			system[i].y += system[i].speed/(slowdown*1000);
 			system[i].speed += system[i].gravity;
+			system[i].lifeSpan -= system[i].decay;
 
 			//remove particles that are offscreen
 			if(system[i].y < -5.0f)
 			{
-				system[i].life = false;
+				system[i].lifeSpan = -0.5f;
+			}
+
+			if(system[i].lifeSpan < 0.0f)
+			{
+				//restore the particles that were removed
+				this->initialize(i);
 			}
 		}
-		if(system[i].life == false)
-		{
-			//restore the particles that were removed
-			this->initialize(i);
-		}
-
 	}
+	glPopMatrix();
 }

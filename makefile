@@ -1,10 +1,3 @@
-#please use 'make clean' to clean the directory of intermediate build files and the executable
-#simply typing 'make' will compile all source code files to object files .o, and then link all
-#object files into an executable
-#we are using a lot of makefile macros
-
-#changing platform dependant stuff, do not change this
-# Linux (default)
 LDFLAGS = -lGL -lGLU -lglut
 CFLAGS=-g -Wall -std=c++11
 CC=g++
@@ -15,6 +8,7 @@ ML=lib/Math
 CL=lib/Camera
 HBL=lib/Hitbox
 M3D=lib/Mesh3D
+LIB=lib
 INCLUDE=-I include
 
 # Windows (cygwin)
@@ -30,18 +24,11 @@ else
 	endif
 endif
 
-#change the 't1' name to the name you want to call your application
 PROGRAM_NAME=Project.x
 
 #run target to compile and build, and then launch the executable
 run: $(PROGRAM_NAME)
 	./$(PROGRAM_NAME)
-
-#when adding additional source files, such as boilerplateClass.cpp
-#or yourFile.cpp, add the filename with an object extension below
-#ie. boilerplateClass.o and yourFile.o
-#make will automatically know that the objectfile needs to be compiled
-#form a cpp source file and find it itself :)
 
 main.o: src/main.cpp
 	g++ $(INCLUDE) -c -o src/main.o src/main.cpp
@@ -76,9 +63,12 @@ Mesh3D.o: $(M3D)/Mesh3D.cpp
 splitter.o: $(M3D)/splitter.cpp
 	g++ $(INCLUDE) -c -o $(M3D)/splitter.o $(M3D)/splitter.cpp
 
-$(PROGRAM_NAME): main.o node.o math3D.o camera.o Hitbox.o Mesh3D.o splitter.o nodeGroup.o nodeModel.o nodeTransform.o sceneGraph.o compile
+ParticleSystem.o: $(LIB)/ParticleSystem.cpp
+	g++ $(INCLUDE) -c -o $(LIB)/ParticleSystem.o $(LIB)/ParticleSystem.cpp
 
-compile: src/main.o $(SGL)/node.o $(ML)/math3D.o $(CL)/camera.o $(HBL)/Hitbox.o $(M3D)/Mesh3D.o $(M3D)/splitter.o $(SGL)/nodeGroup.o $(SGL)/nodeModel.o $(SGL)/nodeTransform.o $(SGL)/sceneGraph.o 
+$(PROGRAM_NAME): main.o ParticleSystem.o node.o math3D.o camera.o Hitbox.o Mesh3D.o splitter.o nodeGroup.o nodeModel.o nodeTransform.o sceneGraph.o compile
+
+compile: src/main.o $(SGL)/node.o $(ML)/math3D.o $(CL)/camera.o $(HBL)/Hitbox.o $(M3D)/Mesh3D.o $(M3D)/splitter.o $(SGL)/nodeGroup.o $(SGL)/nodeModel.o $(SGL)/nodeTransform.o $(SGL)/sceneGraph.o $(LIB)/ParticleSystem.o
 	$(CC) -o $(PROGRAM_NAME) $^ $(CFLAGS) $(LDFLAGS) $(INCLUDE)
 
 clean:

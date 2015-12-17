@@ -15,7 +15,7 @@
 #  include <GL/freeglut.h>
 #endif
 
-#define MAX_PARTICLES 1000//the maximum amount of particles being rendered
+#define MAX_PARTICLES 2000//the maximum amount of particles being rendered
 
 typedef struct
 {
@@ -32,6 +32,7 @@ typedef struct
 
 class ParticleSystem
 {
+public:
 	float ySpeed, slowdown;
 	particle system[MAX_PARTICLES];//max number of particles is 1000
 	
