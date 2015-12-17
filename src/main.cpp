@@ -102,7 +102,17 @@ void initLighting()
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
 
-	glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
+	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, amb0);
+
+	glLightf(GL_LIGHT0,GL_SPOT_CUTOFF,70.0f);
+	glLightf(GL_LIGHT0,GL_SPOT_EXPONENT,100.0f);
+
+	float light_pos_tmp[4] = {pos[0],pos[1],pos[2],1.0f};
+
+	glLightfv(GL_LIGHT0, GL_POSITION, light_pos_tmp);
+
+	float spotDir[] = {lookAt[0]-pos[0],lookAt[1]-pos[1],lookAt[2]-pos[2]};
+	glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, spotDir);
 
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, diff0);
 	glLightfv(GL_LIGHT0, GL_AMBIENT, amb0);
@@ -124,6 +134,16 @@ void initGraph()
 	printf("\nFIRST NODE %i\n", SG->currentNode->nodeType);
 }
 */
+
+void initFog()
+{
+	glEnable(GL_FOG);
+	float FogCol[3]={0.8f,0.8f,0.8f}; // Define a nice light grey
+	glFogfv(GL_FOG_COLOR,FogCol);     // Set the fog color
+	glFogi(GL_FOG_MODE, GL_LINEAR); // Note the 'i' after glFog - the GL_LINEAR constant is an integer.
+	glFogf(GL_FOG_START, 2.f);
+	glFogf(GL_FOG_END, 40.f);
+}
 
 void init(void)
 {
@@ -298,7 +318,6 @@ int main(int argc, char **argv)
 	//Enable Blending for water particles
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable( GL_BLEND );
-
 
 	//register glut callbacks
 	glutCallbacks();

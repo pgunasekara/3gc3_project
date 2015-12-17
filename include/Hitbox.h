@@ -29,6 +29,11 @@ struct colour3D{
 	// float blue[] = {0,0,1};
 };
 
+struct textureCoord
+{
+	float a,b;
+};
+
 class Plane {
 public:
 	Plane();

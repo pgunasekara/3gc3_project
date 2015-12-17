@@ -4,7 +4,7 @@
 #include <string>
 #include <fstream>
 #include <iostream>
-#include <stdlib.h> 
+#include <stdlib.h>
 #include "Hitbox.h"
 
 using namespace std;
@@ -22,6 +22,7 @@ public:
 	vector<faceVertNorms3D> faceVertNorms;
 	vector<vertNorms3D> vertNorms;
 	vector<colour3D> colours;
+	vector<textureCoord> vertexTexture;
 
 };
 

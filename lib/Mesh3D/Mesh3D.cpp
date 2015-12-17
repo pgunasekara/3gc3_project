@@ -147,6 +147,8 @@ void Mesh3D::loadObj(char* filename){
 	vector<string> vertexElements3;
 	vector<string> vertexElements4;
 
+	vector<string> texElements1;
+
 
 	ifstream infile;
 	infile.open(filename);
@@ -231,6 +233,17 @@ void Mesh3D::loadObj(char* filename){
 			}
 
 		}
+
+		if(lines[i].substr(0,2) == "vt")
+		{
+			texElements1 = split(lines[i], ' ');
+			textureCoord v;
+			v.a = (float) atof(texElements1[1].c_str());  //atof is converting string to float
+			v.b = (float) atof(texElements1[2].c_str());
+
+			vertexTexture.push_back(v);
+		}
+
 		else {}
 	}
 	infile.close();
