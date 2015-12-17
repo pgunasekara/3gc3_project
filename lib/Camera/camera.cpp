@@ -29,7 +29,7 @@ Camera::Camera(){
 	compass.w = compass.e.flipVectorR();
 	//compass.nw = compass.se.flipVectorR();
 	universal_camera_direction = &compass.n;
-	availableDirections = new bool[4];
+	availableDirections = new bool[2];
 	availableDirections[0] = true;
 	availableDirections[1] = false;
 	availableDirections[2] = false;
@@ -38,7 +38,7 @@ Camera::Camera(){
 	//spot_direction = vec3D(camera_look_at - camera_position);
 
 	camera_scaleX = 0.1f;
-	camera_scaleZ = 0.3f;
+	camera_scaleZ = 0.5f;
 	camera_heading = 0.0;
 	rotate_camera = false;
 }
@@ -185,40 +185,84 @@ bool Camera::checkInvalidMove(Mesh3D* m,CameraDirection dir){
 	vec3D cP;
 	float scale;
 	float distanceFactor;
+	if (dir == FORWARD){
+		cP = camera_position + universal_camera_direction->vectorMultiplyr(camera_scaleZ);
+	}else if (dir == BACK){
+		cP = camera_position - universal_camera_direction->vectorMultiplyr(camera_scaleZ);
+	}else if (dir == LEFT){
+		cP = camera_position - universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleX);
+	}else if (dir == RIGHT){
+		cP = camera_position + universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleX);
+	}
 	if (availableDirections[0]){
-		if (dir == FORWARD){
-			cP = camera_position + universal_camera_direction->vectorMultiplyr(camera_scaleZ);
-		}else {
-			cP = camera_position + universal_camera_direction->vectorMultiplyr(camera_scaleZ);
-			cP.flipVector();
-		}
 		for (int i = 0; i < m->faces.size();i++){
-			if (m->faces[i].lHit->xPlane && m->faces[i].lHit->yPlane){
-				//printf("%f %f\n",abs(m->faces[i].lHit->minP.z - cP.z),universal_camera_direction->vectorMultiplyr(camera_scaleZ).z);
-				lowerBounds = (min(m->faces[i].lHit->minP.x,m->faces[i].lHit->maxP.x) < cP.x);
-		    upperBounds = (max(m->faces[i].lHit->minP.x,m->faces[i].lHit->maxP.x) > cP.x);
-				if (lowerBounds && upperBounds && abs(m->faces[i].lHit->minP.z - cP.z) <= universal_camera_direction->vectorMultiplyr(camera_scaleZ).z) return true;
-				else if (lowerBounds && upperBounds && abs(m->faces[i].rHit->minP.z - cP.z) <= universal_camera_direction->vectorMultiplyr(camera_scaleZ).z) return true;
+			if (dir == FORWARD || dir == BACK){
+				if (m->faces[i].lHit->xPlane && m->faces[i].lHit->yPlane){
+					lowerBounds = (min(m->faces[i].lHit->minP.x,m->faces[i].lHit->maxP.x) < cP.x);
+			    upperBounds = (max(m->faces[i].lHit->minP.x,m->faces[i].lHit->maxP.x) > cP.x);
+					if (lowerBounds && upperBounds && abs(m->faces[i].lHit->minP.z - cP.z) <= abs(universal_camera_direction->vectorMultiplyr(camera_scaleZ).z) && dir == BACK) return true;
+					else if (lowerBounds && upperBounds && abs(m->faces[i].rHit->minP.z - cP.z) <= abs(universal_camera_direction->vectorMultiplyr(camera_scaleZ).z) && dir == FORWARD) return true;
+				}
+			}else if (dir == LEFT || dir == RIGHT){
+				if (m->faces[i].lHit->zPlane && m->faces[i].lHit->yPlane){
+					lowerBounds = (min(m->faces[i].lHit->minP.z,m->faces[i].lHit->maxP.z) < cP.z);
+			    upperBounds = (max(m->faces[i].lHit->minP.z,m->faces[i].lHit->maxP.z) > cP.z);
+					if (lowerBounds && upperBounds && abs(m->faces[i].lHit->minP.x - cP.x) <= abs(universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleX).x) && dir == RIGHT) return true;
+					if (lowerBounds && upperBounds && abs(m->faces[i].rHit->minP.x - cP.x) <= abs(universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleX).x) && dir == LEFT) return true;
+				}
+			}
+		}
+	}else if (availableDirections[2]){
+		for (int i = 0; i < m->faces.size();i++){
+			if (dir == FORWARD || dir == BACK){
+				if (m->faces[i].lHit->xPlane && m->faces[i].lHit->yPlane){
+					lowerBounds = (min(m->faces[i].lHit->minP.x,m->faces[i].lHit->maxP.x) < cP.x);
+			    upperBounds = (max(m->faces[i].lHit->minP.x,m->faces[i].lHit->maxP.x) > cP.x);
+					if (lowerBounds && upperBounds && abs(m->faces[i].lHit->minP.z - cP.z) <= abs(universal_camera_direction->vectorMultiplyr(camera_scaleZ).z) && dir == FORWARD) return true;
+					else if (lowerBounds && upperBounds && abs(m->faces[i].rHit->minP.z - cP.z) <= abs(universal_camera_direction->vectorMultiplyr(camera_scaleZ).z) && dir == BACK) return true;
+				}
+			}else if (dir == LEFT || dir == RIGHT){
+				if (m->faces[i].lHit->zPlane && m->faces[i].lHit->yPlane){
+					lowerBounds = (min(m->faces[i].lHit->minP.z,m->faces[i].lHit->maxP.z) < cP.z);
+			    upperBounds = (max(m->faces[i].lHit->minP.z,m->faces[i].lHit->maxP.z) > cP.z);
+					if (lowerBounds && upperBounds && abs(m->faces[i].lHit->minP.x - cP.x) <= abs(universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleX).x) && dir == LEFT) return true;
+					if (lowerBounds && upperBounds && abs(m->faces[i].rHit->minP.x - cP.x) <= abs(universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleX).x) && dir == RIGHT) return true;
+				}
 			}
 		}
 	}else if (availableDirections[1]){
-		if (dir == FORWARD){
-			cP = camera_position + universal_camera_direction->vectorMultiplyr(camera_scaleZ);
-		}else {
-			cP = camera_position + universal_camera_direction->vectorMultiplyr(camera_scaleZ);
-			cP.flipVector();
-		}
 		for (int i = 0; i < m->faces.size();i++){
-			if (m->faces[i].lHit->zPlane && m->faces[i].lHit->yPlane){
-				lowerBounds = (min(m->faces[i].lHit->minP.z,m->faces[i].lHit->maxP.z) < cP.z);
-				upperBounds = (max(m->faces[i].lHit->minP.z,m->faces[i].lHit->maxP.z) > cP.z);
-				if (lowerBounds && upperBounds && abs(m->faces[i].lHit->minP.x - cP.x) <= universal_camera_direction->vectorMultiplyr(camera_scaleX).x) {
-					//printf("here\n");
-					return true;
+			if (dir == FORWARD || dir == BACK){
+				if (m->faces[i].lHit->zPlane && m->faces[i].lHit->yPlane){
+					lowerBounds = (min(m->faces[i].lHit->minP.z,m->faces[i].lHit->maxP.z) < cP.z);
+			    upperBounds = (max(m->faces[i].lHit->minP.z,m->faces[i].lHit->maxP.z) > cP.z);
+					if (lowerBounds && upperBounds && abs(m->faces[i].lHit->minP.x - cP.x) <= abs(universal_camera_direction->vectorMultiplyr(camera_scaleZ).x) && dir == FORWARD) return true;
+					else if (lowerBounds && upperBounds && abs(m->faces[i].rHit->minP.x - cP.x) <= abs(universal_camera_direction->vectorMultiplyr(camera_scaleZ).x) && dir == BACK) return true;
 				}
-				else if (lowerBounds && upperBounds && abs(m->faces[i].rHit->minP.x - cP.x) <= universal_camera_direction->vectorMultiplyr(camera_scaleX).x) {
-					//printf("here2\n");
-					return true;
+			}else if (dir == LEFT || dir == RIGHT){
+				if (m->faces[i].lHit->xPlane && m->faces[i].lHit->yPlane){
+					lowerBounds = (min(m->faces[i].lHit->minP.x,m->faces[i].lHit->maxP.x) < cP.x);
+			    upperBounds = (max(m->faces[i].lHit->minP.x,m->faces[i].lHit->maxP.x) > cP.x);
+					if (lowerBounds && upperBounds && abs(m->faces[i].lHit->minP.z - cP.z) <= abs(universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleX).z) && dir == RIGHT) return true;
+					if (lowerBounds && upperBounds && abs(m->faces[i].rHit->minP.z - cP.z) <= abs(universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleX).z) && dir == LEFT) return true;
+				}
+			}
+		}
+	}else if (availableDirections[3]){
+		for (int i = 0; i < m->faces.size();i++){
+			if (dir == FORWARD || dir == BACK){
+				if (m->faces[i].lHit->zPlane && m->faces[i].lHit->yPlane){
+					lowerBounds = (min(m->faces[i].lHit->minP.z,m->faces[i].lHit->maxP.z) < cP.z);
+			    upperBounds = (max(m->faces[i].lHit->minP.z,m->faces[i].lHit->maxP.z) > cP.z);
+					if (lowerBounds && upperBounds && abs(m->faces[i].lHit->minP.x - cP.x) <= abs(universal_camera_direction->vectorMultiplyr(camera_scaleZ).x) && dir == BACK) return true;
+					else if (lowerBounds && upperBounds && abs(m->faces[i].rHit->minP.x - cP.x) <= abs(universal_camera_direction->vectorMultiplyr(camera_scaleZ).x) && dir == FORWARD) return true;
+				}
+			}else if (dir == LEFT || dir == RIGHT){
+				if (m->faces[i].lHit->xPlane && m->faces[i].lHit->yPlane){
+					lowerBounds = (min(m->faces[i].lHit->minP.x,m->faces[i].lHit->maxP.x) < cP.x);
+			    upperBounds = (max(m->faces[i].lHit->minP.x,m->faces[i].lHit->maxP.x) > cP.x);
+					if (lowerBounds && upperBounds && abs(m->faces[i].lHit->minP.z - cP.z) <= abs(universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleX).z) && dir == LEFT) return true;
+					if (lowerBounds && upperBounds && abs(m->faces[i].rHit->minP.z - cP.z) <= abs(universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleX).z) && dir == RIGHT) return true;
 				}
 			}
 		}
