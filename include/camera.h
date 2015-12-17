@@ -72,6 +72,7 @@ class Camera {
 		vec3D light_position;
 		vec3D spot_direction;
 		compass3D compass;
+		bool* availableDirections;
 		float cameraYMove;
 };
 #endif

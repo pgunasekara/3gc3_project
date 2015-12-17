@@ -165,10 +165,10 @@ void display()
 	test->drawMesh();
 	glPopMatrix();
 	rain.drawRainParticles();
-	//for (int i =0; i < test->faces.size();i++){
-	//	test->faces[i].lHit->draw();
-	//	test->faces[i].rHit->draw();
-	//}
+	for (int i =0; i < test->faces.size();i++){
+		test->faces[i].lHit->draw();
+		test->faces[i].rHit->draw();
+	}
 
 	//swap buffers - rendering is done to the back buffer, bring it forward to display
 	glutSwapBuffers();

@@ -29,12 +29,16 @@ Camera::Camera(){
 	compass.w = compass.e.flipVectorR();
 	//compass.nw = compass.se.flipVectorR();
 	universal_camera_direction = &compass.n;
-
+	availableDirections = new bool[4];
+	availableDirections[0] = true;
+	availableDirections[1] = false;
+	availableDirections[2] = false;
+	availableDirections[3] = false;
 	//light_position = vec3D(0,0,0);
 	//spot_direction = vec3D(camera_look_at - camera_position);
 
-	camera_scaleX = 0.025f;
-	camera_scaleZ = 0.1f;
+	camera_scaleX = 0.1f;
+	camera_scaleZ = 0.3f;
 	camera_heading = 0.0;
 	rotate_camera = false;
 }
@@ -181,44 +185,41 @@ bool Camera::checkInvalidMove(Mesh3D* m,CameraDirection dir){
 	vec3D cP;
 	float scale;
 	float distanceFactor;
-	switch (dir){
-		case LEFT:
-			cP = camera_position + universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleX);
-			break;
-		case RIGHT:
-			cP = camera_position - universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleX);
-			cP.flipVector();
-			break;
-		case FORWARD:
+	if (availableDirections[0]){
+		if (dir == FORWARD){
 			cP = camera_position + universal_camera_direction->vectorMultiplyr(camera_scaleZ);
-			break;
-		case BACK:
-			cP = camera_position - universal_camera_direction->vectorMultiplyr(camera_scaleZ);
+		}else {
+			cP = camera_position + universal_camera_direction->vectorMultiplyr(camera_scaleZ);
 			cP.flipVector();
-			break;
-	}
-	if (dir == FORWARD || dir == BACK){
+		}
 		for (int i = 0; i < m->faces.size();i++){
 			if (m->faces[i].lHit->xPlane && m->faces[i].lHit->yPlane){
-				lowerBounds = (min(m->faces[i].lHit->minP.x,m->faces[i].lHit->maxP.x) < cP.x && min(m->faces[i].lHit->minP.y,m->faces[i].lHit->maxP.y) < cP.y);
-				upperBounds = (max(m->faces[i].lHit->minP.x,m->faces[i].lHit->maxP.x) > cP.x && max(m->faces[i].lHit->minP.y,m->faces[i].lHit->maxP.y) > cP.y);
-				if(((abs(m->faces[i].lHit->minP.z - cP.z) <= camera_scaleZ*3.0f) || (abs(m->faces[i].rHit->minP.z - cP.z) <= camera_scaleZ*3.0f)) && lowerBounds && upperBounds) return true;
-			}else if (m->faces[i].lHit->zPlane && m->faces[i].lHit->yPlane){
-				lowerBounds = (min(m->faces[i].lHit->minP.z,m->faces[i].lHit->maxP.z) < cP.z && min(m->faces[i].lHit->minP.y,m->faces[i].lHit->maxP.y) < cP.y);
-				upperBounds = (max(m->faces[i].lHit->minP.z,m->faces[i].lHit->maxP.z) > cP.z && max(m->faces[i].lHit->minP.y,m->faces[i].lHit->maxP.y) > cP.y);
-				if(((abs(m->faces[i].lHit->minP.x - cP.x) <= camera_scaleZ*3.0f) || (abs(m->faces[i].rHit->minP.x - cP.x) <= camera_scaleZ*3.0f)) && lowerBounds && upperBounds) return true;
+				//printf("%f %f\n",abs(m->faces[i].lHit->minP.z - cP.z),universal_camera_direction->vectorMultiplyr(camera_scaleZ).z);
+				lowerBounds = (min(m->faces[i].lHit->minP.x,m->faces[i].lHit->maxP.x) < cP.x);
+		    upperBounds = (max(m->faces[i].lHit->minP.x,m->faces[i].lHit->maxP.x) > cP.x);
+				if (lowerBounds && upperBounds && abs(m->faces[i].lHit->minP.z - cP.z) <= universal_camera_direction->vectorMultiplyr(camera_scaleZ).z) return true;
+				else if (lowerBounds && upperBounds && abs(m->faces[i].rHit->minP.z - cP.z) <= universal_camera_direction->vectorMultiplyr(camera_scaleZ).z) return true;
 			}
 		}
-	}else{
+	}else if (availableDirections[1]){
+		if (dir == FORWARD){
+			cP = camera_position + universal_camera_direction->vectorMultiplyr(camera_scaleZ);
+		}else {
+			cP = camera_position + universal_camera_direction->vectorMultiplyr(camera_scaleZ);
+			cP.flipVector();
+		}
 		for (int i = 0; i < m->faces.size();i++){
-			if (m->faces[i].lHit->xPlane && m->faces[i].lHit->yPlane){
-				lowerBounds = (min(m->faces[i].lHit->minP.x,m->faces[i].lHit->maxP.x) < cP.x && min(m->faces[i].lHit->minP.y,m->faces[i].lHit->maxP.y) < cP.y);
-				upperBounds = (max(m->faces[i].lHit->minP.x,m->faces[i].lHit->maxP.x) > cP.x && max(m->faces[i].lHit->minP.y,m->faces[i].lHit->maxP.y) > cP.y);
-				if(((abs(m->faces[i].lHit->minP.z - cP.z) <= camera_scaleX) || (abs(m->faces[i].rHit->minP.z - cP.z) <= camera_scaleZ)) && lowerBounds && upperBounds) return true;
-			}else if (m->faces[i].lHit->zPlane && m->faces[i].lHit->yPlane){
-				lowerBounds = (min(m->faces[i].lHit->minP.z,m->faces[i].lHit->maxP.z) < cP.z && min(m->faces[i].lHit->minP.y,m->faces[i].lHit->maxP.y) < cP.y);
-				upperBounds = (max(m->faces[i].lHit->minP.z,m->faces[i].lHit->maxP.z) > cP.z && max(m->faces[i].lHit->minP.y,m->faces[i].lHit->maxP.y) > cP.y);
-				if(((abs(m->faces[i].lHit->minP.x - cP.x) <= camera_scaleX) || (abs(m->faces[i].rHit->minP.x - cP.x) <= camera_scaleX)) && lowerBounds && upperBounds) return true;
+			if (m->faces[i].lHit->zPlane && m->faces[i].lHit->yPlane){
+				lowerBounds = (min(m->faces[i].lHit->minP.z,m->faces[i].lHit->maxP.z) < cP.z);
+				upperBounds = (max(m->faces[i].lHit->minP.z,m->faces[i].lHit->maxP.z) > cP.z);
+				if (lowerBounds && upperBounds && abs(m->faces[i].lHit->minP.x - cP.x) <= universal_camera_direction->vectorMultiplyr(camera_scaleX).x) {
+					//printf("here\n");
+					return true;
+				}
+				else if (lowerBounds && upperBounds && abs(m->faces[i].rHit->minP.x - cP.x) <= universal_camera_direction->vectorMultiplyr(camera_scaleX).x) {
+					//printf("here2\n");
+					return true;
+				}
 			}
 		}
 	}
@@ -226,15 +227,32 @@ bool Camera::checkInvalidMove(Mesh3D* m,CameraDirection dir){
 }
 
 void Camera::checkCompassDirection(){
+// NESW pattern
 	if (abs(camera_direction.x) < abs(camera_direction.z) && camera_direction.z > 0){
 		universal_camera_direction = &compass.n;
+		availableDirections[0] = true;
+		availableDirections[1] = false;
+		availableDirections[2] = false;
+		availableDirections[3] = false;
 	//else if (abs(camera_direction.x) > 0.5f && abs(camera_direction.z) > 0.5f && camera_direction.x < 0 && camera_direction.z > 0){
 	//	universal_camera_direction = &compass.ne;
 	}else if (abs(camera_direction.x) > abs(camera_direction.z) && camera_direction.x < 0) {
 		universal_camera_direction = &compass.e;
+		availableDirections[0] = false;
+		availableDirections[1] = true;
+		availableDirections[2] = false;
+		availableDirections[3] = false;
 	}else if (abs(camera_direction.x) < abs(camera_direction.z) && camera_direction.z < 0) {
 		universal_camera_direction = &compass.s;
+		availableDirections[0] = false;
+		availableDirections[1] = false;
+		availableDirections[2] = true;
+		availableDirections[3] = false;
 	}else if (abs(camera_direction.x) > abs(camera_direction.z) && camera_direction.x > 0) {
 		universal_camera_direction = &compass.w;
+		availableDirections[0] = false;
+		availableDirections[1] = false;
+		availableDirections[2] = false;
+		availableDirections[3] = true;
 	}
 }
