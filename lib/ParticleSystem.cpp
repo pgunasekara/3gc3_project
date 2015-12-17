@@ -41,7 +41,7 @@ void ParticleSystem::initialize(int i)
 	system[i].x = float((rand()%(26+26))-26);///Pick any point between 0 and 50 for the x axis
 	system[i].y = 7.0f;//Every particle will start at a constant height
 	system[i].z = float((rand()%(26+26))-26);///pick any point on the z axis
-	system[i].gravity = -0.8f;//the drops will fall at random speeds
+	system[i].gravity = -1.8f;//the drops will fall at random speeds
 	system[i].speed = ySpeed;
 }
 
