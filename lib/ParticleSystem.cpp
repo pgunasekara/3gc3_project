@@ -66,10 +66,10 @@ void ParticleSystem::drawRainParticles()
 			system[i].lifeSpan -= system[i].decay;
 
 			//remove particles that are offscreen
-			if(system[i].y < -5.0f)
+			/*if(system[i].y < -5.0f)
 			{
 				system[i].lifeSpan = -0.5f;
-			}
+			}*/
 
 			if(system[i].lifeSpan < 0.0f)
 			{
