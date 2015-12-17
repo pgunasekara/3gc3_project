@@ -46,22 +46,22 @@ Plane::Plane(vertex3D a, vertex3D b, vertex3D c, vertex3D d,bool xPlane, bool yP
 		scaleFactor = -0.5;
 	}
 	if (xPlane && yPlane){
-		this->a = vert3D((float) a.x,(float) a.y,(float) a.z).scalePointR(vec3D(2,2,2));
-		this->b = vert3D((float) b.x,(float) b.y,(float) b.z).scalePointR(vec3D(2,2,2));
-		this->c = vert3D((float) c.x,(float) c.y,(float) c.z).scalePointR(vec3D(2,2,2));
-		this->d = vert3D((float) d.x,(float) d.y,(float) d.z).scalePointR(vec3D(2,2,2));
+		this->a = vert3D((float) a.x,(float) a.y,(float) a.z).scalePointR(vec3D(2.0,2.0,2.0));
+		this->b = vert3D((float) b.x,(float) b.y,(float) b.z).scalePointR(vec3D(2.0,2.0,2.0));
+		this->c = vert3D((float) c.x,(float) c.y,(float) c.z).scalePointR(vec3D(2.0,2.0,2.0));
+		this->d = vert3D((float) d.x,(float) d.y,(float) d.z).scalePointR(vec3D(2.0,2.0,2.0));
 		Translate(vec3D(0,0,scaleFactor));
 	}else if (zPlane && yPlane){
-		this->a = vert3D((float) a.x,(float) a.y,(float) a.z).scalePointR(vec3D(2,2,2));
-		this->b = vert3D((float) b.x,(float) b.y,(float) b.z).scalePointR(vec3D(2,2,2));
-		this->c = vert3D((float) c.x,(float) c.y,(float) c.z).scalePointR(vec3D(2,2,2));
-		this->d = vert3D((float) d.x,(float) d.y,(float) d.z).scalePointR(vec3D(2,2,2));
+		this->a = vert3D((float) a.x,(float) a.y,(float) a.z).scalePointR(vec3D(2.0,2.0,2.0));
+		this->b = vert3D((float) b.x,(float) b.y,(float) b.z).scalePointR(vec3D(2.0,2.0,2.0));
+		this->c = vert3D((float) c.x,(float) c.y,(float) c.z).scalePointR(vec3D(2.0,2.0,2.0));
+		this->d = vert3D((float) d.x,(float) d.y,(float) d.z).scalePointR(vec3D(2.0,2.0,2.0));
 		Translate(vec3D(scaleFactor,0,0));
 	}else {
-		this->a = vert3D((float) a.x,(float) a.y,(float) a.z).scalePointR(vec3D(2,2,2));
-		this->b = vert3D((float) b.x,(float) b.y,(float) b.z).scalePointR(vec3D(2,2,2));
-		this->c = vert3D((float) c.x,(float) c.y,(float) c.z).scalePointR(vec3D(2,2,2));
-		this->d = vert3D((float) d.x,(float) d.y,(float) d.z).scalePointR(vec3D(2,2,2));
+		this->a = vert3D((float) a.x,(float) a.y,(float) a.z).scalePointR(vec3D(2.0,2.0,2.0));
+		this->b = vert3D((float) b.x,(float) b.y,(float) b.z).scalePointR(vec3D(2.0,2.0,2.0));
+		this->c = vert3D((float) c.x,(float) c.y,(float) c.z).scalePointR(vec3D(2.0,2.0,2.0));
+		this->d = vert3D((float) d.x,(float) d.y,(float) d.z).scalePointR(vec3D(2.0,2.0,2.0));
 	}
 
 	vec3D v1 = vec3D(this->a,this->d);

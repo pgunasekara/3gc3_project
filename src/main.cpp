@@ -160,7 +160,6 @@ void display()
 	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shiny);
 
 	//optionally draw the axis
-	drawAxis();
 	glPushMatrix();
 	glScalef(2.0,2.0,2.0);
 	test->drawMesh();

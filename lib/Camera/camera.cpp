@@ -15,8 +15,8 @@
 
 
 Camera::Camera(){
-	camera_position = vec3D(23.0,1.0,-20);
-	camera_look_at = vec3D(23.0,1.0,-10);
+	camera_position = vec3D(23,1.0,-20);
+	camera_look_at = vec3D(23,1.0,-10);
 	cameraYMove = 1.0f;
 	camera_up = vec3D(0, 1, 0);
 	camera_position_delta = vec3D();
@@ -33,23 +33,12 @@ Camera::Camera(){
 	//light_position = vec3D(0,0,0);
 	//spot_direction = vec3D(camera_look_at - camera_position);
 
-	camera_scale = 0.1f;
-	camera_pitch = 0.0;
+	camera_scaleX = 0.025f;
+	camera_scaleZ = 0.1f;
 	camera_heading = 0.0;
 	rotate_camera = false;
 }
-// initializes all your Vectors, your camera scaling and angles for rotation
-Camera::Camera(int tSize) {
-	camera_position = vec3D(tSize + 5,tSize/5,tSize + 5);
-	camera_look_at = vec3D(0,0,0);
-	camera_up = vec3D(0, 1, 0);
-	camera_position_delta = vec3D();
 
-	camera_scale = 1.2f;
-	camera_pitch = 0.0;
-	camera_heading = 0.0;
-	rotate_camera = false;
-}
 // destructor
 Camera::~Camera() {
 
@@ -119,16 +108,16 @@ void Camera::Update() {
 void Camera::Move(CameraDirection dir, Mesh3D* mesh) {
 	switch (dir) {
 		case LEFT:
-			camera_position_delta = camera_position_delta - camera_direction.cross(camera_up).vectorMultiplyr(camera_scale/2);
+			camera_position_delta = camera_position_delta - camera_direction.cross(camera_up).vectorMultiplyr(camera_scaleX);
 			break;
 		case RIGHT:
-			camera_position_delta = camera_position_delta + camera_direction.cross(camera_up).vectorMultiplyr(camera_scale/2);
+			camera_position_delta = camera_position_delta + camera_direction.cross(camera_up).vectorMultiplyr(camera_scaleX);
 			break;
 		case FORWARD:
-			camera_position_delta = camera_position_delta + camera_direction.vectorMultiplyr(camera_scale);
+			camera_position_delta = camera_position_delta + camera_direction.vectorMultiplyr(camera_scaleZ);
 			break;
 		case BACK:
-				camera_position_delta = camera_position_delta - camera_direction.vectorMultiplyr(camera_scale);
+				camera_position_delta = camera_position_delta - camera_direction.vectorMultiplyr(camera_scaleZ);
 			break;
 	}
 	if (camera_position_delta.y != cameraYMove){
@@ -190,37 +179,47 @@ void Camera::ChangeHeading(float degrees) {
 bool Camera::checkInvalidMove(Mesh3D* m,CameraDirection dir){
 	bool lowerBounds,upperBounds;
 	vec3D cP;
+	float scale;
 	float distanceFactor;
 	switch (dir){
 		case LEFT:
-			cP = camera_position + universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scale);
+			cP = camera_position + universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleX);
 			break;
 		case RIGHT:
-			cP = camera_position + universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scale);
+			cP = camera_position - universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleX);
 			cP.flipVector();
 			break;
 		case FORWARD:
-			cP = camera_position + universal_camera_direction->vectorMultiplyr(camera_scale);
+			cP = camera_position + universal_camera_direction->vectorMultiplyr(camera_scaleZ);
 			break;
 		case BACK:
-			cP = camera_position + universal_camera_direction->vectorMultiplyr(camera_scale);
+			cP = camera_position - universal_camera_direction->vectorMultiplyr(camera_scaleZ);
 			cP.flipVector();
 			break;
 	}
-	for (int i = 0; i < m->faces.size();i++){
-		if (dir == FORWARD || dir == BACK){
-			distanceFactor = camera_scale;
-		}else {
-			distanceFactor = camera_scale;
+	if (dir == FORWARD || dir == BACK){
+		for (int i = 0; i < m->faces.size();i++){
+			if (m->faces[i].lHit->xPlane && m->faces[i].lHit->yPlane){
+				lowerBounds = (min(m->faces[i].lHit->minP.x,m->faces[i].lHit->maxP.x) < cP.x && min(m->faces[i].lHit->minP.y,m->faces[i].lHit->maxP.y) < cP.y);
+				upperBounds = (max(m->faces[i].lHit->minP.x,m->faces[i].lHit->maxP.x) > cP.x && max(m->faces[i].lHit->minP.y,m->faces[i].lHit->maxP.y) > cP.y);
+				if(((abs(m->faces[i].lHit->minP.z - cP.z) <= camera_scaleZ*3.0f) || (abs(m->faces[i].rHit->minP.z - cP.z) <= camera_scaleZ*3.0f)) && lowerBounds && upperBounds) return true;
+			}else if (m->faces[i].lHit->zPlane && m->faces[i].lHit->yPlane){
+				lowerBounds = (min(m->faces[i].lHit->minP.z,m->faces[i].lHit->maxP.z) < cP.z && min(m->faces[i].lHit->minP.y,m->faces[i].lHit->maxP.y) < cP.y);
+				upperBounds = (max(m->faces[i].lHit->minP.z,m->faces[i].lHit->maxP.z) > cP.z && max(m->faces[i].lHit->minP.y,m->faces[i].lHit->maxP.y) > cP.y);
+				if(((abs(m->faces[i].lHit->minP.x - cP.x) <= camera_scaleZ*3.0f) || (abs(m->faces[i].rHit->minP.x - cP.x) <= camera_scaleZ*3.0f)) && lowerBounds && upperBounds) return true;
+			}
 		}
-		if (m->faces[i].lHit->xPlane && m->faces[i].lHit->yPlane){
-			lowerBounds = (min(m->faces[i].lHit->minP.x,m->faces[i].lHit->maxP.x) < cP.x && min(m->faces[i].lHit->minP.y,m->faces[i].lHit->maxP.y) < cP.y);
-			upperBounds = (max(m->faces[i].lHit->minP.x,m->faces[i].lHit->maxP.x) > cP.x && max(m->faces[i].lHit->minP.y,m->faces[i].lHit->maxP.y) > cP.y);
-			if(((abs(m->faces[i].lHit->minP.z - cP.z) <= distanceFactor) || (abs(m->faces[i].rHit->minP.z - cP.z) <= distanceFactor)) && lowerBounds && upperBounds) return true;
-		}else if (m->faces[i].lHit->zPlane && m->faces[i].lHit->yPlane){
-			lowerBounds = (min(m->faces[i].lHit->minP.z,m->faces[i].lHit->maxP.z) < cP.z && min(m->faces[i].lHit->minP.y,m->faces[i].lHit->maxP.y) < cP.y);
-			upperBounds = (max(m->faces[i].lHit->minP.z,m->faces[i].lHit->maxP.z) > cP.z && max(m->faces[i].lHit->minP.y,m->faces[i].lHit->maxP.y) > cP.y);
-			if(((abs(m->faces[i].lHit->minP.x - cP.x) <= distanceFactor) || (abs(m->faces[i].rHit->minP.x - cP.x) <= distanceFactor)) && lowerBounds && upperBounds) return true;
+	}else{
+		for (int i = 0; i < m->faces.size();i++){
+			if (m->faces[i].lHit->xPlane && m->faces[i].lHit->yPlane){
+				lowerBounds = (min(m->faces[i].lHit->minP.x,m->faces[i].lHit->maxP.x) < cP.x && min(m->faces[i].lHit->minP.y,m->faces[i].lHit->maxP.y) < cP.y);
+				upperBounds = (max(m->faces[i].lHit->minP.x,m->faces[i].lHit->maxP.x) > cP.x && max(m->faces[i].lHit->minP.y,m->faces[i].lHit->maxP.y) > cP.y);
+				if(((abs(m->faces[i].lHit->minP.z - cP.z) <= camera_scaleX) || (abs(m->faces[i].rHit->minP.z - cP.z) <= camera_scaleZ)) && lowerBounds && upperBounds) return true;
+			}else if (m->faces[i].lHit->zPlane && m->faces[i].lHit->yPlane){
+				lowerBounds = (min(m->faces[i].lHit->minP.z,m->faces[i].lHit->maxP.z) < cP.z && min(m->faces[i].lHit->minP.y,m->faces[i].lHit->maxP.y) < cP.y);
+				upperBounds = (max(m->faces[i].lHit->minP.z,m->faces[i].lHit->maxP.z) > cP.z && max(m->faces[i].lHit->minP.y,m->faces[i].lHit->maxP.y) > cP.y);
+				if(((abs(m->faces[i].lHit->minP.x - cP.x) <= camera_scaleX) || (abs(m->faces[i].rHit->minP.x - cP.x) <= camera_scaleX)) && lowerBounds && upperBounds) return true;
+			}
 		}
 	}
 	return false;

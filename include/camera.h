@@ -56,7 +56,7 @@ class Camera {
 		bool checkInvalidMove(Mesh3D* m,CameraDirection dir);
 
 		// amount that you scale
-		float camera_scale;
+		float camera_scaleX,camera_scaleZ;
 		// angle around x and y axis
 		float camera_heading,camera_pitch;
 		// boolean whether you just rotated the camera or not
