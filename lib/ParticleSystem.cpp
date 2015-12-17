@@ -14,6 +14,7 @@
 
 #include "ParticleSystem.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 ParticleSystem::ParticleSystem()
 {
@@ -36,7 +37,7 @@ void ParticleSystem::initialize(int i)
 	system[i].life = true;//set all initial particles to be alive
 	system[i].lifeSpan = 1.0f;//all particles will have a lifespan between 0 and 1
 	system[i].decay = float(rand()%100)/1000.0f+0.005f;//Random decay for every drop
-	
+
 	system[i].x = float((rand()%(26+26))-26);///Pick any point between 0 and 50 for the x axis
 	system[i].y = 7.0f;//Every particle will start at a constant height
 	system[i].z = float((rand()%(26+26))-26);///pick any point on the z axis
