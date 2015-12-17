@@ -27,7 +27,7 @@ enum CameraSpinDirection {
 };
 
 struct compass3D{
-	vec3D n,e,s,w;
+	vec3D n,e,s,w,ne,nw,se,sw;
 };
 
 // class for the camera
