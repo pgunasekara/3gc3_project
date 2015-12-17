@@ -15,6 +15,7 @@
 #include "ParticleSystem.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctime>
 
 ParticleSystem::ParticleSystem()
 {
@@ -22,6 +23,7 @@ ParticleSystem::ParticleSystem()
 	height = 0;
 	ySpeed = 0.0f;
 	slowdown = 2.0f;
+	srand((unsigned)(time(0)));
 	//image = this->LoadPPM("texture.ppm", &width, &height, &k);
 	//Initialize all the particles
 	for(int i = 0; i < MAX_PARTICLES; i++)
@@ -38,9 +40,9 @@ void ParticleSystem::initialize(int i)
 	system[i].lifeSpan = 1.0f;//all particles will have a lifespan between 0 and 1
 	system[i].decay = float(rand()%100)/1000.0f+0.005f;//Random decay for every drop
 
-	system[i].x = float((rand()%(26+26))-26);///Pick any point between 0 and 50 for the x axis
+	system[i].x =  (26+26) * (float)rand()/(float)RAND_MAX - 26;///Pick any point between 0 and 50 for the x axis
 	system[i].y = 7.0f;//Every particle will start at a constant height
-	system[i].z = float((rand()%(26+26))-26);///pick any point on the z axis
+	system[i].z =  (26+26) * (float)rand()/(float)RAND_MAX - 26;///pick any point on the z axis
 	system[i].gravity = -1.8f;//the drops will fall at random speeds
 	system[i].speed = ySpeed;
 }
@@ -72,7 +74,7 @@ void ParticleSystem::drawRainParticles()
 			glEnd();
 
 			//Move the particles after drawing them
-			system[i].y += system[i].speed/(slowdown*1000);
+			system[i].y += system[i].speed/(slowdown*500);
 			system[i].speed += system[i].gravity;
 			system[i].lifeSpan -= system[i].decay;
 
