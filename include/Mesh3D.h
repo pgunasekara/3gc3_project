@@ -23,6 +23,7 @@ public:
 	vector<vertNorms3D> vertNorms;
 	vector<colour3D> colours;
 	vector<textureCoord> vertexTexture;
+	vector<faces3D> faceTexCoords;
 
 };
 

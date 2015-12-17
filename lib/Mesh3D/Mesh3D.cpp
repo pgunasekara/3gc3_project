@@ -193,7 +193,7 @@ void Mesh3D::loadObj(char* filename){
 			if (faceLine.size() == 5){
 				faces3D f;
 				faceVertNorms3D fvn;
-
+				faces3D ft;
 				vertexElements1 = split(faceLine[1],'/');
 				vertexElements2 = split(faceLine[2],'/');
 				vertexElements3 = split(faceLine[3],'/');
@@ -228,8 +228,14 @@ void Mesh3D::loadObj(char* filename){
 				fvn.vn3 = atoi(vertexElements3[2].c_str());
 				fvn.vn4 = atoi(vertexElements4[2].c_str());
 
+				ft.v1 = atoi(vertexElements1[1].c_str());		//atoi is string to int
+				ft.v2 = atoi(vertexElements2[1].c_str());
+				ft.v3 = atoi(vertexElements3[1].c_str());
+				ft.v4 = atoi(vertexElements4[1].c_str());
+
 				faces.push_back(f);
 				faceVertNorms.push_back(fvn);
+				faceTexCoords.push_back(ft);
 			}
 
 		}
