@@ -9,6 +9,7 @@ CL=lib/Camera
 HBL=lib/Hitbox
 M3D=lib/Mesh3D
 LIB=lib
+LIB_PATH=-l SOIL
 INCLUDE=-I include
 
 # Windows (cygwin)
@@ -68,8 +69,10 @@ ParticleSystem.o: $(LIB)/ParticleSystem.cpp
 
 $(PROGRAM_NAME): main.o ParticleSystem.o node.o math3D.o camera.o Hitbox.o Mesh3D.o splitter.o nodeGroup.o nodeModel.o nodeTransform.o sceneGraph.o compile
 
-compile: src/main.o $(SGL)/node.o $(ML)/math3D.o $(CL)/camera.o $(HBL)/Hitbox.o $(M3D)/Mesh3D.o $(M3D)/splitter.o $(SGL)/nodeGroup.o $(SGL)/nodeModel.o $(SGL)/nodeTransform.o $(SGL)/sceneGraph.o $(LIB)/ParticleSystem.o
-	$(CC) -o $(PROGRAM_NAME) $^ $(CFLAGS) $(LDFLAGS) $(INCLUDE)
+#$(CC) $(CFLAGS) $(INCLUDE) $(LDFLAGS) -static -L soil/ $(LIB_PATH) $^ -o $(PROGRAM_NAME)
 
+
+compile: src/main.o $(SGL)/node.o $(ML)/math3D.o $(CL)/camera.o $(HBL)/Hitbox.o $(M3D)/Mesh3D.o $(M3D)/splitter.o $(SGL)/nodeGroup.o $(SGL)/nodeModel.o $(SGL)/nodeTransform.o $(SGL)/sceneGraph.o $(LIB)/ParticleSystem.o
+		$(CC) -o $(PROGRAM_NAME) $^ $(CFLAGS) $(LDFLAGS) $(INCLUDE)
 clean:
 	$(RM) $(SGL)/*.o $(ML)/*.o $(CL)/*.o $(HBL)/*.o $(M3D)/*.o $(PROGRAM_NAME)

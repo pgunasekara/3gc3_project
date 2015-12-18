@@ -15,6 +15,7 @@
 #include "Hitbox.h"
 //#include "../lib/SceneGraph/structs.h"
 #include "math3D.h"
+#include "SOIL.h"
 
 //sceneGraph
 //#include "../lib/SceneGraph/sceneGraph.h"
@@ -35,6 +36,11 @@ float angle = 0.005f;
 bool PlaneExist = false;
 Camera camera;
 bool moveable = false;
+
+//Texture information
+int width, height;
+unsigned char *hedgeTexture;
+GLuint textureID[1];
 
 //node ids
 int masterID = 0;
@@ -72,6 +78,15 @@ void drawAxis()
 	glEnd();
 }
 
+void loadTexture()
+{
+	hedgeTexture = SOIL_load_image("hedge.png",&width,&height,0,SOIL_LOAD_RGB);
+	glGenTextures(1, &textureID[0]);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, hedgeTexture);
+	//glGenerateMipmap(GL_TEXTURE_2D);
+	SOIL_free_image_data(hedgeTexture);
+	glBindTexture(GL_TEXTURE_2D, 0);
+}
 
 //SceneGraph *SG;
 
@@ -312,6 +327,9 @@ int main(int argc, char **argv)
 
 	//enable Z buffer test, otherwise things appear in the order they're drawn
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_TEXTURE_2D);
+	glShadeModel(GL_SMOOTH);
+	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 	//glEnable(GL_CULL_FACE);
 	//glCullFace(GL_BACK);
 
