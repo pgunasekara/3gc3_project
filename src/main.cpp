@@ -15,7 +15,7 @@
 #include "Hitbox.h"
 //#include "../lib/SceneGraph/structs.h"
 #include "math3D.h"
-#include "SOIL.h"
+//#include "SOIL.h"
 
 //sceneGraph
 //#include "../lib/SceneGraph/sceneGraph.h"
@@ -30,8 +30,8 @@ using namespace std;
 // global variables for scene graph and camera
 float mouseX,mouseY,globalW,globalH;
 bool buttonDown = false;
-float pos[] = {23,1.0,-20};
-float lookAt[] = {23,1.0,0};
+float pos[] = {34.5,1.5,-30};
+float lookAt[] = {34.5,1.5,0};
 float angle = 0.005f;
 bool PlaneExist = false;
 Camera camera;
@@ -80,12 +80,12 @@ void drawAxis()
 
 void loadTexture()
 {
-	hedgeTexture = SOIL_load_image("hedge.png",&width,&height,0,SOIL_LOAD_RGB);
-	glGenTextures(1, &textureID[0]);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, hedgeTexture);
+	//hedgeTexture = SOIL_load_image("hedge.png",&width,&height,0,SOIL_LOAD_RGB);
+	//glGenTextures(1, &textureID[0]);
+	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, hedgeTexture);
 	//glGenerateMipmap(GL_TEXTURE_2D);
-	SOIL_free_image_data(hedgeTexture);
-	glBindTexture(GL_TEXTURE_2D, 0);
+	//SOIL_free_image_data(hedgeTexture);
+	//glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 //SceneGraph *SG;
@@ -120,14 +120,12 @@ void initLighting()
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, amb0);
 
 	glLightf(GL_LIGHT0,GL_SPOT_CUTOFF,70.0f);
-	glLightf(GL_LIGHT0,GL_SPOT_EXPONENT,100.0f);
+	//glLightf(GL_LIGHT0,GL_SPOT_EXPONENT,100.0f);
 
-	float light_pos_tmp[4] = {pos[0],pos[1],pos[2],1.0f};
+	glLightfv(GL_LIGHT0, GL_POSITION, camera.camera_position.returnArray4L());
 
-	glLightfv(GL_LIGHT0, GL_POSITION, light_pos_tmp);
-
-	float spotDir[] = {lookAt[0]-pos[0],lookAt[1]-pos[1],lookAt[2]-pos[2]};
-	glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, spotDir);
+	float spot_direction[3] = {0,0,1};
+	glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION,camera.spot_direction.returnArray());
 
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, diff0);
 	glLightfv(GL_LIGHT0, GL_AMBIENT, amb0);
@@ -196,7 +194,7 @@ void display()
 
 	//optionally draw the axis
 	glPushMatrix();
-	glScalef(2.0,2.0,2.0);
+	glScalef(3.0,3.0,3.0);
 	test->drawMesh();
 	glPopMatrix();
 	rain.drawRainParticles();

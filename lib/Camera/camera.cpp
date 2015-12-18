@@ -15,8 +15,8 @@
 
 
 Camera::Camera(){
-	camera_position = vec3D(23,1.0,-20);
-	camera_look_at = vec3D(23,1.0,-10);
+	camera_position = vec3D(34.5,1.5,-30);
+	camera_look_at = vec3D(34.5,1.5,-15);
 	cameraYMove = 1.0f;
 	camera_up = vec3D(0, 1, 0);
 	camera_position_delta = vec3D();
@@ -35,19 +35,12 @@ Camera::Camera(){
 	availableDirections[2] = false;
 	availableDirections[3] = false;
 
-	//light_position = vec3D(0,0,0);
-	//spot_direction = vec3D(camera_look_at - camera_position);
+	spot_direction = *universal_camera_direction;
 
 	camera_scaleX = 0.1f;
 	camera_scaleZ = 0.5f;
 	camera_heading = 0.0;
 	rotate_camera = false;
-
-	//glLightf(GL_LIGHT0,GL_SPOT_CUTOFF,70.0f);
-	//glLightf(GL_LIGHT0,GL_SPOT_EXPONENT,100.0f);
-
-	//glLightfv(GL_LIGHT0, GL_POSITION, camera_position.returnArray4L());
-	//glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, (camera_look_at-camera_position).returnArray());
 }
 
 // destructor
@@ -294,7 +287,7 @@ bool Camera::checkInvalidMove(Mesh3D* m,CameraDirection dir){
 						hitCheck = abs(m->faces[i].lHit->minP.x - cP.x) <= abs(universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleX).x);
 						hitCheckSec =abs(m->faces[i].rHit->minP.x - cP.x) <= abs(universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleX).x);
 						if (lowerBounds && upperBounds && hitCheck && dir == FORWARD) return true;
-						else if (lowerBounds && upperBounds && hitCheckSec && dir == FORWARD) return true;
+						else if (lowerBounds && upperBounds && hitCheckSec && dir == BACK) return true;
 					}
 				}else if (dir == LEFT || dir == RIGHT){
 					if (m->faces[i].lHit->zPlane && m->faces[i].lHit->yPlane){
