@@ -31,6 +31,7 @@ using namespace std;
 float mouseX,mouseY,globalW,globalH;
 bool buttonDown = false;
 float pos[] = {34.5,1.5,-30};
+float light_pos_tmp[4] = {pos[0],pos[1],pos[2],1.0f};
 float lookAt[] = {34.5,1.5,0};
 float angle = 0.005f;
 bool PlaneExist = false;
@@ -59,24 +60,6 @@ double* start = new double[3];
 double* finish = new double[3];
 
 ParticleSystem rain;
-
-/* drawAxis() -- draws an axis at the origin of the coordinate system
- *   red = +X axis, green = +Y axis, blue = +Z axis
- */
-void drawAxis()
-{
-	glBegin(GL_LINES);
-	glColor3f(1, 0, 0);
-	glVertex3f(0,0,0);
-	glVertex3f(50,0,0);
-	glColor3f(0,1,0);
-	glVertex3f(0,0,0);
-	glVertex3f(0,50,0);
-	glColor3f(0,0,1);
-	glVertex3f(0,0,0);
-	glVertex3f(0,0,50);
-	glEnd();
-}
 
 void loadTexture()
 {
@@ -122,7 +105,7 @@ void initLighting()
 	glLightf(GL_LIGHT0,GL_SPOT_CUTOFF,30.0f);
 	//glLightf(GL_LIGHT0,GL_SPOT_EXPONENT,100.0f);
 
-	float light_pos_tmp[4] = {pos[0],pos[1],pos[2],1.0f};
+	
 	//glLightfv(GL_LIGHT0, GL_POSITION, camera.camera_position.returnArray4L());
 
 	//float spot_direction[3] = {0,0,1};
@@ -186,8 +169,7 @@ void display()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	//clear the screen
-	glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
+	glLightfv(GL_LIGHT0,GL_POSITION,light_pos_tmp);
 
 	glLightfv(GL_LIGHT0, GL_AMBIENT, amb0);
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, diff0);
