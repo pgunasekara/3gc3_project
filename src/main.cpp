@@ -30,8 +30,8 @@ using namespace std;
 // global variables for scene graph and camera
 float mouseX,mouseY,globalW,globalH;
 bool buttonDown = false;
-float pos[] = {23,1.0,-20};
-float lookAt[] = {23,1.0,0};
+float pos[] = {34.5,1.5,-30};
+float lookAt[] = {34.5,1.5,0};
 float angle = 0.005f;
 bool PlaneExist = false;
 Camera camera;
@@ -120,12 +120,12 @@ void initLighting()
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, amb0);
 
 	glLightf(GL_LIGHT0,GL_SPOT_CUTOFF,70.0f);
-	glLightf(GL_LIGHT0,GL_SPOT_EXPONENT,100.0f);
+	//glLightf(GL_LIGHT0,GL_SPOT_EXPONENT,100.0f);
 
 	glLightfv(GL_LIGHT0, GL_POSITION, camera.camera_position.returnArray4L());
 
-	float spot_direction[3] = {1,0,1};
-	glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION,spot_direction);
+	float spot_direction[3] = {0,0,1};
+	glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION,camera.spot_direction.returnArray());
 
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, diff0);
 	glLightfv(GL_LIGHT0, GL_AMBIENT, amb0);
@@ -194,7 +194,7 @@ void display()
 
 	//optionally draw the axis
 	glPushMatrix();
-	glScalef(2.0,2.0,2.0);
+	glScalef(3.0,3.0,3.0);
 	test->drawMesh();
 	glPopMatrix();
 	rain.drawRainParticles();

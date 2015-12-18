@@ -15,8 +15,8 @@
 
 
 Camera::Camera(){
-	camera_position = vec3D(23,1.0,-20);
-	camera_look_at = vec3D(23,1.0,-10);
+	camera_position = vec3D(34.5,1.5,-30);
+	camera_look_at = vec3D(34.5,1.5,-15);
 	cameraYMove = 1.0f;
 	camera_up = vec3D(0, 1, 0);
 	camera_position_delta = vec3D();

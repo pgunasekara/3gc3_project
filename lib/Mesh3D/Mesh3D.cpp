@@ -214,11 +214,6 @@ void Mesh3D::loadObj(char* filename){
 					f.lHit = new Plane(verts[f.v1-1],verts[f.v2-1],verts[f.v3-1],verts[f.v4-1],true,false,true,true);
 					f.rHit = new Plane(verts[f.v1-1],verts[f.v2-1],verts[f.v3-1],verts[f.v4-1],true,false,true,false);
 				}else{
-					//printf("v1:%f %f %f\n",verts[f.v1-1].x,verts[f.v1-1].y,verts[f.v1-1].z);
-					//printf("v2:%f %f %f\n",verts[f.v2-1].x,verts[f.v2-1].y,verts[f.v2-1].z);
-					//printf("v3:%f %f %f\n",verts[f.v3-1].x,verts[f.v3-1].y,verts[f.v3-1].z);
-					//printf("v4:%f %f %f\n",verts[f.v4-1].x,verts[f.v4-1].y,verts[f.v4-1].z);
-					// these are problem cases
 					f.lHit = new Plane(verts[f.v1-1],verts[f.v2-1],verts[f.v3-1],verts[f.v4-1],true,false,true,true);
 					f.rHit = new Plane(verts[f.v1-1],verts[f.v2-1],verts[f.v3-1],verts[f.v4-1],true,false,true,false);
 				}
