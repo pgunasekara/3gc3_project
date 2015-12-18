@@ -90,6 +90,18 @@ float* vec3D::returnArray(){
 	return vert;
 }
 
+float* vec3D::returnArray4L(){
+	// deallocate pls
+	float *vert = new float[4];
+
+	vert[0] = static_cast<float>(x);
+	vert[1] = static_cast<float>(y);
+	vert[2] = static_cast<float>(z);
+	vert[3] = 1.0f;
+
+	return vert;
+}
+
 double* vec3D::returnDoubleArray(){
 	double *vert = new double[3];
 

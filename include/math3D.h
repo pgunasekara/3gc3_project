@@ -34,6 +34,8 @@ public:
 	float* returnArray();
 	// retusn vector components as pointer to double array
 	double* returnDoubleArray();
+	// returns array but with extra 1.0f at the end for lighting
+	float* returnArray4L();
 	// multiply the vector by a transformation matrix
 	void applyMatrix(float* matrix);
 	// updates vector through passed in array
