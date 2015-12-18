@@ -119,13 +119,19 @@ void initLighting()
 
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, amb0);
 
-	glLightf(GL_LIGHT0,GL_SPOT_CUTOFF,70.0f);
+	glLightf(GL_LIGHT0,GL_SPOT_CUTOFF,30.0f);
 	//glLightf(GL_LIGHT0,GL_SPOT_EXPONENT,100.0f);
 
-	glLightfv(GL_LIGHT0, GL_POSITION, camera.camera_position.returnArray4L());
+	float light_pos_tmp[4] = {pos[0],pos[1],pos[2],1.0f};
+	//glLightfv(GL_LIGHT0, GL_POSITION, camera.camera_position.returnArray4L());
 
-	float spot_direction[3] = {0,0,1};
-	glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION,camera.spot_direction.returnArray());
+	//float spot_direction[3] = {0,0,1};
+	//glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION,camera.spot_direction.returnArray());
+
+	glLightfv(GL_LIGHT0, GL_POSITION, light_pos_tmp);
+
+	float spotDir[] = {pos[0]-lookAt[0],pos[1]-lookAt[1],pos[2]-lookAt[2]};
+	glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, spotDir);
 
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, diff0);
 	glLightfv(GL_LIGHT0, GL_AMBIENT, amb0);
