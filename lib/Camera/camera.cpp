@@ -35,7 +35,7 @@ Camera::Camera(){
 	availableDirections[2] = false;
 	availableDirections[3] = false;
 
-	spot_direction = vec3D(camera_look_at - camera_position);
+	spot_direction = *universal_camera_direction;
 
 	camera_scaleX = 0.1f;
 	camera_scaleZ = 0.5f;
@@ -287,7 +287,7 @@ bool Camera::checkInvalidMove(Mesh3D* m,CameraDirection dir){
 						hitCheck = abs(m->faces[i].lHit->minP.x - cP.x) <= abs(universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleX).x);
 						hitCheckSec =abs(m->faces[i].rHit->minP.x - cP.x) <= abs(universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleX).x);
 						if (lowerBounds && upperBounds && hitCheck && dir == FORWARD) return true;
-						else if (lowerBounds && upperBounds && hitCheckSec && dir == FORWARD) return true;
+						else if (lowerBounds && upperBounds && hitCheckSec && dir == BACK) return true;
 					}
 				}else if (dir == LEFT || dir == RIGHT){
 					if (m->faces[i].lHit->zPlane && m->faces[i].lHit->yPlane){

@@ -15,7 +15,7 @@
 #include "Hitbox.h"
 //#include "../lib/SceneGraph/structs.h"
 #include "math3D.h"
-#include "SOIL.h"
+//#include "SOIL.h"
 
 //sceneGraph
 //#include "../lib/SceneGraph/sceneGraph.h"
@@ -80,12 +80,12 @@ void drawAxis()
 
 void loadTexture()
 {
-	hedgeTexture = SOIL_load_image("hedge.png",&width,&height,0,SOIL_LOAD_RGB);
-	glGenTextures(1, &textureID[0]);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, hedgeTexture);
+	//hedgeTexture = SOIL_load_image("hedge.png",&width,&height,0,SOIL_LOAD_RGB);
+	//glGenTextures(1, &textureID[0]);
+	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, hedgeTexture);
 	//glGenerateMipmap(GL_TEXTURE_2D);
-	SOIL_free_image_data(hedgeTexture);
-	glBindTexture(GL_TEXTURE_2D, 0);
+	//SOIL_free_image_data(hedgeTexture);
+	//glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 //SceneGraph *SG;
@@ -122,12 +122,10 @@ void initLighting()
 	glLightf(GL_LIGHT0,GL_SPOT_CUTOFF,70.0f);
 	glLightf(GL_LIGHT0,GL_SPOT_EXPONENT,100.0f);
 
-	float light_pos_tmp[4] = {pos[0],pos[1],pos[2],1.0f};
-
 	glLightfv(GL_LIGHT0, GL_POSITION, camera.camera_position.returnArray4L());
 
-	float spotDir[] = {lookAt[0]-pos[0],lookAt[1]-pos[1],lookAt[2]-pos[2]};
-	glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, spotDir);
+	float spot_direction[3] = {1,0,1};
+	glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION,spot_direction);
 
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, diff0);
 	glLightfv(GL_LIGHT0, GL_AMBIENT, amb0);
