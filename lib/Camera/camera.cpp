@@ -35,19 +35,12 @@ Camera::Camera(){
 	availableDirections[2] = false;
 	availableDirections[3] = false;
 
-	//light_position = vec3D(0,0,0);
-	//spot_direction = vec3D(camera_look_at - camera_position);
+	spot_direction = vec3D(camera_look_at - camera_position);
 
 	camera_scaleX = 0.1f;
 	camera_scaleZ = 0.5f;
 	camera_heading = 0.0;
 	rotate_camera = false;
-
-	//glLightf(GL_LIGHT0,GL_SPOT_CUTOFF,70.0f);
-	//glLightf(GL_LIGHT0,GL_SPOT_EXPONENT,100.0f);
-
-	//glLightfv(GL_LIGHT0, GL_POSITION, camera_position.returnArray4L());
-	//glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, (camera_look_at-camera_position).returnArray());
 }
 
 // destructor

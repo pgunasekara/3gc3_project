@@ -124,7 +124,7 @@ void initLighting()
 
 	float light_pos_tmp[4] = {pos[0],pos[1],pos[2],1.0f};
 
-	glLightfv(GL_LIGHT0, GL_POSITION, light_pos_tmp);
+	glLightfv(GL_LIGHT0, GL_POSITION, camera.camera_position.returnArray4L());
 
 	float spotDir[] = {lookAt[0]-pos[0],lookAt[1]-pos[1],lookAt[2]-pos[2]};
 	glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, spotDir);
