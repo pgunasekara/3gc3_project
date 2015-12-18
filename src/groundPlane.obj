@@ -1,0 +1,12 @@
+# Blender v2.76 (sub 0) OBJ File: 'groundPlane.blend'
+# www.blender.org
+mtllib groundPlane.mtl
+o Plane
+v -32.194073 -0.319511 32.332264
+v 32.598614 -0.319511 32.332264
+v -32.194073 -0.319511 -32.460423
+v 32.598614 -0.319511 -32.460423
+vn 0.000000 1.000000 0.000000
+usemtl None
+s off
+f 1//1 2//1 4//1 3//1
