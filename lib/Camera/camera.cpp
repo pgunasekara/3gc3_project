@@ -16,7 +16,7 @@
 
 Camera::Camera(){
 	camera_position = vec3D(34.5,1.5,-30);
-	camera_look_at = vec3D(34.5,1.5,-15);
+	camera_look_at = vec3D(34.5,1.5,0);
 	cameraYMove = 1.0f;
 	camera_up = vec3D(0, 1, 0);
 	camera_position_delta = vec3D();
@@ -35,7 +35,7 @@ Camera::Camera(){
 	availableDirections[2] = false;
 	availableDirections[3] = false;
 
-	spot_direction = *universal_camera_direction;
+	spot_direction = (camera_position-camera_look_at).normalize();
 
 	camera_scaleX = 0.1f;
 	camera_scaleZ = 0.5f;
@@ -95,6 +95,7 @@ void Camera::Update() {
 	// creates new lookat and rounds it off to nicer numbers (by scalar multiplication)
 	camera_look_at = camera_position + camera_direction;
 	camera_look_at= camera_look_at.vectorMultiplyr(1.0f);
+	spot_direction = (camera_position-camera_look_at).normalize();
 
 	// below you just update the look
 	glMatrixMode(GL_MODELVIEW);
@@ -184,110 +185,205 @@ bool Camera::checkInvalidMove(Mesh3D* m,CameraDirection dir){
 	bool lowerBounds,upperBounds,hitCheck,hitCheckSec;
 	vec3D cP;
 	if (dir == FORWARD){
-		cP = camera_position + universal_camera_direction->vectorMultiplyr(camera_scaleZ);
+		cP = camera_position + camera_direction.vectorMultiplyr(camera_scaleZ);
 	}else if (dir == BACK){
-		cP = camera_position - universal_camera_direction->vectorMultiplyr(camera_scaleZ);
+		cP = camera_position - camera_direction.vectorMultiplyr(camera_scaleZ);
 	}else if (dir == LEFT){
-		cP = camera_position - universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleX);
+		cP = camera_position - camera_direction.cross(camera_up).vectorMultiplyr(camera_scaleX);
 	}else if (dir == RIGHT){
-		cP = camera_position + universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleX);
+		cP = camera_position + camera_direction.cross(camera_up).vectorMultiplyr(camera_scaleX);
 	}
 	// N
 	if (availableDirections[0]){
 		for (int i = 0; i < m->faces.size();i++){
-			if (dir == FORWARD || dir == BACK){
-				CameraDirection directions[] = {BACK,FORWARD,FORWARD,FORWARD};
-				if (checkFBHit(m->faces[i],cP,dir,directions)) return true;
-			}else if (dir == LEFT || dir == RIGHT){
-				CameraDirection directions[] = {RIGHT,LEFT,RIGHT,RIGHT};
-				if (checkLRHit(m->faces[i],cP,dir,directions)) return true;
-			}
+			if (checkFBHit(m->faces[i],cP,dir)) return true;
+			if (checkLRHit(m->faces[i],cP,dir)) return true;
 		}
 		// If you angle it causes problems
 	}else if (availableDirections[1]){
 		for (int i = 0; i < m->faces.size();i++){
-			if (dir == FORWARD || dir == BACK){
-				CameraDirection directions[] = {FORWARD,FORWARD,BACK,FORWARD};
-				if (checkFBHit(m->faces[i],cP,dir,directions)) return true;
-			}else if (dir == LEFT || dir == RIGHT){
-				CameraDirection directions[] = {LEFT,RIGHT,RIGHT,LEFT};
-				if (checkLRHit(m->faces[i],cP,dir,directions)) return true;
+			if (checkFBHit(m->faces[i],cP,dir)) return true;
+			if (checkLRHit(m->faces[i],cP,dir)) return true;
 			}
-		}
 		// S
-		// Pls Modularize
 	}else if (availableDirections[2]){
 			for (int i = 0; i < m->faces.size();i++){
-				if (dir == FORWARD || dir == BACK){
-					CameraDirection directions[] = {FORWARD,BACK,FORWARD,FORWARD};
-					if (checkFBHit(m->faces[i],cP,dir,directions)) return true;
-				}else if (dir == LEFT || dir == RIGHT){
-					CameraDirection directions[] = {LEFT,RIGHT,LEFT,LEFT};
-					if (checkLRHit(m->faces[i],cP,dir,directions)) return true;
-				}
+				if (checkFBHit(m->faces[i],cP,dir)) return true;
+				if (checkLRHit(m->faces[i],cP,dir)) return true;
 			}
 		// W
 	}else if (availableDirections[3]){
 		for (int i = 0; i < m->faces.size();i++){
-			if (dir == FORWARD || dir == BACK){
-				CameraDirection directions[] = {BACK,FORWARD,FORWARD,BACK};
-				if (checkFBHit(m->faces[i],cP,dir,directions)) return true;
-			}else if (dir == LEFT || dir == RIGHT){
-				CameraDirection directions[] = {RIGHT,LEFT,LEFT,RIGHT};
-				if (checkLRHit(m->faces[i],cP,dir,directions)) return true;
-			}
+			if (checkFBHit(m->faces[i],cP,dir)) return true;
+			if (checkLRHit(m->faces[i],cP,dir)) return true;
 		}
 	}
 	return false;
 }
 
-bool Camera::checkLRHit(faces3D face, vec3D cP, CameraDirection dir,CameraDirection* directions){
-	bool lowerBounds,upperBounds,hitCheck,hitCheckSec;
-	if (face.lHit->zPlane && face.lHit->yPlane){
-		lowerBounds = (min(face.lHit->minP.z,face.lHit->maxP.z) < cP.z);
-		upperBounds = (max(face.lHit->minP.z,face.lHit->maxP.z) > cP.z);
-		hitCheck = abs(face.lHit->minP.x - cP.x) <= abs(universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleX).x);
-		hitCheckSec = abs(face.rHit->minP.x - cP.x) <= abs(universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleX).x);
-		if (lowerBounds && upperBounds && hitCheck && dir == directions[0]) return true;
-		else if (lowerBounds && upperBounds && hitCheckSec && dir == directions[1]) return true;
-	}else if (face.lHit->xPlane && face.lHit->yPlane){
-		lowerBounds = (min(face.lHit->minP.z,face.lHit->maxP.x) < cP.x);
-		upperBounds = (max(face.lHit->minP.z,face.lHit->maxP.x) > cP.x);
-		hitCheck = abs(face.lHit->minP.z - cP.z) <= abs(universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleZ).z);
-		hitCheckSec = abs(face.rHit->minP.z - cP.z) <= abs(universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleZ).z);
-		if (lowerBounds && upperBounds && hitCheck && dir == directions[2]) return true;
-		if (lowerBounds && upperBounds && hitCheckSec && dir == directions[3]) return true;
-	}
-}
-
-bool Camera::checkFBHit(faces3D face, vec3D cP, CameraDirection dir,CameraDirection* directions){
-	bool lowerBounds,upperBounds,hitCheck,hitCheckSec;
+bool Camera::checkLRHit(faces3D face, vec3D cP, CameraDirection dir){
+	bool lowerBounds,upperBounds,leftBounds,rightBounds;
+	bool hitCheck,hitCheckSec;
 	// check hit on z-y plane
 	if (face.lHit->xPlane && face.lHit->yPlane){
+		// if you are checking for an intersection with a xy Plane check whether its within the x and y bounds plane so that
+		// you aren't missing the plane
 		lowerBounds = (min(face.lHit->minP.x,face.lHit->maxP.x) < cP.x);
 		upperBounds = (max(face.lHit->minP.x,face.lHit->maxP.x) > cP.x);
 		if (availableDirections[0] || availableDirections[2]){
-			hitCheck = (abs(face.lHit->minP.z - cP.z) <= abs(universal_camera_direction->vectorMultiplyr(camera_scaleZ).z));
-			hitCheckSec = (abs(face.rHit->minP.z - cP.z) <= abs(universal_camera_direction->vectorMultiplyr(camera_scaleZ).z));
+			// if you are going in the North or South directions you will see whether a move can be made
+			// based on the distance between a wall and the camera and how much the camera moves each time
+			// these two checks below compare the distance the camera travels from one move's x value and the distance
+			// between the current position and the wall's x-value
+			// hitCheck checks for collision with left walls, hitCheckSec checks for collision with right walls
+			hitCheck = (abs(face.lHit->minP.z - cP.z) <= abs(camera_direction.cross(camera_up).vectorMultiplyr(camera_scaleX).z));
+			hitCheckSec = (abs(face.rHit->minP.z - cP.z) <= abs(camera_direction.cross(camera_up).vectorMultiplyr(camera_scaleX).z));
 		}else{
-			hitCheck = (abs(face.lHit->minP.z - cP.z) <= abs(universal_camera_direction->vectorMultiplyr(camera_scaleZ).x));
-			hitCheckSec = (abs(face.rHit->minP.z - cP.z) <= abs(universal_camera_direction->vectorMultiplyr(camera_scaleZ).x));
+			// if you are going in the East or West directions you will see whether a move can be made
+			// based on the distance between a wall and the camera and how much the camera moves each time
+			// these two checks below compare the distance the camera travels from one move's z value and the distance
+			// between the current position and the wall's z-value
+			// between the current position and the wall's x-value
+			// hitCheck checks for collision with left walls, hitCheckSec checks for collision with right walls
+			hitCheck = (abs(face.lHit->minP.z - cP.z) <= abs(camera_direction.cross(camera_up).vectorMultiplyr(camera_scaleX).z));
+			hitCheckSec = (abs(face.rHit->minP.z - cP.z) <= abs(camera_direction.cross(camera_up).vectorMultiplyr(camera_scaleX).z));
 		}
-		if (lowerBounds && upperBounds && hitCheck && dir == directions[0]) return true;
-		else if (lowerBounds && upperBounds && hitCheckSec && dir == directions[1]) return true;
+
+		if (availableDirections[0]){
+			// true represents unavailable move
+			if (lowerBounds && upperBounds && hitCheck && dir == RIGHT) return true;
+			else if (lowerBounds && upperBounds && hitCheckSec && dir == LEFT) return true;
+		}else if (availableDirections[2]) {
+			if (lowerBounds && upperBounds && hitCheck && dir == LEFT) return true;
+			else if (lowerBounds && upperBounds && hitCheckSec && dir == RIGHT) return true;
+		}else if (availableDirections[1] || availableDirections[3]) {
+			// check both behave in same way
+			// handles checks when moving in diagonal direction
+			if (lowerBounds && upperBounds && hitCheck && dir == RIGHT) return true;
+			else if (lowerBounds && upperBounds && hitCheckSec && dir == RIGHT) return true;
+			if (lowerBounds && upperBounds && hitCheck && dir == LEFT) return true;
+			else if (lowerBounds && upperBounds && hitCheckSec && dir == LEFT) return true;
+		}
+		// check hit on x y plane
 	}else if (face.lHit->zPlane && face.lHit->yPlane){
+		// if you are checking for an intersection with a xy Plane check whether its within the x and y bounds plane so that
+		// you aren't missing the plane
 		lowerBounds = (min(face.lHit->minP.z,face.lHit->maxP.z) < cP.z);
 		upperBounds = (max(face.lHit->minP.z,face.lHit->maxP.z) > cP.z);
 		if (availableDirections[0] || availableDirections[2]){
-			hitCheck = abs(face.lHit->minP.x - cP.x) <= abs(universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleX).x);
-			hitCheckSec =abs(face.rHit->minP.x - cP.x) <= abs(universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleX).x);
+			// if you are going in the North or South directions you will see whether a move can be made
+			// based on the distance between a wall and the camera and how much the camera moves each time
+			// these two checks below compare the distance the camera travels from one move's x value and the distance
+			// between the current position and the wall's x-value
+			// hitCheck checks for collision with left walls, hitCheckSec checks for collision with right walls
+			hitCheck = abs(face.lHit->minP.x - cP.x) <= abs(camera_direction.cross(camera_up).vectorMultiplyr(camera_scaleX).x);
+			hitCheckSec = abs(face.rHit->minP.x - cP.x) <= abs(camera_direction.cross(camera_up).vectorMultiplyr(camera_scaleX).x);
 		}else{
-			hitCheck = abs(face.lHit->minP.x - cP.x) <= abs(universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleX).z);
-			hitCheckSec =abs(face.rHit->minP.x - cP.x) <= abs(universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleX).z);
+			// if you are going in the East or West directions you will see whether a move can be made
+			// based on the distance between a wall and the camera and how much the camera moves each time
+			// these two checks below compare the distance the camera travels from one move's z value and the distance
+			// between the current position and the wall's z-value
+			// between the current position and the wall's x-value
+			// hitCheck checks for collision with left walls, hitCheckSec checks for collision with right walls
+			hitCheck = abs(face.lHit->minP.x - cP.x) <= abs(camera_direction.cross(camera_up).vectorMultiplyr(camera_scaleX).x);
+			hitCheckSec =abs(face.rHit->minP.x - cP.x) <= abs(camera_direction.cross(camera_up).vectorMultiplyr(camera_scaleX).x);
 		}
-		if (lowerBounds && upperBounds && hitCheck && dir == directions[2]) return true;
-		else if (lowerBounds && upperBounds && hitCheckSec && dir == directions[3]) {
-			return true;
+		if (availableDirections[0] || availableDirections[2]){
+			// true represents unavailable move
+			if (lowerBounds && upperBounds && hitCheck && dir == RIGHT) return true;
+			else if (lowerBounds && upperBounds && hitCheckSec && dir == RIGHT) return true;
+			else if (lowerBounds && upperBounds && hitCheck && dir == LEFT) return true;
+			else if (lowerBounds && upperBounds && hitCheckSec && dir == LEFT) return true;
+		}else if (availableDirections[1]) {
+			if (lowerBounds && upperBounds && hitCheck && dir == RIGHT) return true;
+			else if (lowerBounds && upperBounds && hitCheckSec && dir == LEFT) return true;
+		}else if (availableDirections[3]) {
+			if (lowerBounds && upperBounds && hitCheck && dir == LEFT) return true;
+			else if (lowerBounds && upperBounds && hitCheckSec && dir == RIGHT) return true;
+		}
+	}
+	return false;
+}
+
+bool Camera::checkFBHit(faces3D face, vec3D cP, CameraDirection dir){
+	bool lowerBounds,upperBounds,leftBounds,rightBounds;
+	bool hitCheck,hitCheckSec;
+	// check hit on z-y plane
+	if (face.lHit->xPlane && face.lHit->yPlane){
+		// if you are checking for an intersection with a xy Plane check whether its within the x and y bounds plane so that
+		// you aren't missing the plane
+		lowerBounds = (min(face.lHit->minP.x,face.lHit->maxP.x) < cP.x);
+		upperBounds = (max(face.lHit->minP.x,face.lHit->maxP.x) > cP.x);
+		if (availableDirections[0] || availableDirections[2]){
+			// if you are going in the North or South directions you will see whether a move can be made
+			// based on the distance between a wall and the camera and how much the camera moves each time
+			// these two checks below compare the distance the camera travels from one move's x value and the distance
+			// between the current position and the wall's x-value
+			// hitCheck checks for collision with left walls, hitCheckSec checks for collision with right walls
+			hitCheck = (abs(face.lHit->minP.z - cP.z) <= abs(camera_direction.vectorMultiplyr(camera_scaleZ).z));
+			hitCheckSec = (abs(face.rHit->minP.z - cP.z) <= abs(camera_direction.vectorMultiplyr(camera_scaleZ).z));
+		}else{
+			// if you are going in the East or West directions you will see whether a move can be made
+			// based on the distance between a wall and the camera and how much the camera moves each time
+			// these two checks below compare the distance the camera travels from one move's z value and the distance
+			// between the current position and the wall's z-value
+			// between the current position and the wall's x-value
+			// hitCheck checks for collision with left walls, hitCheckSec checks for collision with right walls
+			hitCheck = (abs(face.lHit->minP.z - cP.z) <= abs(camera_direction.vectorMultiplyr(camera_scaleZ).z));
+			hitCheckSec = (abs(face.rHit->minP.z - cP.z) <= abs(camera_direction.vectorMultiplyr(camera_scaleZ).z));
+		}
+
+		if (availableDirections[0]){
+			// true represents unavailable move
+			if (lowerBounds && upperBounds && hitCheck && dir == BACK) return true;
+			else if (lowerBounds && upperBounds && hitCheckSec && dir == FORWARD) return true;
+		}else if (availableDirections[2]) {
+			if (lowerBounds && upperBounds && hitCheck && dir == FORWARD) return true;
+			else if (lowerBounds && upperBounds && hitCheckSec && dir == BACK) return true;
+		}else if (availableDirections[1] || availableDirections[3]) {
+			// check both behave in same way
+			// handles checks when moving in diagonal direction
+			if (lowerBounds && upperBounds && hitCheck && dir == FORWARD) return true;
+			else if (lowerBounds && upperBounds && hitCheckSec && dir == FORWARD) return true;
+			if (lowerBounds && upperBounds && hitCheck && dir == BACK) return true;
+			else if (lowerBounds && upperBounds && hitCheckSec && dir == BACK) return true;
+		}
+		// check hit on x y plane
+	}else if (face.lHit->zPlane && face.lHit->yPlane){
+		// if you are checking for an intersection with a xy Plane check whether its within the x and y bounds plane so that
+		// you aren't missing the plane
+		lowerBounds = (min(face.lHit->minP.z,face.lHit->maxP.z) < cP.z);
+		upperBounds = (max(face.lHit->minP.z,face.lHit->maxP.z) > cP.z);
+		if (availableDirections[0] || availableDirections[2]){
+			// if you are going in the North or South directions you will see whether a move can be made
+			// based on the distance between a wall and the camera and how much the camera moves each time
+			// these two checks below compare the distance the camera travels from one move's x value and the distance
+			// between the current position and the wall's x-value
+			// hitCheck checks for collision with left walls, hitCheckSec checks for collision with right walls
+			hitCheck = abs(face.lHit->minP.x - cP.x) <= abs(universal_camera_direction->vectorMultiplyr(camera_scaleZ).x);
+			hitCheckSec = abs(face.rHit->minP.x - cP.x) <= abs(universal_camera_direction->vectorMultiplyr(camera_scaleZ).x);
+		}else{
+			// if you are going in the East or West directions you will see whether a move can be made
+			// based on the distance between a wall and the camera and how much the camera moves each time
+			// these two checks below compare the distance the camera travels from one move's z value and the distance
+			// between the current position and the wall's z-value
+			// between the current position and the wall's x-value
+			// hitCheck checks for collision with left walls, hitCheckSec checks for collision with right walls
+			hitCheck = abs(face.lHit->minP.x - cP.x) <= abs(universal_camera_direction->vectorMultiplyr(camera_scaleZ).x);
+			hitCheckSec =abs(face.rHit->minP.x - cP.x) <= abs(universal_camera_direction->vectorMultiplyr(camera_scaleZ).x);
+		}
+		if (availableDirections[0] || availableDirections[2]){
+			// true represents unavailable move
+			if (lowerBounds && upperBounds && hitCheck && dir == FORWARD) return true;
+			else if (lowerBounds && upperBounds && hitCheckSec && dir == FORWARD) return true;
+			else if (lowerBounds && upperBounds && hitCheck && dir == BACK) return true;
+			else if (lowerBounds && upperBounds && hitCheckSec && dir == BACK) return true;
+		}else if (availableDirections[1]) {
+			if (lowerBounds && upperBounds && hitCheck && dir == FORWARD) return true;
+			else if (lowerBounds && upperBounds && hitCheckSec && dir == BACK) return true;
+		}else if (availableDirections[2]) {
+			if (lowerBounds && upperBounds && hitCheck && dir == BACK) return true;
+			else if (lowerBounds && upperBounds && hitCheckSec && dir == FORWARD) return true;
 		}
 	}
 	return false;
