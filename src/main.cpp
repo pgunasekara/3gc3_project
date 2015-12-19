@@ -35,7 +35,7 @@ float *light_pos_tmp, *spot_direction;
 float lookAt[] = {34.5,1.5,0};
 float angle = 0.005f;
 bool PlaneExist = false;
-Camera camera;
+Camera* camera;
 bool moveable = false;
 
 //Texture information
@@ -105,10 +105,10 @@ void initLighting()
 	glLightf(GL_LIGHT0,GL_SPOT_CUTOFF,20.0f);
 	glLightf(GL_LIGHT0,GL_SPOT_EXPONENT,120.0f);
 
-	light_pos_tmp = camera.camera_position.returnArray4L();
+	light_pos_tmp = camera->camera_position.returnArray4L();
 	glLightfv(GL_LIGHT0, GL_POSITION, light_pos_tmp);
 
-	spot_direction = camera.spot_direction.returnArray();
+	spot_direction = camera->spot_direction.returnArray();
 	glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION,spot_direction);
 
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, diff0);
@@ -145,7 +145,7 @@ void initFog()
 void init(void)
 {
 	//GLuint id = 1;
-	camera = Camera();
+	camera = new Camera();
 	rain = ParticleSystem();
 
 	//init our scenegraph
@@ -218,19 +218,19 @@ void keyboard(unsigned char key, int x, int y)
 	switch (key)
 	{
 		case 'W':
-			camera.Move(FORWARD,test);
+			camera->Move(FORWARD,test);
 			glutPostRedisplay();
 			break;
 		case 'A':
-			camera.Move(LEFT,test);
+			camera->Move(LEFT,test);
 			glutPostRedisplay();
 			break;
 		case 'S':
-			camera.Move(BACK,test);
+			camera->Move(BACK,test);
 			glutPostRedisplay();
 			break;
 		case 'D':
-			camera.Move(RIGHT,test);
+			camera->Move(RIGHT,test);
 			glutPostRedisplay();
 			break;
 		case 'q':
@@ -238,6 +238,7 @@ void keyboard(unsigned char key, int x, int y)
 			delete start;
 			delete finish;
 			delete test;
+			delete camera;
 			delete light_pos_tmp;
 			delete spot_direction;
 			exit (0);
@@ -264,18 +265,18 @@ void motion(int x, int y)
 void passive(int x,int y){
 	if (moveable){
 		if ((x - mouseX) > 0){
-			camera.Spin(SRIGHT,4.0*(x-mouseX)/globalW);
+			camera->Spin(SRIGHT,4.0*(x-mouseX)/globalW);
 			mouseX = x;
 		}
 		else if ((x - mouseX) < 0){
-			camera.Spin(SLEFT,-4.0*(x-mouseX)/globalW);
+			camera->Spin(SLEFT,-4.0*(x-mouseX)/globalW);
 			mouseX = x;
 		}
 		if ((y - mouseY) > 0){
-			camera.Spin(SDOWN,4.0*(y-mouseY)/globalH);
+			camera->Spin(SDOWN,4.0*(y-mouseY)/globalH);
 			mouseY = y;
 		}else if ((y - mouseY) < 0){
-			camera.Spin(SUP,-4.0*(y-mouseY)/globalH);
+			camera->Spin(SUP,-4.0*(y-mouseY)/globalH);
 			mouseY = y;
 		}
 		glutPostRedisplay();

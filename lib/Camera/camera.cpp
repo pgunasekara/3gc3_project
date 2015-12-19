@@ -36,7 +36,7 @@ Camera::Camera(){
 
 // destructor
 Camera::~Camera() {
-	delte availableDirections;
+	delete availableDirections;
 }
 
 // updates camera anytime transformation happens
