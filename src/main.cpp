@@ -105,7 +105,7 @@ void initLighting()
 	glLightf(GL_LIGHT0,GL_SPOT_CUTOFF,30.0f);
 	//glLightf(GL_LIGHT0,GL_SPOT_EXPONENT,100.0f);
 
-	
+
 	//glLightfv(GL_LIGHT0, GL_POSITION, camera.camera_position.returnArray4L());
 
 	//float spot_direction[3] = {0,0,1};

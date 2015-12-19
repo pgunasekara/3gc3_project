@@ -54,6 +54,8 @@ class Camera {
 		void ChangePitch(float degrees);
 		void checkCompassDirection();
 		bool checkInvalidMove(Mesh3D* m,CameraDirection dir);
+		bool checkFBHit(faces3D face, vec3D cP, CameraDirection dir,CameraDirection* directions);
+		bool checkLRHit(faces3D face, vec3D cP, CameraDirection dir,CameraDirection* directions);
 
 		// amount that you scale
 		float camera_scaleX,camera_scaleZ;

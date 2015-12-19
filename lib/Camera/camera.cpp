@@ -183,8 +183,6 @@ void Camera::ChangeHeading(float degrees) {
 bool Camera::checkInvalidMove(Mesh3D* m,CameraDirection dir){
 	bool lowerBounds,upperBounds,hitCheck,hitCheckSec;
 	vec3D cP;
-	float scale;
-	float distanceFactor;
 	if (dir == FORWARD){
 		cP = camera_position + universal_camera_direction->vectorMultiplyr(camera_scaleZ);
 	}else if (dir == BACK){
@@ -198,74 +196,22 @@ bool Camera::checkInvalidMove(Mesh3D* m,CameraDirection dir){
 	if (availableDirections[0]){
 		for (int i = 0; i < m->faces.size();i++){
 			if (dir == FORWARD || dir == BACK){
-				if (m->faces[i].lHit->xPlane && m->faces[i].lHit->yPlane){
-					lowerBounds = (min(m->faces[i].lHit->minP.x,m->faces[i].lHit->maxP.x) < cP.x);
-			    upperBounds = (max(m->faces[i].lHit->minP.x,m->faces[i].lHit->maxP.x) > cP.x);
-					hitCheck = (abs(m->faces[i].lHit->minP.z - cP.z) <= abs(universal_camera_direction->vectorMultiplyr(camera_scaleZ).z));
-					hitCheckSec = (abs(m->faces[i].rHit->minP.z - cP.z) <= abs(universal_camera_direction->vectorMultiplyr(camera_scaleZ).z));
-					if (lowerBounds && upperBounds && hitCheck && dir == BACK) return true;
-					else if (lowerBounds && upperBounds && hitCheckSec && dir == FORWARD) return true;
-				}else if (m->faces[i].lHit->zPlane && m->faces[i].lHit->yPlane){
-					lowerBounds = (min(m->faces[i].lHit->minP.z,m->faces[i].lHit->maxP.z) < cP.z);
-					upperBounds = (max(m->faces[i].lHit->minP.z,m->faces[i].lHit->maxP.z) > cP.z);
-					hitCheck = abs(m->faces[i].lHit->minP.x - cP.x) <= abs(universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleX).x);
-					hitCheckSec =abs(m->faces[i].rHit->minP.x - cP.x) <= abs(universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleX).x);
-					if (lowerBounds && upperBounds && hitCheck && dir == FORWARD) return true;
-					else if (lowerBounds && upperBounds && hitCheckSec && dir == FORWARD) return true;
-				}
+				CameraDirection directions[] = {BACK,FORWARD,FORWARD,FORWARD};
+				if (checkFBHit(m->faces[i],cP,dir,directions)) return true;
 			}else if (dir == LEFT || dir == RIGHT){
-				if (m->faces[i].lHit->zPlane && m->faces[i].lHit->yPlane){
-					lowerBounds = (min(m->faces[i].lHit->minP.z,m->faces[i].lHit->maxP.z) < cP.z);
-			    upperBounds = (max(m->faces[i].lHit->minP.z,m->faces[i].lHit->maxP.z) > cP.z);
-					hitCheck = abs(m->faces[i].lHit->minP.x - cP.x) <= abs(universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleX).x);
-					hitCheckSec = abs(m->faces[i].rHit->minP.x - cP.x) <= abs(universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleX).x);
-					if (lowerBounds && upperBounds && hitCheck && dir == RIGHT) return true;
-					else if (lowerBounds && upperBounds && hitCheckSec && dir == LEFT) return true;
-				}else if (m->faces[i].lHit->xPlane && m->faces[i].lHit->yPlane){
-					lowerBounds = (min(m->faces[i].lHit->minP.z,m->faces[i].lHit->maxP.x) < cP.x);
-					upperBounds = (max(m->faces[i].lHit->minP.z,m->faces[i].lHit->maxP.x) > cP.x);
-					hitCheck = abs(m->faces[i].lHit->minP.z - cP.z) <= abs(universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleZ).z);
-					hitCheckSec = abs(m->faces[i].rHit->minP.z - cP.z) <= abs(universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleZ).z);
-					if (lowerBounds && upperBounds && hitCheck && dir == RIGHT) return true;
-					if (lowerBounds && upperBounds && hitCheckSec && dir == RIGHT) return true;
-				}
+				CameraDirection directions[] = {RIGHT,LEFT,RIGHT,RIGHT};
+				if (checkLRHit(m->faces[i],cP,dir,directions)) return true;
 			}
 		}
-		// E
+		// If you angle it causes problems
 	}else if (availableDirections[1]){
 		for (int i = 0; i < m->faces.size();i++){
 			if (dir == FORWARD || dir == BACK){
-				if (m->faces[i].lHit->zPlane && m->faces[i].lHit->yPlane){
-					lowerBounds = (min(m->faces[i].lHit->minP.z,m->faces[i].lHit->maxP.z) < cP.z);
-					upperBounds = (max(m->faces[i].lHit->minP.z,m->faces[i].lHit->maxP.z) > cP.z);
-					hitCheck = (abs(m->faces[i].lHit->minP.x - cP.x) <= abs(universal_camera_direction->vectorMultiplyr(camera_scaleZ).x));
-					hitCheckSec = (abs(m->faces[i].rHit->minP.x - cP.x) <= abs(universal_camera_direction->vectorMultiplyr(camera_scaleZ).x));
-					if (lowerBounds && upperBounds && hitCheck && dir == FORWARD) return true;
-					else if (lowerBounds && upperBounds && hitCheckSec && dir == BACK) return true;
-				}else if (m->faces[i].lHit->xPlane && m->faces[i].lHit->yPlane){
-					lowerBounds = (min(m->faces[i].lHit->minP.x,m->faces[i].lHit->maxP.x) < cP.x);
-					upperBounds = (max(m->faces[i].lHit->minP.x,m->faces[i].lHit->maxP.x) > cP.x);
-					hitCheck = abs(m->faces[i].lHit->minP.z - cP.z) <= abs(universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleX).z);
-					hitCheckSec =abs(m->faces[i].rHit->minP.z - cP.z) <= abs(universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleX).z);
-					if (lowerBounds && upperBounds && hitCheck && dir == FORWARD) return true;
-					else if (lowerBounds && upperBounds && hitCheckSec && dir == FORWARD) return true;
-				}
+				CameraDirection directions[] = {FORWARD,FORWARD,BACK,FORWARD};
+				if (checkFBHit(m->faces[i],cP,dir,directions)) return true;
 			}else if (dir == LEFT || dir == RIGHT){
-				if (m->faces[i].lHit->zPlane && m->faces[i].lHit->yPlane){
-					lowerBounds = (min(m->faces[i].lHit->minP.z,m->faces[i].lHit->maxP.z) < cP.z);
-					upperBounds = (max(m->faces[i].lHit->minP.z,m->faces[i].lHit->maxP.z) > cP.z);
-					hitCheck = abs(m->faces[i].lHit->minP.x - cP.x) <= abs(universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleX).x);
-					hitCheckSec = abs(m->faces[i].rHit->minP.x - cP.x) <= abs(universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleX).x);
-					if (lowerBounds && upperBounds && hitCheck && dir == LEFT) return true;
-					else if (lowerBounds && upperBounds && hitCheckSec && dir == RIGHT) return true;
-				}else if (m->faces[i].lHit->xPlane && m->faces[i].lHit->yPlane){
-					lowerBounds = (min(m->faces[i].lHit->minP.z,m->faces[i].lHit->maxP.x) < cP.x);
-					upperBounds = (max(m->faces[i].lHit->minP.z,m->faces[i].lHit->maxP.x) > cP.x);
-					hitCheck = abs(m->faces[i].lHit->minP.z - cP.z) <= abs(universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleZ).z);
-					hitCheckSec = abs(m->faces[i].rHit->minP.z - cP.z) <= abs(universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleZ).z);
-					if (lowerBounds && upperBounds && hitCheck && dir == RIGHT) return true;
-					if (lowerBounds && upperBounds && hitCheckSec && dir == LEFT) return true;
-				}
+				CameraDirection directions[] = {LEFT,RIGHT,RIGHT,LEFT};
+				if (checkLRHit(m->faces[i],cP,dir,directions)) return true;
 			}
 		}
 		// S
@@ -273,103 +219,104 @@ bool Camera::checkInvalidMove(Mesh3D* m,CameraDirection dir){
 	}else if (availableDirections[2]){
 			for (int i = 0; i < m->faces.size();i++){
 				if (dir == FORWARD || dir == BACK){
-					if (m->faces[i].lHit->xPlane && m->faces[i].lHit->yPlane){
-						lowerBounds = (min(m->faces[i].lHit->minP.x,m->faces[i].lHit->maxP.x) < cP.x);
-				    upperBounds = (max(m->faces[i].lHit->minP.x,m->faces[i].lHit->maxP.x) > cP.x);
-						hitCheck = (abs(m->faces[i].lHit->minP.z - cP.z) <= abs(universal_camera_direction->vectorMultiplyr(camera_scaleZ).z));
-						hitCheckSec = (abs(m->faces[i].rHit->minP.z - cP.z) <= abs(universal_camera_direction->vectorMultiplyr(camera_scaleZ).z));
-						// only difference is the other one is back and forward
-						if (lowerBounds && upperBounds && hitCheck && dir == FORWARD) return true;
-						else if (lowerBounds && upperBounds && hitCheckSec && dir == BACK) return true;
-					}else if (m->faces[i].lHit->zPlane && m->faces[i].lHit->yPlane){
-						lowerBounds = (min(m->faces[i].lHit->minP.z,m->faces[i].lHit->maxP.z) < cP.z);
-						upperBounds = (max(m->faces[i].lHit->minP.z,m->faces[i].lHit->maxP.z) > cP.z);
-						hitCheck = abs(m->faces[i].lHit->minP.x - cP.x) <= abs(universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleX).x);
-						hitCheckSec =abs(m->faces[i].rHit->minP.x - cP.x) <= abs(universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleX).x);
-						if (lowerBounds && upperBounds && hitCheck && dir == FORWARD) return true;
-						else if (lowerBounds && upperBounds && hitCheckSec && dir == BACK) return true;
-					}
+					CameraDirection directions[] = {FORWARD,BACK,FORWARD,FORWARD};
+					if (checkFBHit(m->faces[i],cP,dir,directions)) return true;
 				}else if (dir == LEFT || dir == RIGHT){
-					if (m->faces[i].lHit->zPlane && m->faces[i].lHit->yPlane){
-						lowerBounds = (min(m->faces[i].lHit->minP.z,m->faces[i].lHit->maxP.z) < cP.z);
-				    upperBounds = (max(m->faces[i].lHit->minP.z,m->faces[i].lHit->maxP.z) > cP.z);
-						hitCheck = abs(m->faces[i].lHit->minP.x - cP.x) <= abs(universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleX).x);
-						hitCheckSec = abs(m->faces[i].rHit->minP.x - cP.x) <= abs(universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleX).x);
-						if (lowerBounds && upperBounds && hitCheck && dir == LEFT) return true;
-						else if (lowerBounds && upperBounds && hitCheckSec && dir == RIGHT) return true;
-					}else if (m->faces[i].lHit->xPlane && m->faces[i].lHit->yPlane){
-						lowerBounds = (min(m->faces[i].lHit->minP.z,m->faces[i].lHit->maxP.x) < cP.x);
-						upperBounds = (max(m->faces[i].lHit->minP.z,m->faces[i].lHit->maxP.x) > cP.x);
-						hitCheck = abs(m->faces[i].lHit->minP.z - cP.z) <= abs(universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleZ).z);
-						hitCheckSec = abs(m->faces[i].rHit->minP.z - cP.z) <= abs(universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleZ).z);
-						if (lowerBounds && upperBounds && hitCheck && dir == LEFT) return true;
-						if (lowerBounds && upperBounds && hitCheckSec && dir == LEFT) return true;
-					}
+					CameraDirection directions[] = {LEFT,RIGHT,LEFT,LEFT};
+					if (checkLRHit(m->faces[i],cP,dir,directions)) return true;
 				}
 			}
 		// W
 	}else if (availableDirections[3]){
 		for (int i = 0; i < m->faces.size();i++){
 			if (dir == FORWARD || dir == BACK){
-				if (m->faces[i].lHit->zPlane && m->faces[i].lHit->yPlane){
-					lowerBounds = (min(m->faces[i].lHit->minP.z,m->faces[i].lHit->maxP.z) < cP.z);
-					upperBounds = (max(m->faces[i].lHit->minP.z,m->faces[i].lHit->maxP.z) > cP.z);
-					hitCheck = (abs(m->faces[i].lHit->minP.x - cP.x) <= abs(universal_camera_direction->vectorMultiplyr(camera_scaleZ).x));
-					hitCheckSec = (abs(m->faces[i].rHit->minP.x - cP.x) <= abs(universal_camera_direction->vectorMultiplyr(camera_scaleZ).x));
-					if (lowerBounds && upperBounds && hitCheck && dir == BACK) return true;
-					else if (lowerBounds && upperBounds && hitCheckSec && dir == FORWARD) return true;
-				}else if (m->faces[i].lHit->xPlane && m->faces[i].lHit->yPlane){
-					lowerBounds = (min(m->faces[i].lHit->minP.x,m->faces[i].lHit->maxP.x) < cP.x);
-					upperBounds = (max(m->faces[i].lHit->minP.x,m->faces[i].lHit->maxP.x) > cP.x);
-					hitCheck = abs(m->faces[i].lHit->minP.z - cP.z) <= abs(universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleX).z);
-					hitCheckSec =abs(m->faces[i].rHit->minP.z - cP.z) <= abs(universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleX).z);
-					if (lowerBounds && upperBounds && hitCheck && dir == FORWARD) return true;
-					else if (lowerBounds && upperBounds && hitCheckSec && dir == BACK) return true;
-				}
+				CameraDirection directions[] = {BACK,FORWARD,FORWARD,BACK};
+				if (checkFBHit(m->faces[i],cP,dir,directions)) return true;
 			}else if (dir == LEFT || dir == RIGHT){
-				if (m->faces[i].lHit->zPlane && m->faces[i].lHit->yPlane){
-					lowerBounds = (min(m->faces[i].lHit->minP.z,m->faces[i].lHit->maxP.z) < cP.z);
-					upperBounds = (max(m->faces[i].lHit->minP.z,m->faces[i].lHit->maxP.z) > cP.z);
-					hitCheck = abs(m->faces[i].lHit->minP.x - cP.x) <= abs(universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleX).x);
-					hitCheckSec = abs(m->faces[i].rHit->minP.x - cP.x) <= abs(universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleX).x);
-					if (lowerBounds && upperBounds && hitCheck && dir == RIGHT) return true;
-					else if (lowerBounds && upperBounds && hitCheckSec && dir == LEFT) return true;
-				}else if (m->faces[i].lHit->xPlane && m->faces[i].lHit->yPlane){
-					lowerBounds = (min(m->faces[i].lHit->minP.z,m->faces[i].lHit->maxP.x) < cP.x);
-					upperBounds = (max(m->faces[i].lHit->minP.z,m->faces[i].lHit->maxP.x) > cP.x);
-					hitCheck = abs(m->faces[i].lHit->minP.z - cP.z) <= abs(universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleZ).z);
-					hitCheckSec = abs(m->faces[i].rHit->minP.z - cP.z) <= abs(universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleZ).z);
-					// These use to be LEFT Left
-					if (lowerBounds && upperBounds && hitCheck && dir == LEFT) return true;
-					if (lowerBounds && upperBounds && hitCheckSec && dir == RIGHT) return true;
-				}
+				CameraDirection directions[] = {RIGHT,LEFT,LEFT,RIGHT};
+				if (checkLRHit(m->faces[i],cP,dir,directions)) return true;
 			}
 		}
 	}
 	return false;
 }
 
+bool Camera::checkLRHit(faces3D face, vec3D cP, CameraDirection dir,CameraDirection* directions){
+	bool lowerBounds,upperBounds,hitCheck,hitCheckSec;
+	if (face.lHit->zPlane && face.lHit->yPlane){
+		lowerBounds = (min(face.lHit->minP.z,face.lHit->maxP.z) < cP.z);
+		upperBounds = (max(face.lHit->minP.z,face.lHit->maxP.z) > cP.z);
+		hitCheck = abs(face.lHit->minP.x - cP.x) <= abs(universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleX).x);
+		hitCheckSec = abs(face.rHit->minP.x - cP.x) <= abs(universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleX).x);
+		if (lowerBounds && upperBounds && hitCheck && dir == directions[0]) return true;
+		else if (lowerBounds && upperBounds && hitCheckSec && dir == directions[1]) return true;
+	}else if (face.lHit->xPlane && face.lHit->yPlane){
+		lowerBounds = (min(face.lHit->minP.z,face.lHit->maxP.x) < cP.x);
+		upperBounds = (max(face.lHit->minP.z,face.lHit->maxP.x) > cP.x);
+		hitCheck = abs(face.lHit->minP.z - cP.z) <= abs(universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleZ).z);
+		hitCheckSec = abs(face.rHit->minP.z - cP.z) <= abs(universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleZ).z);
+		if (lowerBounds && upperBounds && hitCheck && dir == directions[2]) return true;
+		if (lowerBounds && upperBounds && hitCheckSec && dir == directions[3]) return true;
+	}
+}
+
+bool Camera::checkFBHit(faces3D face, vec3D cP, CameraDirection dir,CameraDirection* directions){
+	bool lowerBounds,upperBounds,hitCheck,hitCheckSec;
+	// check hit on z-y plane
+	if (face.lHit->xPlane && face.lHit->yPlane){
+		lowerBounds = (min(face.lHit->minP.x,face.lHit->maxP.x) < cP.x);
+		upperBounds = (max(face.lHit->minP.x,face.lHit->maxP.x) > cP.x);
+		if (availableDirections[0] || availableDirections[2]){
+			hitCheck = (abs(face.lHit->minP.z - cP.z) <= abs(universal_camera_direction->vectorMultiplyr(camera_scaleZ).z));
+			hitCheckSec = (abs(face.rHit->minP.z - cP.z) <= abs(universal_camera_direction->vectorMultiplyr(camera_scaleZ).z));
+		}else{
+			hitCheck = (abs(face.lHit->minP.z - cP.z) <= abs(universal_camera_direction->vectorMultiplyr(camera_scaleZ).x));
+			hitCheckSec = (abs(face.rHit->minP.z - cP.z) <= abs(universal_camera_direction->vectorMultiplyr(camera_scaleZ).x));
+		}
+		if (lowerBounds && upperBounds && hitCheck && dir == directions[0]) return true;
+		else if (lowerBounds && upperBounds && hitCheckSec && dir == directions[1]) return true;
+	}else if (face.lHit->zPlane && face.lHit->yPlane){
+		lowerBounds = (min(face.lHit->minP.z,face.lHit->maxP.z) < cP.z);
+		upperBounds = (max(face.lHit->minP.z,face.lHit->maxP.z) > cP.z);
+		if (availableDirections[0] || availableDirections[2]){
+			hitCheck = abs(face.lHit->minP.x - cP.x) <= abs(universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleX).x);
+			hitCheckSec =abs(face.rHit->minP.x - cP.x) <= abs(universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleX).x);
+		}else{
+			hitCheck = abs(face.lHit->minP.x - cP.x) <= abs(universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleX).z);
+			hitCheckSec =abs(face.rHit->minP.x - cP.x) <= abs(universal_camera_direction->cross(camera_up).vectorMultiplyr(camera_scaleX).z);
+		}
+		if (lowerBounds && upperBounds && hitCheck && dir == directions[2]) return true;
+		else if (lowerBounds && upperBounds && hitCheckSec && dir == directions[3]) {
+			return true;
+		}
+	}
+	return false;
+}
+
 void Camera::checkCompassDirection(){
-// NESW pattern
+// checks to see which way you are looking
+// the initial direction (north)
 	if (abs(camera_direction.x) < abs(camera_direction.z) && camera_direction.z > 0){
-		//printf("%f %f\n",abs(camera_direction.x),abs(camera_direction.z));
 		universal_camera_direction = &compass.n;
 		availableDirections[0] = true;
 		availableDirections[1] = false;
 		availableDirections[2] = false;
 		availableDirections[3] = false;
+// you are facing east
 	}else if (abs(camera_direction.x) > abs(camera_direction.z) && camera_direction.x < 0) {
 		universal_camera_direction = &compass.e;
 		availableDirections[0] = false;
 		availableDirections[1] = true;
 		availableDirections[2] = false;
 		availableDirections[3] = false;
+// you are facing south
 	}else if (abs(camera_direction.x) < abs(camera_direction.z) && camera_direction.z < 0) {
 		universal_camera_direction = &compass.s;
 		availableDirections[0] = false;
 		availableDirections[1] = false;
 		availableDirections[2] = true;
 		availableDirections[3] = false;
+// you are facing west
 	}else if (abs(camera_direction.x) > abs(camera_direction.z) && camera_direction.x > 0) {
 		universal_camera_direction = &compass.w;
 		availableDirections[0] = false;
