@@ -36,7 +36,7 @@ float lookAt[] = {34.5,1.5,0};
 float angle = 0.005f;
 bool PlaneExist = false;
 Camera* camera;
-bool moveable = false;
+bool moveable = true;
 
 //Texture information
 int width, height;
@@ -102,7 +102,7 @@ void initLighting()
 
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, amb0);
 
-	glLightf(GL_LIGHT0,GL_SPOT_CUTOFF,20.0f);
+	glLightf(GL_LIGHT0,GL_SPOT_CUTOFF,50.0f);
 	glLightf(GL_LIGHT0,GL_SPOT_EXPONENT,120.0f);
 
 	light_pos_tmp = camera->camera_position.returnArray4L();
@@ -164,11 +164,9 @@ void display()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glLightfv(GL_LIGHT0,GL_POSITION,light_pos_tmp);
-
-	glLightfv(GL_LIGHT0, GL_AMBIENT, amb0);
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, diff0);
-	glLightfv(GL_LIGHT0, GL_SPECULAR, spec0);
+	delete light_pos_tmp;
+	light_pos_tmp = camera->camera_position.returnArray4L();
+	glLightfv(GL_LIGHT0, GL_POSITION, light_pos_tmp);
 
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, m_amb);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, m_diff);
@@ -181,10 +179,10 @@ void display()
 	test->drawMesh();
 	glPopMatrix();
 	rain.drawRainParticles();
-	for (int i =0; i < test->faces.size();i++){
-		test->faces[i].lHit->draw();
-		test->faces[i].rHit->draw();
-	}
+	//for (int i =0; i < test->faces.size();i++){
+	//	test->faces[i].lHit->draw();
+	//	test->faces[i].rHit->draw();
+	//}
 
 	//swap buffers - rendering is done to the back buffer, bring it forward to display
 	glutSwapBuffers();
@@ -279,8 +277,8 @@ void passive(int x,int y){
 			camera->Spin(SUP,-4.0*(y-mouseY)/globalH);
 			mouseY = y;
 		}
-		glutPostRedisplay();
 	}
+	glutPostRedisplay();
 }
 
 void special(int key, int x, int y)
