@@ -31,7 +31,7 @@ using namespace std;
 float mouseX,mouseY,globalW,globalH;
 bool buttonDown = false;
 float pos[] = {34.5,1.5,-30};
-float light_pos_tmp[4] = {pos[0],pos[1],pos[2],1.0f};
+float *light_pos_tmp, *spot_direction;
 float lookAt[] = {34.5,1.5,0};
 float angle = 0.005f;
 bool PlaneExist = false;
@@ -105,16 +105,11 @@ void initLighting()
 	glLightf(GL_LIGHT0,GL_SPOT_CUTOFF,20.0f);
 	glLightf(GL_LIGHT0,GL_SPOT_EXPONENT,120.0f);
 
+	light_pos_tmp = camera.camera_position.returnArray4L();
+	glLightfv(GL_LIGHT0, GL_POSITION, light_pos_tmp);
 
-	glLightfv(GL_LIGHT0, GL_POSITION, camera.camera_position.returnArray4L());
-
-	//float spot_direction[3] = {0,0,1};
-	glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION,camera.spot_direction.returnArray());
-
-	//glLightfv(GL_LIGHT0, GL_POSITION, light_pos_tmp);
-
-	//float spotDir[] = {pos[0]-lookAt[0],pos[1]-lookAt[1],pos[2]-lookAt[2]};
-	//glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, spotDir);
+	spot_direction = camera.spot_direction.returnArray();
+	glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION,spot_direction);
 
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, diff0);
 	glLightfv(GL_LIGHT0, GL_AMBIENT, amb0);
@@ -243,6 +238,8 @@ void keyboard(unsigned char key, int x, int y)
 			delete start;
 			delete finish;
 			delete test;
+			delete light_pos_tmp;
+			delete spot_direction;
 			exit (0);
 			break;
 		}

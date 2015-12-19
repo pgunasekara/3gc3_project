@@ -36,7 +36,7 @@ Camera::Camera(){
 
 // destructor
 Camera::~Camera() {
-
+	delte availableDirections;
 }
 
 // updates camera anytime transformation happens
@@ -95,9 +95,11 @@ void Camera::Update() {
 	float *cp = camera_position.returnArray();
 	float *cl = camera_look_at.returnArray();
 	float *cu = camera_up.returnArray();
-	float *cd = camera_direction.returnArray();
 
 	gluLookAt(cp[0],cp[1],cp[2],cl[0],cl[1],cl[2],cu[0],cu[1],cu[2]);
+	delete cp;
+	delete cl;
+	delete cu;
 }
 
 // Move the camera forward depending on your scale
