@@ -69,7 +69,6 @@ class Camera {
 		vec3D camera_position_delta;
 		vec3D camera_look_at;
 		vec3D camera_direction;
-		vec3D* universal_camera_direction;
 		vec3D camera_up;
 		vec3D light_position;
 		vec3D spot_direction;

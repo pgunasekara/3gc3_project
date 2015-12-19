@@ -20,15 +20,6 @@ Camera::Camera(){
 	cameraYMove = 1.0f;
 	camera_up = vec3D(0, 1, 0);
 	camera_position_delta = vec3D();
-	compass.n = vec3D(0,0,1);
-	compass.ne = vec3D(-0.5,0,0.5);
-	compass.e = vec3D(1,0,0);
-	compass.se = vec3D(-0.5,0,-0.5);
-	compass.s = compass.n.flipVectorR();
-	compass.sw = compass.ne.flipVectorR();
-	compass.w = compass.e.flipVectorR();
-	compass.nw = compass.se.flipVectorR();
-	universal_camera_direction = &compass.n;
 	availableDirections = new bool[4];
 	availableDirections[0] = true;
 	availableDirections[1] = false;
@@ -341,8 +332,6 @@ bool Camera::checkFBHit(faces3D face, vec3D cP, CameraDirection dir){
 			if (lowerBounds && upperBounds && hitCheck && dir == FORWARD) return true;
 			else if (lowerBounds && upperBounds && hitCheckSec && dir == BACK) return true;
 		}else if (availableDirections[1] || availableDirections[3]) {
-			// check both behave in same way
-			// handles checks when moving in diagonal direction
 			if (lowerBounds && upperBounds && hitCheck && dir == FORWARD) return true;
 			else if (lowerBounds && upperBounds && hitCheckSec && dir == FORWARD) return true;
 			if (lowerBounds && upperBounds && hitCheck && dir == BACK) return true;
@@ -360,8 +349,8 @@ bool Camera::checkFBHit(faces3D face, vec3D cP, CameraDirection dir){
 			// these two checks below compare the distance the camera travels from one move's x value and the distance
 			// between the current position and the wall's x-value
 			// hitCheck checks for collision with left walls, hitCheckSec checks for collision with right walls
-			hitCheck = abs(face.lHit->minP.x - cP.x) <= abs(universal_camera_direction->vectorMultiplyr(camera_scaleZ).x);
-			hitCheckSec = abs(face.rHit->minP.x - cP.x) <= abs(universal_camera_direction->vectorMultiplyr(camera_scaleZ).x);
+			hitCheck = abs(face.lHit->minP.x - cP.x) <= abs(camera_direction.vectorMultiplyr(camera_scaleZ).x);
+			hitCheckSec = abs(face.rHit->minP.x - cP.x) <= abs(camera_direction.vectorMultiplyr(camera_scaleZ).x);
 		}else{
 			// if you are going in the East or West directions you will see whether a move can be made
 			// based on the distance between a wall and the camera and how much the camera moves each time
@@ -369,8 +358,8 @@ bool Camera::checkFBHit(faces3D face, vec3D cP, CameraDirection dir){
 			// between the current position and the wall's z-value
 			// between the current position and the wall's x-value
 			// hitCheck checks for collision with left walls, hitCheckSec checks for collision with right walls
-			hitCheck = abs(face.lHit->minP.x - cP.x) <= abs(universal_camera_direction->vectorMultiplyr(camera_scaleZ).x);
-			hitCheckSec =abs(face.rHit->minP.x - cP.x) <= abs(universal_camera_direction->vectorMultiplyr(camera_scaleZ).x);
+			hitCheck = abs(face.lHit->minP.x - cP.x) <= abs(camera_direction.vectorMultiplyr(camera_scaleZ).x);
+			hitCheckSec =abs(face.rHit->minP.x - cP.x) <= abs(camera_direction.vectorMultiplyr(camera_scaleZ).x);
 		}
 		if (availableDirections[0] || availableDirections[2]){
 			// true represents unavailable move
@@ -381,7 +370,7 @@ bool Camera::checkFBHit(faces3D face, vec3D cP, CameraDirection dir){
 		}else if (availableDirections[1]) {
 			if (lowerBounds && upperBounds && hitCheck && dir == FORWARD) return true;
 			else if (lowerBounds && upperBounds && hitCheckSec && dir == BACK) return true;
-		}else if (availableDirections[2]) {
+		}else if (availableDirections[3]) {
 			if (lowerBounds && upperBounds && hitCheck && dir == BACK) return true;
 			else if (lowerBounds && upperBounds && hitCheckSec && dir == FORWARD) return true;
 		}
@@ -393,28 +382,24 @@ void Camera::checkCompassDirection(){
 // checks to see which way you are looking
 // the initial direction (north)
 	if (abs(camera_direction.x) < abs(camera_direction.z) && camera_direction.z > 0){
-		universal_camera_direction = &compass.n;
 		availableDirections[0] = true;
 		availableDirections[1] = false;
 		availableDirections[2] = false;
 		availableDirections[3] = false;
 // you are facing east
 	}else if (abs(camera_direction.x) > abs(camera_direction.z) && camera_direction.x < 0) {
-		universal_camera_direction = &compass.e;
 		availableDirections[0] = false;
 		availableDirections[1] = true;
 		availableDirections[2] = false;
 		availableDirections[3] = false;
 // you are facing south
 	}else if (abs(camera_direction.x) < abs(camera_direction.z) && camera_direction.z < 0) {
-		universal_camera_direction = &compass.s;
 		availableDirections[0] = false;
 		availableDirections[1] = false;
 		availableDirections[2] = true;
 		availableDirections[3] = false;
 // you are facing west
 	}else if (abs(camera_direction.x) > abs(camera_direction.z) && camera_direction.x > 0) {
-		universal_camera_direction = &compass.w;
 		availableDirections[0] = false;
 		availableDirections[1] = false;
 		availableDirections[2] = false;
