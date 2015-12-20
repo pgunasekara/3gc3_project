@@ -260,7 +260,7 @@ void keyboard(unsigned char key, int x, int y)
 			delete test;
 			delete camera;
 			delete light_pos_tmp;
-			delete spot_direction;
+			//delete spot_direction;
 			exit (0);
 			break;
 		}
