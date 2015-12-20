@@ -22,12 +22,21 @@
 
 using namespace std;
 
-Mesh3D::Mesh3D(){
+Mesh3D::Mesh3D(int type){
 	vector<vertex3D> verts;
 	vector<faceVertNorms3D> faceVertNorms;
 	vector<vertNorms3D> vertNorms;
 	vector<faces3D> faces;
 	vector<colour3D> colours;
+
+	this->type = type;
+
+	hedgeTexture = LoadPPM("src/hedge_ascii.ppm", &widthh, &heightg, &kh);
+	textures[0] = *hedgeTexture;
+	groundTexture = LoadPPM("src/ground.ppm", &widthg, &heightg, &kg);
+	textures[1] = *groundTexture;
+	
+	glGenTextures(2, textures);
 }
 
 Mesh3D::~Mesh3D(){
@@ -41,6 +50,65 @@ Mesh3D::~Mesh3D(){
 	verts.clear();
 	faceVertNorms.clear();
 	vertNorms.clear();
+}
+
+GLubyte* Mesh3D::LoadPPM(char* file, int* width, int* height, int* max)
+{
+	GLubyte* img;
+	FILE *fd;
+	int n, m;
+	int  k, nm;
+	char c;
+	int i;
+	char b[100];
+	float s;
+	int red, green, blue;
+	
+	/* first open file and check if it's an ASCII PPM (indicated by P3 at the start) */
+	fd = fopen(file, "r");
+	fscanf(fd,"%[^\n] ",b);
+	if(b[0]!='P'|| b[1] != '3')
+	{
+		printf("%s is not a PPM file!\n",file); 
+		exit(0);
+	}
+	printf("%s is a PPM file\n", file);
+	fscanf(fd, "%c",&c);
+
+	/* next, skip past the comments - any line starting with #*/
+	while(c == '#') 
+	{
+		fscanf(fd, "%[^\n] ", b);
+		printf("%s\n",b);
+		fscanf(fd, "%c",&c);
+	}
+	ungetc(c,fd); 
+
+	/* now get the dimensions and max colour value from the image */
+	fscanf(fd, "%d %d %d", &n, &m, &k);
+
+	printf("%d rows  %d columns  max value= %d\n",n,m,k);
+
+	/* calculate number of pixels and allocate storage for this */
+	nm = n*m;
+	img = (GLubyte*)malloc(3*sizeof(GLuint)*nm);
+	s=255.0/k;
+
+	/* for every pixel, grab the read green and blue values, storing them in the image data array */
+	for(i=0;i<nm;i++) 
+	{
+		fscanf(fd,"%d %d %d",&red, &green, &blue );
+		img[3*nm-3*i-3]=red*s;
+		img[3*nm-3*i-2]=green*s;
+		img[3*nm-3*i-1]=blue*s;
+	}
+
+	/* finally, set the "return parameters" (width, height, max) and return the image array */
+	*width = n;
+	*height = m;
+	*max = k;
+
+	return img;
 }
 
 void Mesh3D::drawMesh(){
@@ -109,9 +177,30 @@ void Mesh3D::drawMesh(){
 
 		glEnd();
 
+
+		/*//TEXTURING CODE
+		if(type == 0)
+			glBindTexture(GL_TEXTURE_2D, textures[0]);
+		
+		else
+			glBindTexture(GL_TEXTURE_2D, textures[1]);
+
+
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+		if(type == 0)
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, widthh, heighth, 0, GL_RGB,GL_UNSIGNED_BYTE, hedgeTexture); 
+		
+		else
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, widthg, heightg, 0, GL_RGB,GL_UNSIGNED_BYTE, groundTexture);
+*/
 		glBegin(GL_QUADS);
 
 			glPushMatrix();
+<<<<<<< HEAD
 			glTexCoord2f(0, 0);
 			glNormal3f(vertNorms[vertexNormIndex1].x,vertNorms[vertexNormIndex1].y, vertNorms[vertexNormIndex1].z);
 			glVertex3f(verts[vertexIndex1].x,verts[vertexIndex1].y,verts[vertexIndex1].z);
@@ -122,6 +211,25 @@ void Mesh3D::drawMesh(){
 			glNormal3f(vertNorms[vertexNormIndex3].x,vertNorms[vertexNormIndex3].y, vertNorms[vertexNormIndex3].z);
 			glVertex3f(verts[vertexIndex3].x,verts[vertexIndex3].y,verts[vertexIndex3].z);
 			glTexCoord2f(1, 0);
+=======
+			//glTexCoord2f(vertexTexture.at(faceTexCoords.at(i).v1- 1).a, vertexTexture.at(faceTexCoords.at(i).v1- 1).b);
+			//glTexCoord2f(0, 0);
+			glNormal3f(vertNorms[vertexNormIndex1].x,vertNorms[vertexNormIndex1].y, vertNorms[vertexNormIndex1].z);
+			glVertex3f(verts[vertexIndex1].x,verts[vertexIndex1].y,verts[vertexIndex1].z);
+
+			//glTexCoord2f(vertexTexture.at(faceTexCoords.at(i).v2- 1).a, vertexTexture.at(faceTexCoords.at(i).v2- 1).b);
+			//glTexCoord2f(0, 1);
+			glNormal3f(vertNorms[vertexNormIndex2].x,vertNorms[vertexNormIndex2].y, vertNorms[vertexNormIndex2].z);
+			glVertex3f(verts[vertexIndex2].x,verts[vertexIndex2].y,verts[vertexIndex2].z);
+			
+			//glTexCoord2f(vertexTexture.at(faceTexCoords.at(i).v3- 1).a, vertexTexture.at(faceTexCoords.at(i).v3- 1).b);
+			//glTexCoord2f(1, 1);
+			glNormal3f(vertNorms[vertexNormIndex3].x,vertNorms[vertexNormIndex3].y, vertNorms[vertexNormIndex3].z);
+			glVertex3f(verts[vertexIndex3].x,verts[vertexIndex3].y,verts[vertexIndex3].z);
+
+			//glTexCoord2f(vertexTexture.at(faceTexCoords.at(i).v4- 1).a, vertexTexture.at(faceTexCoords.at(i).v4- 1).b);
+			//glTexCoord2f(1, 0);
+>>>>>>> 1abac92569fe85c574049b3c6da30e5548d4d24e
 			glNormal3f(vertNorms[vertexNormIndex4].x,vertNorms[vertexNormIndex4].y, vertNorms[vertexNormIndex4].z);
 			glVertex3f(verts[vertexIndex4].x,verts[vertexIndex4].y,verts[vertexIndex4].z);
 
