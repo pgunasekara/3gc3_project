@@ -34,6 +34,12 @@ bool moveable = false;
 GLubyte* img, *groundTex;
 int height,width,maxAmount,height2,width2,max2;
 GLuint textures[2];
+double matModelView[16], matProjection[16];
+int viewport[4];
+vector<Hitbox*> hitBoxes;
+// change these so they work with your camera position
+vec3D near,far,distanceRay;
+Plane entrance;
 
 //node ids
 int masterID = 0;
@@ -47,6 +53,51 @@ double* start = new double[3];
 double* finish = new double[3];
 
 ParticleSystem rain;
+
+/*************************RAY PICKING***************************/
+bool Intersect(int x, int y){
+
+	//grab the matricies
+	glGetDoublev(GL_MODELVIEW_MATRIX, matModelView);
+	glGetDoublev(GL_PROJECTION_MATRIX, matProjection);
+	glGetIntegerv(GL_VIEWPORT, viewport);
+
+	start = camera->camera_position.returnDoubleArray();
+	finish = camera->camera_look_at.returnDoubleArray();
+
+	//unproject the values
+	double winX = (double)x;
+	double winY = viewport[3] - (double)y;
+
+	// get point on the 'near' plane (third param is set to 0.0)
+	gluUnProject(winX, winY, 0.0, matModelView, matProjection,
+		 viewport, &start[0], &start[1], &start[2]);
+
+	// get point on the 'far' plane (third param is set to 1.0)
+	gluUnProject(winX, winY, 1.0, matModelView, matProjection,
+		 viewport, &finish[0], &finish[1], &finish[2]);
+
+	near.update(start);
+	far.update(finish);
+	distanceRay = (far - near).normalize();
+
+	int ID_tmp;
+	for(int i = 0; i < hitBoxes.size(); i++)
+	{
+		ID_tmp = hitBoxes[i]->Intersect(near,distanceRay);
+		if(ID_tmp != -1)
+		{
+			printf("ID FOUND\n");
+		}else {
+			printf("miss\n");
+		}
+	}
+
+	return false;
+
+}
+
+
 
 GLubyte* LoadPPM(char* file, int* width, int* height, int* max)
 {
@@ -138,8 +189,8 @@ void initLighting()
 
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, amb0);
 
-	glLightf(GL_LIGHT0,GL_SPOT_CUTOFF,80.0f);
-	glLightf(GL_LIGHT0,GL_SPOT_EXPONENT,120.0f);
+	glLightf(GL_LIGHT0,GL_SPOT_CUTOFF,50.0f);
+	glLightf(GL_LIGHT0,GL_SPOT_EXPONENT,100.0f);
 
 	light_pos_tmp = camera->camera_position.returnArray4L();
 	glLightfv(GL_LIGHT0, GL_POSITION, light_pos_tmp);
@@ -212,15 +263,17 @@ void display()
 	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shiny);
 	//optionally draw the axis
 	glPushMatrix();
-
 		glScalef(3.0,3.0,3.0);
 		glBindTexture(GL_TEXTURE_2D, textures[0]);
 		test->drawMesh();
 			glPushMatrix();
-				glTranslatef(0,0.2,0);
 				glBindTexture(GL_TEXTURE_2D, textures[1]);
 				groundPlane->drawMesh();
 			glPopMatrix();
+	glPopMatrix();
+	glPushMatrix();
+		glTranslatef(34.5,0,-6);
+		glutSolidCube(1);
 	glPopMatrix();
 	rain.drawRainParticles();
 
@@ -291,6 +344,8 @@ void mouse(int btn, int state, int x, int y)
 		moveable = true;
 	}else if (btn == GLUT_LEFT_BUTTON && state == GLUT_DOWN && moveable){
 		moveable = false;
+	}else if (btn==GLUT_RIGHT_BUTTON && state == GLUT_DOWN){
+		Intersect(x,y);
 	}
 }
 
@@ -357,6 +412,9 @@ int main(int argc, char **argv)
 	//register glut callbacks
 	glutCallbacks();
 	initLighting();
+	//entrance = Plane();
+	hitBoxes.push_back(new Hitbox(vert3D(-0.5,-0.5,-0.5),vert3D(0.5,0.5,0.5),1));
+	hitBoxes[0]->Translate(vec3D(34.5,0,-6));
 
 	test = new Mesh3D();
 	test->loadObj("src/maze_2.obj");

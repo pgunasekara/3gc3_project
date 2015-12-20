@@ -41,9 +41,9 @@ Plane::Plane(vert3D a, vert3D b, vert3D c, vert3D d,bool xPlane, bool yPlane, bo
 Plane::Plane(vertex3D a, vertex3D b, vertex3D c, vertex3D d,bool xPlane, bool yPlane, bool zPlane,bool leftWall){
 	float scaleFactor;
 	if (leftWall){
-		scaleFactor = 1.0;
+		scaleFactor = 0.5;
 	}else{
-		scaleFactor = -1.0;
+		scaleFactor = -0.5;
 	}
 	if (xPlane && yPlane){
 		this->a = vert3D((float) a.x,(float) a.y,(float) a.z).scalePointR(vec3D(3.0,3.0,3.0));
