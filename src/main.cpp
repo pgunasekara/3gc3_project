@@ -276,7 +276,6 @@ void display()
 	
 	glPopMatrix();
 	rain.drawRainParticles();
-<<<<<<< HEAD
 	/*for (int i =0; i < test->faces.size();i++){
 		test->faces[i].lHit->draw();
 		test->faces[i].rHit->draw();
@@ -286,12 +285,10 @@ void display()
 		maze->faces[i].lHit->draw();
 		maze->faces[i].rHit->draw();
 	}
-=======
 	//for (int i =0; i < test->faces.size();i++){
 	//	test->faces[i].lHit->draw();
 	//	test->faces[i].rHit->draw();
 	//}
->>>>>>> 892efb5aa30f2f161a17a90e218689aeb5e2328f
 
 	//swap buffers - rendering is done to the back buffer, bring it forward to display
 	glutSwapBuffers();

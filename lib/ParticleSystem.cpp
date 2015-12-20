@@ -40,15 +40,9 @@ void ParticleSystem::initialize(int i)
 	system[i].lifeSpan = 1.0f;//all particles will have a lifespan between 0 and 1
 	system[i].decay = float(rand()%100)/1000.0f+0.005f;//Random decay for every drop
 
-<<<<<<< HEAD
-	system[i].x =  (30+30) * (float)rand()/(float)RAND_MAX - 30;///Pick any point between 0 and 50 for the x axis
-	system[i].y = 7.0f;//Every particle will start at a constant height
-	system[i].z =  (30+30) * (float)rand()/(float)RAND_MAX - 30;///pick any point on the z axis
-=======
 	system[i].x =  (40+40) * (float)rand()/(float)RAND_MAX - 40;///Pick any point between 0 and 50 for the x axis
 	system[i].y = 7.0f;//Every particle will start at a constant height
 	system[i].z =  (40+40) * (float)rand()/(float)RAND_MAX - 40;///pick any point on the z axis
->>>>>>> 892efb5aa30f2f161a17a90e218689aeb5e2328f
 	system[i].gravity = -1.8f;//the drops will fall at random speeds
 	system[i].speed = ySpeed;
 }
