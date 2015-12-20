@@ -31,7 +31,8 @@ float angle = 0.005f;
 bool PlaneExist = false;
 Camera* camera;
 bool moveable = true;
-GLubyte* img;
+GLubyte *img, *groundImg;
+GLuint textures[2];
 int height,width,maxAmount;
 
 //node ids
@@ -118,7 +119,7 @@ float m_diff[] = {0.78, 0.57, 0.11, 1.0};
 float m_spec[] = {0.99, 0.91, 0.81, 1.0};
 float shiny = 27.8;
 Mesh3D* test;
-
+Mesh3D* groundPlane;
 
 void display();
 void reshape(int h, int w);
@@ -167,11 +168,21 @@ void init(void)
 	camera = new Camera();
 	rain = ParticleSystem();
 
-	GLuint textures[1] = {*img};
-	glGenTextures(1,textures);
+	textures[0] = *img;
+	textures[1] = *groundImg;
+	glGenTextures(2,textures);
 	glBindTexture(GL_TEXTURE_2D, textures[0]);
 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, img);
+
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+	glBindTexture(GL_TEXTURE_2D, textures[1]);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, groundImg);
 
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
@@ -202,7 +213,14 @@ void display()
 	//optionally draw the axis
 	glPushMatrix();
 	glScalef(3.0,3.0,3.0);
+	glBindTexture(GL_TEXTURE_2D, textures[0]);
 	test->drawMesh();
+
+	glPushMatrix();
+	glBindTexture(GL_TEXTURE_2D, textures[1]);
+	glTranslatef(0, 0.3, 0);
+	groundPlane->drawMesh();
+	glPopMatrix();
 	glPopMatrix();
 	rain.drawRainParticles();
 
@@ -327,6 +345,7 @@ int main(int argc, char **argv)
 	glutInitWindowSize(1200, 1200);
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
 	img = LoadPPM("src/hedge_ascii.ppm",&width,&height,&maxAmount);
+	groundImg = LoadPPM("src/ground.ppm",&width,&height,&maxAmount);
 	glutCreateWindow("Spinning Cube");
 
 	//enable Z buffer test, otherwise things appear in the order they're drawn
@@ -343,8 +362,12 @@ int main(int argc, char **argv)
 	initLighting();
 
 	test = new Mesh3D();
-	test->loadObj("src/map.obj");
+	test->loadObj("src/maze_2.obj");
+
+	groundPlane = new Mesh3D();
+	groundPlane->loadObj("src/groundPlane.obj");
 	//start the program!
+
 	glutMainLoop();
 
 	return 0;
