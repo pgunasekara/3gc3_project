@@ -92,6 +92,7 @@ int Intersect(int x, int y){
 		if(ID_tmp != -1 && !(find(batteriesAcquired.begin(), batteriesAcquired.end(), ID_tmp) != batteriesAcquired.end()))
 		{
 			return ID_tmp;
+			printf("you have picked up batteries\n");
 		}
 	}
 	printf("There is nothing here\n");
@@ -364,6 +365,10 @@ void keyboard(unsigned char key, int x, int y)
 			camera->Move(RIGHT,test);
 			batteryChangeCount++;
 			break;
+			break;
+		case 'b':
+		case 'B':
+			printf("you have %f percent of your battery remaining\n",BatteryLife/70.0f);
 			break;
 		case 'q':
 		case 27:
