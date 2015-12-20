@@ -212,24 +212,15 @@ void display()
 	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shiny);
 	//optionally draw the axis
 	glPushMatrix();
-<<<<<<< HEAD
-	glScalef(3.0,3.0,3.0);
-	glBindTexture(GL_TEXTURE_2D, textures[0]);
-	test->drawMesh();
-	glPushMatrix();
-	glTranslatef(0,0.2,0);
-	glBindTexture(GL_TEXTURE_2D, textures[1]);
-	groundPlane->drawMesh();
-=======
+
 		glScalef(3.0,3.0,3.0);
 		glBindTexture(GL_TEXTURE_2D, textures[0]);
 		test->drawMesh();
 			glPushMatrix();
+				glTranslatef(0,0.2,0);
 				glBindTexture(GL_TEXTURE_2D, textures[1]);
 				groundPlane->drawMesh();
 			glPopMatrix();
->>>>>>> 88f6fc6885d2217c3d0798740d203ccd023a740e
-	glPopMatrix();
 	glPopMatrix();
 	rain.drawRainParticles();
 
