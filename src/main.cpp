@@ -30,10 +30,10 @@ float lookAt[] = {34.5,1.5,0};
 float angle = 0.005f;
 bool PlaneExist = false;
 Camera* camera;
-bool moveable = true;
-GLubyte *img, *groundImg;
+bool moveable = false;
+GLubyte* img, *groundTex;
+int height,width,maxAmount,height2,width2,max2;
 GLuint textures[2];
-int height,width,maxAmount;
 
 //node ids
 int masterID = 0;
@@ -118,8 +118,8 @@ float m_amb[] = {0.33, 0.22, 0.03, 1.0};
 float m_diff[] = {0.78, 0.57, 0.11, 1.0};
 float m_spec[] = {0.99, 0.91, 0.81, 1.0};
 float shiny = 27.8;
-Mesh3D* test;
-Mesh3D* groundPlane;
+Mesh3D* test, *groundPlane;
+
 
 void display();
 void reshape(int h, int w);
@@ -168,26 +168,27 @@ void init(void)
 	camera = new Camera();
 	rain = ParticleSystem();
 
-	textures[0] = *img;
-	textures[1] = *groundImg;
 	glGenTextures(2,textures);
+	img = LoadPPM("src/hedge_ascii.ppm",&width,&height,&maxAmount);
+
 	glBindTexture(GL_TEXTURE_2D, textures[0]);
+
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, img);
 
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
+	groundTex = LoadPPM("src/ground.ppm",&width,&height,&maxAmount);
 	glBindTexture(GL_TEXTURE_2D, textures[1]);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, groundImg);
-
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, groundTex);
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -209,18 +210,13 @@ void display()
 	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, m_diff);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, m_spec);
 	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shiny);
-
 	//optionally draw the axis
 	glPushMatrix();
 	glScalef(3.0,3.0,3.0);
 	glBindTexture(GL_TEXTURE_2D, textures[0]);
 	test->drawMesh();
-
-	glPushMatrix();
 	glBindTexture(GL_TEXTURE_2D, textures[1]);
-	glTranslatef(0, 0.3, 0);
 	groundPlane->drawMesh();
-	glPopMatrix();
 	glPopMatrix();
 	rain.drawRainParticles();
 
@@ -278,7 +274,6 @@ void keyboard(unsigned char key, int x, int y)
 			delete test;
 			delete camera;
 			delete light_pos_tmp;
-			//delete spot_direction;
 			exit (0);
 			break;
 		}
@@ -344,8 +339,6 @@ int main(int argc, char **argv)
 	glutInit(&argc, argv);
 	glutInitWindowSize(1200, 1200);
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
-	img = LoadPPM("src/hedge_ascii.ppm",&width,&height,&maxAmount);
-	groundImg = LoadPPM("src/ground.ppm",&width,&height,&maxAmount);
 	glutCreateWindow("Spinning Cube");
 
 	//enable Z buffer test, otherwise things appear in the order they're drawn
@@ -363,11 +356,9 @@ int main(int argc, char **argv)
 
 	test = new Mesh3D();
 	test->loadObj("src/maze_2.obj");
-
 	groundPlane = new Mesh3D();
 	groundPlane->loadObj("src/groundPlane.obj");
 	//start the program!
-
 	glutMainLoop();
 
 	return 0;
