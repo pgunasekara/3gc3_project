@@ -217,8 +217,8 @@ void init(void)
 	//GLuint id = 1;
 	camera = new Camera();
 	rain = ParticleSystem();
-	glEnable(GL_TEXTURE_2D);
-	loadTextures();
+	//glEnable(GL_TEXTURE_2D);
+	//loadTextures();
 
 	//init our scenegraph
 	//SG = new SceneGraph();
