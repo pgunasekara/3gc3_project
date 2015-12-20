@@ -22,12 +22,13 @@
 
 using namespace std;
 
-Mesh3D::Mesh3D(){
+Mesh3D::Mesh3D(int type){
 	vector<vertex3D> verts;
 	vector<faceVertNorms3D> faceVertNorms;
 	vector<vertNorms3D> vertNorms;
 	vector<faces3D> faces;
 	vector<colour3D> colours;
+	this->type = type;
 }
 
 Mesh3D::~Mesh3D(){
@@ -80,36 +81,32 @@ void Mesh3D::drawMesh(){
 		 vertexNormIndex4 = faceVertNorms[i].vn4;
 
 		glBegin(GL_QUADS);
-
-
-
-			switch (count){
-				case 0:
-					glColor3fv(red);
-					break;
-				case 1:
-					glColor3fv(green);
-					break;
-				case 2:
-					glColor3fv(blue);
-					break;
-				case 3:
-					glColor3fv(lightBlue);
-					break;
-				case 4:
-					glColor3fv(purple);
-					break;
-				case 5:
-					glColor3fv(yellow);
-					break;
-				case 6:
-					glColor3fv(black);
-					break;
+		/*	if (type == 1){
+				switch (count){
+					case 0:
+						glColor3fv(red);
+						break;
+					case 1:
+						glColor3fv(green);
+						break;
+					case 2:
+						glColor3fv(blue);
+						break;
+					case 3:
+						glColor3fv(lightBlue);
+						break;
+					case 4:
+						glColor3fv(purple);
+						break;
+					case 5:
+						glColor3fv(yellow);
+						break;
+					case 6:
+						glColor3fv(black);
+						break;
+				}
 			}
-
-		glEnd();
-
-		glBegin(GL_QUADS);
+			*/
 
 			glPushMatrix();
 			glTexCoord2f(0, 0);

@@ -22,6 +22,7 @@ using namespace std;
 class Mesh3D{
 public:
 	Mesh3D();
+	Mesh3D(int type);
 	~Mesh3D();
 	void drawMesh();
 	void load();
@@ -35,6 +36,7 @@ public:
 	vector<colour3D> colours;
 	vector<textureCoord> vertexTexture;
 	vector<faces3D> faceTexCoords;
+	int type;
 
 };
 

@@ -118,7 +118,7 @@ vec3D operator+ (vec3D v1, vec3D v2);
 vec3D operator- (vec3D v1, vec3D v2);
 vec3D operator* (vec3D v1, vec3D v2);
 
-bool Intersect(int x, int y);
+int Intersect(int x, int y);
 
 
 #endif

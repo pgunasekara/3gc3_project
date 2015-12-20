@@ -40,6 +40,8 @@ vector<Hitbox*> hitBoxes;
 // change these so they work with your camera position
 vec3D near,far,distanceRay;
 Plane entrance;
+int keyCount = 0;
+vector<int> keysAcquired;
 
 //node ids
 int masterID = 0;
@@ -55,7 +57,7 @@ double* finish = new double[3];
 ParticleSystem rain;
 
 /*************************RAY PICKING***************************/
-bool Intersect(int x, int y){
+int Intersect(int x, int y){
 
 	//grab the matricies
 	glGetDoublev(GL_MODELVIEW_MATRIX, matModelView);
@@ -87,13 +89,12 @@ bool Intersect(int x, int y){
 		ID_tmp = hitBoxes[i]->Intersect(near,distanceRay);
 		if(ID_tmp != -1)
 		{
-			printf("ID FOUND\n");
-		}else {
-			printf("miss\n");
+			printf("You have found a key\n");
+			return ID_tmp;
 		}
 	}
-
-	return false;
+	printf("There is nothing here\n");
+	return -1;
 
 }
 
@@ -271,8 +272,29 @@ void display()
 				groundPlane->drawMesh();
 			glPopMatrix();
 	glPopMatrix();
+	// first key
 	glPushMatrix();
 		glTranslatef(34.5,0,-6);
+		glutSolidCube(1);
+	glPopMatrix();
+	// second key
+	glPushMatrix();
+		glTranslatef(-34.5,0,-6);
+		glutSolidCube(1);
+	glPopMatrix();
+	//third key
+	glPushMatrix();
+		glTranslatef(-18,0,24);
+		glutSolidCube(1);
+	glPopMatrix();
+	// fourth key
+	glPushMatrix();
+		glTranslatef(0,0,0);
+		glutSolidCube(1);
+	glPopMatrix();
+	// fifth key
+	glPushMatrix();
+		glTranslatef(-12.0,0,15);
 		glutSolidCube(1);
 	glPopMatrix();
 	rain.drawRainParticles();
@@ -301,7 +323,7 @@ void reshape(int w, int h)
 	globalW = w;
 	globalH = h;
 	gluLookAt(pos[0], pos[1], pos[2], lookAt[0], lookAt[1], lookAt[2], 0, 1, 0);
-	//gluLookAt(50, 50, 50, 0, 0, 0, 0, 1, 0);
+	//gluLookAt(-60, 50, 50, 0, 0, 0, 0, 1, 0);
 }
 
 void keyboard(unsigned char key, int x, int y)
@@ -324,6 +346,10 @@ void keyboard(unsigned char key, int x, int y)
 			camera->Move(RIGHT,test);
 			glutPostRedisplay();
 			break;
+		case 'k':
+		case 'K':
+			printf("You have %i keys\n",keyCount);
+			break;
 		case 'q':
 		case 27:
 			delete start;
@@ -338,6 +364,7 @@ void keyboard(unsigned char key, int x, int y)
 
 void mouse(int btn, int state, int x, int y)
 {
+	int id;
 	if (btn == GLUT_LEFT_BUTTON && state == GLUT_DOWN && !moveable){
 		mouseX = x;
 		mouseY = y;
@@ -345,7 +372,11 @@ void mouse(int btn, int state, int x, int y)
 	}else if (btn == GLUT_LEFT_BUTTON && state == GLUT_DOWN && moveable){
 		moveable = false;
 	}else if (btn==GLUT_RIGHT_BUTTON && state == GLUT_DOWN){
-		Intersect(x,y);
+		id = Intersect(x,y);
+		if (id != -1 && find(keysAcquired.begin(), keysAcquired.end(), id) == keysAcquired.end()){
+			keysAcquired.push_back(id);
+			keyCount++;
+		}
 	}
 }
 
@@ -415,10 +446,18 @@ int main(int argc, char **argv)
 	//entrance = Plane();
 	hitBoxes.push_back(new Hitbox(vert3D(-0.5,-0.5,-0.5),vert3D(0.5,0.5,0.5),1));
 	hitBoxes[0]->Translate(vec3D(34.5,0,-6));
+	hitBoxes.push_back(new Hitbox(vert3D(-0.5,-0.5,-0.5),vert3D(0.5,0.5,0.5),2));
+	hitBoxes[1]->Translate(vec3D(-34.5,0,-6));
+	hitBoxes.push_back(new Hitbox(vert3D(-0.5,-0.5,-0.5),vert3D(0.5,0.5,0.5),3));
+	hitBoxes[2]->Translate(vec3D(-18,0,24));
+	hitBoxes.push_back(new Hitbox(vert3D(-0.5,-0.5,-0.5),vert3D(0.5,0.5,0.5),4));
+	hitBoxes[3]->Translate(vec3D(0,0,0));
+	hitBoxes.push_back(new Hitbox(vert3D(-0.5,-0.5,-0.5),vert3D(0.5,0.5,0.5),5));
+	hitBoxes[4]->Translate(vec3D(-12.0,0,15));
 
-	test = new Mesh3D();
+	test = new Mesh3D(1);
 	test->loadObj("src/maze_2.obj");
-	groundPlane = new Mesh3D();
+	groundPlane = new Mesh3D(0);
 	groundPlane->loadObj("src/groundPlane.obj");
 	//start the program!
 	glutMainLoop();
