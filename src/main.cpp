@@ -39,12 +39,12 @@ Camera* camera;
 bool moveable = true;
 
 //Texture information
-int widthh=0, heighth=0, widthg=0, heightg=0, kh, kg;
+/*int widthh=0, heighth=0, widthg=0, heightg=0, kh, kg;
 //unsigned char *hedgeTexture;
 GLubyte *hedgeTexture;
 GLubyte *groundTexture;
 //GLuint textureID[1];
-GLuint textures[2];
+GLuint textures[2];*/
 
 //node ids
 int masterID = 0;
@@ -127,7 +127,7 @@ GLubyte* LoadPPM(char* file, int* width, int* height, int* max)
 
 void loadTextures()
 {
-	GLuint id = 1;
+	/*GLuint id = 1;
 	
 	hedgeTexture = LoadPPM("src/hedge_ascii.ppm", &widthh, &heightg, &kh);
 	//Setup hedge texture
@@ -136,7 +136,7 @@ void loadTextures()
 	
 	textures[0] = *hedgeTexture;
 	textures[1] = *groundTexture;
-	glGenTextures(2, textures);
+	glGenTextures(2, textures);*/
 }
 
 //SceneGraph *SG;
@@ -249,20 +249,11 @@ void display()
 	glPushMatrix();
 	glScalef(3.0,3.0,3.0);
 	//test->drawMesh();
-	glBindTexture(GL_TEXTURE_2D, textures[0]);
-	//set texture parameters
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	//Create texture
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, widthh, heighth, 0, GL_RGB, GL_UNSIGNED_BYTE, hedgeTexture);
-	
 	maze->drawMesh();
 		
 		glPushMatrix();
 		//glTranslatef(-5,0,0);
-		glBindTexture(GL_TEXTURE_2D, textures[1]);
+		/*glBindTexture(GL_TEXTURE_2D, textures[1]);
 		//set texture parameters
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
@@ -270,7 +261,7 @@ void display()
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		//Create texture
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, widthg, heightg, 0, GL_RGB, GL_UNSIGNED_BYTE, groundTexture);
-		
+		*/
 		groundPlane->drawMesh();
 		glPopMatrix();
 	
@@ -434,9 +425,9 @@ int main(int argc, char **argv)
 
 	//test = new Mesh3D();
 	//test->loadObj("src/map.obj");
-	maze = new Mesh3D();
+	maze = new Mesh3D(0);
 	maze->loadObj("src/maze_2.obj");
-	groundPlane = new Mesh3D();
+	groundPlane = new Mesh3D(1);
 	groundPlane->loadObj("src/groundPlane.obj");
 	//start the program!
 
