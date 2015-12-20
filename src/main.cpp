@@ -15,7 +15,6 @@
 #include "Hitbox.h"
 
 #include "math3D.h"
-//#include "SOIL.h"
 
 #include "Mesh3D.h"
 #include "ParticleSystem.h"
@@ -32,19 +31,8 @@ float angle = 0.005f;
 bool PlaneExist = false;
 Camera* camera;
 bool moveable = true;
-<<<<<<< HEAD
-GLubyte* img, *ground;
+GLubyte* img;
 int height,width,maxAmount;
-=======
-
-//Texture information
-/*int widthh=0, heighth=0, widthg=0, heightg=0, kh, kg;
-//unsigned char *hedgeTexture;
-GLubyte *hedgeTexture;
-GLubyte *groundTexture;
-//GLuint textureID[1];
-GLuint textures[2];*/
->>>>>>> 1abac92569fe85c574049b3c6da30e5548d4d24e
 
 //node ids
 int masterID = 0;
@@ -59,11 +47,6 @@ double* finish = new double[3];
 
 ParticleSystem rain;
 
-<<<<<<< HEAD
-=======
-
-//-------------------------------TEXTURE CODE-----------------------------------//
->>>>>>> 1abac92569fe85c574049b3c6da30e5548d4d24e
 GLubyte* LoadPPM(char* file, int* width, int* height, int* max)
 {
 	GLubyte* img;
@@ -75,54 +58,31 @@ GLubyte* LoadPPM(char* file, int* width, int* height, int* max)
 	char b[100];
 	float s;
 	int red, green, blue;
-<<<<<<< HEAD
 
-=======
-	
->>>>>>> 1abac92569fe85c574049b3c6da30e5548d4d24e
 	/* first open file and check if it's an ASCII PPM (indicated by P3 at the start) */
 	fd = fopen(file, "r");
 	fscanf(fd,"%[^\n] ",b);
 	if(b[0]!='P'|| b[1] != '3')
 	{
-<<<<<<< HEAD
 		printf("%s is not a PPM file!\n",file);
-		exit(0);
-	}
-	//printf("%s is a PPM file\n", file);
-	fscanf(fd, "%c",&c);
-
-	/* next, skip past the comments - any line starting with #*/
-	while(c == '#')
-=======
-		printf("%s is not a PPM file!\n",file); 
 		exit(0);
 	}
 	printf("%s is a PPM file\n", file);
 	fscanf(fd, "%c",&c);
 
 	/* next, skip past the comments - any line starting with #*/
-	while(c == '#') 
->>>>>>> 1abac92569fe85c574049b3c6da30e5548d4d24e
+	while(c == '#')
 	{
 		fscanf(fd, "%[^\n] ", b);
 		printf("%s\n",b);
 		fscanf(fd, "%c",&c);
 	}
-<<<<<<< HEAD
 	ungetc(c,fd);
-=======
-	ungetc(c,fd); 
->>>>>>> 1abac92569fe85c574049b3c6da30e5548d4d24e
 
 	/* now get the dimensions and max colour value from the image */
 	fscanf(fd, "%d %d %d", &n, &m, &k);
 
-<<<<<<< HEAD
-	//printf("%d rows  %d columns  max value= %d\n",n,m,k);
-=======
 	printf("%d rows  %d columns  max value= %d\n",n,m,k);
->>>>>>> 1abac92569fe85c574049b3c6da30e5548d4d24e
 
 	/* calculate number of pixels and allocate storage for this */
 	nm = n*m;
@@ -130,11 +90,7 @@ GLubyte* LoadPPM(char* file, int* width, int* height, int* max)
 	s=255.0/k;
 
 	/* for every pixel, grab the read green and blue values, storing them in the image data array */
-<<<<<<< HEAD
 	for(i=0;i<nm;i++)
-=======
-	for(i=0;i<nm;i++) 
->>>>>>> 1abac92569fe85c574049b3c6da30e5548d4d24e
 	{
 		fscanf(fd,"%d %d %d",&red, &green, &blue );
 		img[3*nm-3*i-3]=red*s;
@@ -148,23 +104,6 @@ GLubyte* LoadPPM(char* file, int* width, int* height, int* max)
 	*max = k;
 
 	return img;
-<<<<<<< HEAD
-=======
-}
-
-void loadTextures()
-{
-	/*GLuint id = 1;
-	
-	hedgeTexture = LoadPPM("src/hedge_ascii.ppm", &widthh, &heightg, &kh);
-	//Setup hedge texture
-
-	groundTexture = LoadPPM("src/ground.ppm", &widthg, &heightg, &kg);
-	
-	textures[0] = *hedgeTexture;
-	textures[1] = *groundTexture;
-	glGenTextures(2, textures);*/
->>>>>>> 1abac92569fe85c574049b3c6da30e5548d4d24e
 }
 
 //SceneGraph *SG;
@@ -179,8 +118,6 @@ float m_diff[] = {0.78, 0.57, 0.11, 1.0};
 float m_spec[] = {0.99, 0.91, 0.81, 1.0};
 float shiny = 27.8;
 Mesh3D* test;
-Mesh3D* maze;
-Mesh3D* groundPlane;
 
 
 void display();
@@ -229,10 +166,6 @@ void init(void)
 {
 	camera = new Camera();
 	rain = ParticleSystem();
-	//glEnable(GL_TEXTURE_2D);
-	//loadTextures();
-
-	//glEnable(GL_TEXTURE_2D);
 
 	GLuint textures[1] = {*img};
 	glGenTextures(1,textures);
@@ -269,41 +202,9 @@ void display()
 	//optionally draw the axis
 	glPushMatrix();
 	glScalef(3.0,3.0,3.0);
-	//test->drawMesh();
-	maze->drawMesh();
-		
-		glPushMatrix();
-		//glTranslatef(-5,0,0);
-		/*glBindTexture(GL_TEXTURE_2D, textures[1]);
-		//set texture parameters
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		//Create texture
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, widthg, heightg, 0, GL_RGB, GL_UNSIGNED_BYTE, groundTexture);
-		*/
-		groundPlane->drawMesh();
-		glPopMatrix();
-	
+	test->drawMesh();
 	glPopMatrix();
 	rain.drawRainParticles();
-<<<<<<< HEAD
-=======
-	/*for (int i =0; i < test->faces.size();i++){
-		test->faces[i].lHit->draw();
-		test->faces[i].rHit->draw();
-	}*/
-
-	for (int i =0; i < maze->faces.size();i++){
-		maze->faces[i].lHit->draw();
-		maze->faces[i].rHit->draw();
-	}
-	//for (int i =0; i < test->faces.size();i++){
-	//	test->faces[i].lHit->draw();
-	//	test->faces[i].rHit->draw();
-	//}
->>>>>>> 1abac92569fe85c574049b3c6da30e5548d4d24e
 
 	//swap buffers - rendering is done to the back buffer, bring it forward to display
 	glutSwapBuffers();
@@ -337,26 +238,26 @@ void keyboard(unsigned char key, int x, int y)
 	switch (key)
 	{
 		case 'W':
-			camera->Move(FORWARD,maze);
+			camera->Move(FORWARD,test);
 			glutPostRedisplay();
 			break;
 		case 'A':
-			camera->Move(LEFT,maze);
+			camera->Move(LEFT,test);
 			glutPostRedisplay();
 			break;
 		case 'S':
-			camera->Move(BACK,maze);
+			camera->Move(BACK,test);
 			glutPostRedisplay();
 			break;
 		case 'D':
-			camera->Move(RIGHT,maze);
+			camera->Move(RIGHT,test);
 			glutPostRedisplay();
 			break;
 		case 'q':
 		case 27:
 			delete start;
 			delete finish;
-			delete maze;
+			delete test;
 			delete camera;
 			delete light_pos_tmp;
 			delete spot_direction;
@@ -425,41 +326,25 @@ int main(int argc, char **argv)
 	glutInit(&argc, argv);
 	glutInitWindowSize(1200, 1200);
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
-<<<<<<< HEAD
 	img = LoadPPM("src/hedge_ascii.ppm",&width,&height,&maxAmount);
-=======
-
-	init();
->>>>>>> 1abac92569fe85c574049b3c6da30e5548d4d24e
 	glutCreateWindow("Spinning Cube");
 
 	//enable Z buffer test, otherwise things appear in the order they're drawn
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_TEXTURE_2D);
 	glShadeModel(GL_SMOOTH);
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 	init();
 	//glEnable(GL_CULL_FACE);
 	//glCullFace(GL_BACK);
 
-	//Enable Blending for water particles
-
 	//register glut callbacks
 	glutCallbacks();
 	initLighting();
 
-
-
-
-	//test = new Mesh3D();
-	//test->loadObj("src/map.obj");
-	maze = new Mesh3D(0);
-	maze->loadObj("src/maze_2.obj");
-	groundPlane = new Mesh3D(1);
-	groundPlane->loadObj("src/groundPlane.obj");
+	test = new Mesh3D();
+	test->loadObj("src/map.obj");
 	//start the program!
-
-
-
 	glutMainLoop();
 
 	return 0;

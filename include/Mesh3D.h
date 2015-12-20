@@ -21,7 +21,7 @@ using namespace std;
 
 class Mesh3D{
 public:
-	Mesh3D(int type);
+	Mesh3D();
 	~Mesh3D();
 	void drawMesh();
 	void load();
@@ -35,15 +35,6 @@ public:
 	vector<colour3D> colours;
 	vector<textureCoord> vertexTexture;
 	vector<faces3D> faceTexCoords;
-
-	//Texture information
-	int widthh=0, heighth=0, widthg=0, heightg=0, kh, kg;
-	//unsigned char *hedgeTexture;
-	GLubyte *hedgeTexture;
-	GLubyte *groundTexture;
-	//GLuint textureID[1];
-	GLuint textures[2];
-	int type;
 
 };
 
