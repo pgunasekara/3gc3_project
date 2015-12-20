@@ -215,8 +215,11 @@ void display()
 	glScalef(3.0,3.0,3.0);
 	glBindTexture(GL_TEXTURE_2D, textures[0]);
 	test->drawMesh();
+	glPushMatrix();
+	glTranslatef(0,0.2,0);
 	glBindTexture(GL_TEXTURE_2D, textures[1]);
 	groundPlane->drawMesh();
+	glPopMatrix();
 	glPopMatrix();
 	rain.drawRainParticles();
 
