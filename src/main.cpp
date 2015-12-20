@@ -129,7 +129,7 @@ GLubyte* LoadPPM(char* file, int* width, int* height, int* max)
 	while(c == '#')
 	{
 		fscanf(fd, "%[^\n] ", b);
-		printf("%s\n",b);
+		//printf("%s\n",b);
 		fscanf(fd, "%c",&c);
 	}
 	ungetc(c,fd);
@@ -457,7 +457,17 @@ int main(int argc, char **argv)
 	glutInit(&argc, argv);
 	glutInitWindowSize(1200, 1200);
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
-	glutCreateWindow("Spinning Cube");
+	glutCreateWindow("COMP SCI 3GC3 Final Project");
+	cout << "\nCOMP SCI 3GC3 Final Project\n\n"
+		<< "Group: \n\tPasindu Gunasekara\n\t\tgunasepi\n\t\t1412155"
+		<< "\n\tRoberto Temelkovski\n\t\ttemelkr\n\t\t1418731"
+		<< "\n\tColin Gillespie\n\t\tgillescj\n\t\t1330655"
+		<< "\n\tPeter Kalnoki\n\t\tkalnokp\n\t\t1160986"
+		<< "\n\nInstructions:\n"
+		<< "Use the mouse to rotate the camera around\n\tLEFT CLICK to stop the camera from moving, \n\tuse this to move the mouse pointer to a more comfortable position."
+		<< "\n(UPPERCASE)W A S D: Translate the camera, move forwards, backwards, left, and right."
+		<< "\nRIGHT CLICK: Ray picking, for picking up keys.\n"
+		<< "(LOWERCASE) q: quit.\n";
 
 	//enable Z buffer test, otherwise things appear in the order they're drawn
 	glEnable(GL_DEPTH_TEST);
