@@ -279,35 +279,35 @@ void display()
 	glPopMatrix();
 //glBindTexture(GL_TEXTURE_2D, textures[0]);
 	// first key
-	if (!(find(batteriesAcquired.begin(), batteriesAcquired.end(), 0) != batteriesAcquired.end())){
+	if (!(find(batteriesAcquired.begin(), batteriesAcquired.end(), 1) != batteriesAcquired.end())){
 		glPushMatrix();
 			glTranslatef(34.5,0,-6);
 			glutSolidCube(1);
 		glPopMatrix();
 	}
 	// second key
-	if (!(find(batteriesAcquired.begin(), batteriesAcquired.end(), 1) != batteriesAcquired.end())){
+	if (!(find(batteriesAcquired.begin(), batteriesAcquired.end(), 2) != batteriesAcquired.end())){
 		glPushMatrix();
 			glTranslatef(-34.5,0,-6);
 			glutSolidCube(1);
 		glPopMatrix();
 	}
 	//third key
-	if (find(batteriesAcquired.begin(), batteriesAcquired.end(), 2) != batteriesAcquired.end()){
+	if (find(batteriesAcquired.begin(), batteriesAcquired.end(), 3) != batteriesAcquired.end()){
 		glPushMatrix();
 			glTranslatef(-18,0,24);
 			glutSolidCube(1);
 		glPopMatrix();
 	}
 	// fourth key
-	if (find(batteriesAcquired.begin(), batteriesAcquired.end(), 3) != batteriesAcquired.end()){
+	if (find(batteriesAcquired.begin(), batteriesAcquired.end(), 4) != batteriesAcquired.end()){
 		glPushMatrix();
 			glTranslatef(0,0,0);
 			glutSolidCube(1);
 		glPopMatrix();
 	}
 	// fifth key
-	if (find(batteriesAcquired.begin(), batteriesAcquired.end(), 4) != batteriesAcquired.end()){
+	if (find(batteriesAcquired.begin(), batteriesAcquired.end(), 5) != batteriesAcquired.end()){
 		glPushMatrix();
 			glTranslatef(-12.0,0,15);
 			glutSolidCube(1);
