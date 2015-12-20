@@ -68,7 +68,7 @@ GLubyte* LoadPPM(char* file, int* width, int* height, int* max)
 		printf("%s is not a PPM file!\n",file);
 		exit(0);
 	}
-	printf("%s is a PPM file\n", file);
+	//printf("%s is a PPM file\n", file);
 	fscanf(fd, "%c",&c);
 
 	/* next, skip past the comments - any line starting with #*/
@@ -83,7 +83,7 @@ GLubyte* LoadPPM(char* file, int* width, int* height, int* max)
 	/* now get the dimensions and max colour value from the image */
 	fscanf(fd, "%d %d %d", &n, &m, &k);
 
-	printf("%d rows  %d columns  max value= %d\n",n,m,k);
+	//printf("%d rows  %d columns  max value= %d\n",n,m,k);
 
 	/* calculate number of pixels and allocate storage for this */
 	nm = n*m;
@@ -212,6 +212,7 @@ void display()
 	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shiny);
 	//optionally draw the axis
 	glPushMatrix();
+<<<<<<< HEAD
 	glScalef(3.0,3.0,3.0);
 	glBindTexture(GL_TEXTURE_2D, textures[0]);
 	test->drawMesh();
@@ -219,6 +220,15 @@ void display()
 	glTranslatef(0,0.2,0);
 	glBindTexture(GL_TEXTURE_2D, textures[1]);
 	groundPlane->drawMesh();
+=======
+		glScalef(3.0,3.0,3.0);
+		glBindTexture(GL_TEXTURE_2D, textures[0]);
+		test->drawMesh();
+			glPushMatrix();
+				glBindTexture(GL_TEXTURE_2D, textures[1]);
+				groundPlane->drawMesh();
+			glPopMatrix();
+>>>>>>> 88f6fc6885d2217c3d0798740d203ccd023a740e
 	glPopMatrix();
 	glPopMatrix();
 	rain.drawRainParticles();
