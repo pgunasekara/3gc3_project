@@ -39,9 +39,12 @@ Camera* camera;
 bool moveable = false;
 
 //Texture information
-int width, height;
-unsigned char *hedgeTexture;
-GLuint textureID[1];
+int widthh=0, heighth=0, widthg=0, heightg=0, kh, kg;
+//unsigned char *hedgeTexture;
+GLubyte *hedgeTexture;
+GLubyte *groundTexture;
+//GLuint textureID[1];
+GLuint textures[2];
 
 //node ids
 int masterID = 0;
@@ -61,14 +64,79 @@ double* finish = new double[3];
 
 ParticleSystem rain;
 
-void loadTexture()
+
+//-------------------------------TEXTURE CODE-----------------------------------//
+GLubyte* LoadPPM(char* file, int* width, int* height, int* max)
 {
-	//hedgeTexture = SOIL_load_image("hedge.png",&width,&height,0,SOIL_LOAD_RGB);
-	//glGenTextures(1, &textureID[0]);
-	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, hedgeTexture);
-	//glGenerateMipmap(GL_TEXTURE_2D);
-	//SOIL_free_image_data(hedgeTexture);
-	//glBindTexture(GL_TEXTURE_2D, 0);
+	GLubyte* img;
+	FILE *fd;
+	int n, m;
+	int  k, nm;
+	char c;
+	int i;
+	char b[100];
+	float s;
+	int red, green, blue;
+	
+	/* first open file and check if it's an ASCII PPM (indicated by P3 at the start) */
+	fd = fopen(file, "r");
+	fscanf(fd,"%[^\n] ",b);
+	if(b[0]!='P'|| b[1] != '3')
+	{
+		printf("%s is not a PPM file!\n",file); 
+		exit(0);
+	}
+	printf("%s is a PPM file\n", file);
+	fscanf(fd, "%c",&c);
+
+	/* next, skip past the comments - any line starting with #*/
+	while(c == '#') 
+	{
+		fscanf(fd, "%[^\n] ", b);
+		printf("%s\n",b);
+		fscanf(fd, "%c",&c);
+	}
+	ungetc(c,fd); 
+
+	/* now get the dimensions and max colour value from the image */
+	fscanf(fd, "%d %d %d", &n, &m, &k);
+
+	printf("%d rows  %d columns  max value= %d\n",n,m,k);
+
+	/* calculate number of pixels and allocate storage for this */
+	nm = n*m;
+	img = (GLubyte*)malloc(3*sizeof(GLuint)*nm);
+	s=255.0/k;
+
+	/* for every pixel, grab the read green and blue values, storing them in the image data array */
+	for(i=0;i<nm;i++) 
+	{
+		fscanf(fd,"%d %d %d",&red, &green, &blue );
+		img[3*nm-3*i-3]=red*s;
+		img[3*nm-3*i-2]=green*s;
+		img[3*nm-3*i-1]=blue*s;
+	}
+
+	/* finally, set the "return parameters" (width, height, max) and return the image array */
+	*width = n;
+	*height = m;
+	*max = k;
+
+	return img;
+}
+
+void loadTextures()
+{
+	GLuint id = 1;
+	
+	hedgeTexture = LoadPPM("src/hedge_ascii.ppm", &widthh, &heightg, &kh);
+	//Setup hedge texture
+
+	groundTexture = LoadPPM("src/ground.ppm", &widthg, &heightg, &kg);
+	
+	textures[0] = *hedgeTexture;
+	textures[1] = *groundTexture;
+	glGenTextures(2, textures);
 }
 
 //SceneGraph *SG;
@@ -83,6 +151,8 @@ float m_diff[] = {0.78, 0.57, 0.11, 1.0};
 float m_spec[] = {0.99, 0.91, 0.81, 1.0};
 float shiny = 27.8;
 Mesh3D* test;
+Mesh3D* maze;
+Mesh3D* groundPlane;
 
 
 void display();
@@ -147,6 +217,8 @@ void init(void)
 	//GLuint id = 1;
 	camera = new Camera();
 	rain = ParticleSystem();
+	glEnable(GL_TEXTURE_2D);
+	loadTextures();
 
 	//init our scenegraph
 	//SG = new SceneGraph();
@@ -178,12 +250,42 @@ void display()
 	//optionally draw the axis
 	glPushMatrix();
 	glScalef(3.0,3.0,3.0);
-	test->drawMesh();
+	//test->drawMesh();
+	glBindTexture(GL_TEXTURE_2D, textures[0]);
+	//set texture parameters
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	//Create texture
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, widthh, heighth, 0, GL_RGB, GL_UNSIGNED_BYTE, hedgeTexture);
+	
+	maze->drawMesh();
+		
+		glPushMatrix();
+		//glTranslatef(-5,0,0);
+		glBindTexture(GL_TEXTURE_2D, textures[1]);
+		//set texture parameters
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		//Create texture
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, widthg, heightg, 0, GL_RGB, GL_UNSIGNED_BYTE, groundTexture);
+		
+		groundPlane->drawMesh();
+		glPopMatrix();
+	
 	glPopMatrix();
 	rain.drawRainParticles();
-	for (int i =0; i < test->faces.size();i++){
+	/*for (int i =0; i < test->faces.size();i++){
 		test->faces[i].lHit->draw();
 		test->faces[i].rHit->draw();
+	}*/
+
+	for (int i =0; i < maze->faces.size();i++){
+		maze->faces[i].lHit->draw();
+		maze->faces[i].rHit->draw();
 	}
 
 	//swap buffers - rendering is done to the back buffer, bring it forward to display
@@ -218,26 +320,26 @@ void keyboard(unsigned char key, int x, int y)
 	switch (key)
 	{
 		case 'W':
-			camera->Move(FORWARD,test);
+			camera->Move(FORWARD,maze);
 			glutPostRedisplay();
 			break;
 		case 'A':
-			camera->Move(LEFT,test);
+			camera->Move(LEFT,maze);
 			glutPostRedisplay();
 			break;
 		case 'S':
-			camera->Move(BACK,test);
+			camera->Move(BACK,maze);
 			glutPostRedisplay();
 			break;
 		case 'D':
-			camera->Move(RIGHT,test);
+			camera->Move(RIGHT,maze);
 			glutPostRedisplay();
 			break;
 		case 'q':
 		case 27:
 			delete start;
 			delete finish;
-			delete test;
+			delete maze;
 			delete camera;
 			delete light_pos_tmp;
 			delete spot_direction;
@@ -306,12 +408,12 @@ int main(int argc, char **argv)
 	glutInit(&argc, argv);
 	glutInitWindowSize(1200, 1200);
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
+
 	init();
 	glutCreateWindow("Spinning Cube");
 
 	//enable Z buffer test, otherwise things appear in the order they're drawn
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_TEXTURE_2D);
 	glShadeModel(GL_SMOOTH);
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 	//glEnable(GL_CULL_FACE);
@@ -325,9 +427,19 @@ int main(int argc, char **argv)
 	glutCallbacks();
 	initLighting();
 
-	test = new Mesh3D();
-	test->loadObj("src/map.obj");
+
+
+
+	//test = new Mesh3D();
+	//test->loadObj("src/map.obj");
+	maze = new Mesh3D();
+	maze->loadObj("src/maze_2.obj");
+	groundPlane = new Mesh3D();
+	groundPlane->loadObj("src/groundPlane.obj");
 	//start the program!
+
+
+
 	glutMainLoop();
 
 	return 0;
