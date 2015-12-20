@@ -41,8 +41,9 @@ vector<Hitbox*> hitBoxes;
 // change these so they work with your camera position
 vec3D near,far,distanceRay;
 Plane entrance;
-int keyCount = 0;
-vector<int> keysAcquired;
+int BatteryLife = 70;
+int batteryChangeCount = 0;
+vector<int> batteriesAcquired;
 
 //node ids
 int masterID = 0;
@@ -88,9 +89,9 @@ int Intersect(int x, int y){
 	for(int i = 0; i < hitBoxes.size(); i++)
 	{
 		ID_tmp = hitBoxes[i]->Intersect(near,distanceRay);
-		if(ID_tmp != -1)
+		if(ID_tmp != -1 && !(find(batteriesAcquired.begin(), batteriesAcquired.end(), ID_tmp) != batteriesAcquired.end()))
 		{
-			printf("You have found a key\n");
+			printf("You have found Batteries\n");
 			return ID_tmp;
 		}
 	}
@@ -191,8 +192,8 @@ void initLighting()
 
 	//glLightModelfv(GL_LIGHT_MODEL_AMBIENT, amb0);
 
-	glLightf(GL_LIGHT0,GL_SPOT_CUTOFF,50.0f);
-	glLightf(GL_LIGHT0,GL_SPOT_EXPONENT,100.0f);
+	glLightf(GL_LIGHT0,GL_SPOT_CUTOFF,BatteryLife);
+	glLightf(GL_LIGHT0,GL_SPOT_EXPONENT,120.0f);
 
 	light_pos_tmp = camera->camera_position.returnArray4L();
 	glLightfv(GL_LIGHT0, GL_POSITION, light_pos_tmp);
@@ -255,6 +256,8 @@ void display()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	glLightf(GL_LIGHT0,GL_SPOT_CUTOFF,BatteryLife);
+
 	delete light_pos_tmp;
 	light_pos_tmp = camera->camera_position.returnArray4L();
 	glLightfv(GL_LIGHT0, GL_POSITION, light_pos_tmp);
@@ -275,36 +278,40 @@ void display()
 	glPopMatrix();
 //glBindTexture(GL_TEXTURE_2D, textures[0]);
 	// first key
-	glPushMatrix();
-		glTranslatef(34.5,0,-6);
-		//keyObject->drawMesh();
-		glutSolidCube(1);
-	glPopMatrix();
+	if (!(find(batteriesAcquired.begin(), batteriesAcquired.end(), 0) != batteriesAcquired.end())){
+		glPushMatrix();
+			glTranslatef(34.5,0,-6);
+			glutSolidCube(1);
+		glPopMatrix();
+	}
 	// second key
-	glPushMatrix();
-		glTranslatef(-34.5,0,-6);
-		//keyObject->drawMesh();
-		glutSolidCube(1);
-	glPopMatrix();
+	if (!(find(batteriesAcquired.begin(), batteriesAcquired.end(), 1) != batteriesAcquired.end())){
+		glPushMatrix();
+			glTranslatef(-34.5,0,-6);
+			glutSolidCube(1);
+		glPopMatrix();
+	}
 	//third key
-	glPushMatrix();
-		glTranslatef(-18,0,24);
-		//keyObject->drawMesh();
-		glutSolidCube(1);
-	glPopMatrix();
+	if (find(batteriesAcquired.begin(), batteriesAcquired.end(), 2) != batteriesAcquired.end()){
+		glPushMatrix();
+			glTranslatef(-18,0,24);
+			glutSolidCube(1);
+		glPopMatrix();
+	}
 	// fourth key
-	glPushMatrix();
-		glTranslatef(0,0,0);
-		//keyObject->drawMesh();
-		glutSolidCube(1);
-	glPopMatrix();
+	if (find(batteriesAcquired.begin(), batteriesAcquired.end(), 3) != batteriesAcquired.end()){
+		glPushMatrix();
+			glTranslatef(0,0,0);
+			glutSolidCube(1);
+		glPopMatrix();
+	}
 	// fifth key
-	glPushMatrix();
-		glScalef(50,50,50);
-		glTranslatef(-12.0,0,15);
-		//keyObject->drawMesh();
-		glutSolidCube(1);
-	glPopMatrix();
+	if (find(batteriesAcquired.begin(), batteriesAcquired.end(), 4) != batteriesAcquired.end()){
+		glPushMatrix();
+			glTranslatef(-12.0,0,15);
+			glutSolidCube(1);
+		glPopMatrix();
+	}
 	rain.drawRainParticles();
 
 	//swap buffers - rendering is done to the back buffer, bring it forward to display
@@ -340,23 +347,27 @@ void keyboard(unsigned char key, int x, int y)
 	{
 		case 'W':
 			camera->Move(FORWARD,test);
+			batteryChangeCount++;
 			glutPostRedisplay();
 			break;
 		case 'A':
 			camera->Move(LEFT,test);
+			batteryChangeCount++;
 			glutPostRedisplay();
 			break;
 		case 'S':
 			camera->Move(BACK,test);
+			batteryChangeCount++;
 			glutPostRedisplay();
 			break;
 		case 'D':
 			camera->Move(RIGHT,test);
+			batteryChangeCount++;
 			glutPostRedisplay();
 			break;
 		case 'k':
 		case 'K':
-			printf("You have %i keys\n",keyCount);
+			//printf("You have %i keys\n",keyCount);
 			break;
 		case 'q':
 		case 27:
@@ -367,6 +378,10 @@ void keyboard(unsigned char key, int x, int y)
 			delete light_pos_tmp;
 			exit (0);
 			break;
+		}
+		if (batteryChangeCount > 10){
+			BatteryLife -= 5;
+			batteryChangeCount = 0;
 		}
 }
 
@@ -381,9 +396,9 @@ void mouse(int btn, int state, int x, int y)
 		moveable = false;
 	}else if (btn==GLUT_RIGHT_BUTTON && state == GLUT_DOWN){
 		id = Intersect(x,y);
-		if (id != -1 && find(keysAcquired.begin(), keysAcquired.end(), id) == keysAcquired.end()){
-			keysAcquired.push_back(id);
-			keyCount++;
+		if (id != -1){
+			batteriesAcquired.push_back(id);
+			BatteryLife = 70;
 		}
 	}
 }
@@ -445,8 +460,6 @@ int main(int argc, char **argv)
 	glShadeModel(GL_SMOOTH);
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 	init();
-	//glEnable(GL_CULL_FACE);
-	//glCullFace(GL_BACK);
 
 	//register glut callbacks
 	glutCallbacks();
