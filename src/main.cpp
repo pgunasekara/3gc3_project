@@ -193,7 +193,7 @@ void initLighting()
 	//glLightModelfv(GL_LIGHT_MODEL_AMBIENT, amb0);
 
 	glLightf(GL_LIGHT0,GL_SPOT_CUTOFF,BatteryLife);
-	glLightf(GL_LIGHT0,GL_SPOT_EXPONENT,120.0f);
+	glLightf(GL_LIGHT0,GL_SPOT_EXPONENT,30.0f);
 
 	light_pos_tmp = camera->camera_position.returnArray4L();
 	glLightfv(GL_LIGHT0, GL_POSITION, light_pos_tmp);
@@ -273,6 +273,7 @@ void display()
 		test->drawMesh();
 			glPushMatrix();
 				glBindTexture(GL_TEXTURE_2D, textures[1]);
+				glTranslatef(0,0.3,0);
 				groundPlane->drawMesh();
 			glPopMatrix();
 	glPopMatrix();
