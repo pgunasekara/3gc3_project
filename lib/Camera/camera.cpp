@@ -86,7 +86,7 @@ void Camera::Update() {
 	// creates new lookat and rounds it off to nicer numbers (by scalar multiplication)
 	camera_look_at = camera_position + camera_direction;
 	camera_look_at= camera_look_at.vectorMultiplyr(1.0f);
-	spot_direction = (camera_position-camera_look_at).normalize();
+	//spot_direction = (camera_position-camera_look_at).normalize();
 
 	// below you just update the look
 	glMatrixMode(GL_MODELVIEW);

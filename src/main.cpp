@@ -189,7 +189,7 @@ void initLighting()
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
 
-	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, amb0);
+	//glLightModelfv(GL_LIGHT_MODEL_AMBIENT, amb0);
 
 	glLightf(GL_LIGHT0,GL_SPOT_CUTOFF,50.0f);
 	glLightf(GL_LIGHT0,GL_SPOT_EXPONENT,100.0f);
@@ -270,38 +270,39 @@ void display()
 		test->drawMesh();
 			glPushMatrix();
 				glBindTexture(GL_TEXTURE_2D, textures[1]);
-				glTranslatef(0,0.3,0);
 				groundPlane->drawMesh();
 			glPopMatrix();
 	glPopMatrix();
+//glBindTexture(GL_TEXTURE_2D, textures[0]);
 	// first key
 	glPushMatrix();
 		glTranslatef(34.5,0,-6);
-		keyObject->drawMesh();
-		//glutSolidCube(1);
+		//keyObject->drawMesh();
+		glutSolidCube(1);
 	glPopMatrix();
 	// second key
 	glPushMatrix();
 		glTranslatef(-34.5,0,-6);
-		keyObject->drawMesh();
+		//keyObject->drawMesh();
 		glutSolidCube(1);
 	glPopMatrix();
 	//third key
 	glPushMatrix();
 		glTranslatef(-18,0,24);
-		keyObject->drawMesh();
+		//keyObject->drawMesh();
 		glutSolidCube(1);
 	glPopMatrix();
 	// fourth key
 	glPushMatrix();
 		glTranslatef(0,0,0);
-		keyObject->drawMesh();
+		//keyObject->drawMesh();
 		glutSolidCube(1);
 	glPopMatrix();
 	// fifth key
 	glPushMatrix();
+		glScalef(50,50,50);
 		glTranslatef(-12.0,0,15);
-		keyObject->drawMesh();
+		//keyObject->drawMesh();
 		glutSolidCube(1);
 	glPopMatrix();
 	rain.drawRainParticles();
@@ -330,7 +331,7 @@ void reshape(int w, int h)
 	globalW = w;
 	globalH = h;
 	gluLookAt(pos[0], pos[1], pos[2], lookAt[0], lookAt[1], lookAt[2], 0, 1, 0);
-	//gluLookAt(-60, 50, 50, 0, 0, 0, 0, 1, 0);
+	//gluLookAt(70, 70, 70, 0, 0, 0, 0, 1, 0);
 }
 
 void keyboard(unsigned char key, int x, int y)
@@ -466,8 +467,7 @@ int main(int argc, char **argv)
 	test->loadObj("src/maze_2.obj");
 	groundPlane = new Mesh3D(0);
 	groundPlane->loadObj("src/groundPlane_new.obj");
-	keyObject = new Mesh3D(1);
-	keyObject->loadObj("src/key.obj");
+
 	//start the program!
 	glutMainLoop();
 
