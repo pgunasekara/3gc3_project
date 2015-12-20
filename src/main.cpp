@@ -10,6 +10,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "algorithm"
 #include <math.h>
 #include "camera.h"
 #include "Hitbox.h"
@@ -170,7 +171,7 @@ float m_amb[] = {0.33, 0.22, 0.03, 1.0};
 float m_diff[] = {0.78, 0.57, 0.11, 1.0};
 float m_spec[] = {0.99, 0.91, 0.81, 1.0};
 float shiny = 27.8;
-Mesh3D* test, *groundPlane;
+Mesh3D* test, *groundPlane,*keyObject;
 
 
 void display();
@@ -269,32 +270,38 @@ void display()
 		test->drawMesh();
 			glPushMatrix();
 				glBindTexture(GL_TEXTURE_2D, textures[1]);
+				glTranslatef(0,0.3,0);
 				groundPlane->drawMesh();
 			glPopMatrix();
 	glPopMatrix();
 	// first key
 	glPushMatrix();
 		glTranslatef(34.5,0,-6);
-		glutSolidCube(1);
+		keyObject->drawMesh();
+		//glutSolidCube(1);
 	glPopMatrix();
 	// second key
 	glPushMatrix();
 		glTranslatef(-34.5,0,-6);
+		keyObject->drawMesh();
 		glutSolidCube(1);
 	glPopMatrix();
 	//third key
 	glPushMatrix();
 		glTranslatef(-18,0,24);
+		keyObject->drawMesh();
 		glutSolidCube(1);
 	glPopMatrix();
 	// fourth key
 	glPushMatrix();
 		glTranslatef(0,0,0);
+		keyObject->drawMesh();
 		glutSolidCube(1);
 	glPopMatrix();
 	// fifth key
 	glPushMatrix();
 		glTranslatef(-12.0,0,15);
+		keyObject->drawMesh();
 		glutSolidCube(1);
 	glPopMatrix();
 	rain.drawRainParticles();
@@ -458,7 +465,9 @@ int main(int argc, char **argv)
 	test = new Mesh3D(1);
 	test->loadObj("src/maze_2.obj");
 	groundPlane = new Mesh3D(0);
-	groundPlane->loadObj("src/groundPlane.obj");
+	groundPlane->loadObj("src/groundPlane_new.obj");
+	keyObject = new Mesh3D(1);
+	keyObject->loadObj("src/key.obj");
 	//start the program!
 	glutMainLoop();
 
