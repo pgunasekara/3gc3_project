@@ -277,8 +277,12 @@ void display()
 				groundPlane->drawMesh();
 			glPopMatrix();
 	glPopMatrix();
-//glBindTexture(GL_TEXTURE_2D, textures[0]);
-	// first key
+
+	for (int i =0; i < test->faces.size();i++){
+		test->faces[i].lHit->draw();
+		test->faces[i].rHit->draw();
+	}
+
 	if (!(find(batteriesAcquired.begin(), batteriesAcquired.end(), 1) != batteriesAcquired.end())){
 		glPushMatrix();
 			glTranslatef(34.5,0,-6);
@@ -349,22 +353,18 @@ void keyboard(unsigned char key, int x, int y)
 		case 'W':
 			camera->Move(FORWARD,test);
 			batteryChangeCount++;
-			glutPostRedisplay();
 			break;
 		case 'A':
 			camera->Move(LEFT,test);
 			batteryChangeCount++;
-			glutPostRedisplay();
 			break;
 		case 'S':
 			camera->Move(BACK,test);
 			batteryChangeCount++;
-			glutPostRedisplay();
 			break;
 		case 'D':
 			camera->Move(RIGHT,test);
 			batteryChangeCount++;
-			glutPostRedisplay();
 			break;
 		case 'k':
 		case 'K':
@@ -380,10 +380,14 @@ void keyboard(unsigned char key, int x, int y)
 			exit (0);
 			break;
 		}
-		if (batteryChangeCount > 10){
+		if (batteryChangeCount > 30){
 			BatteryLife -= 5;
 			batteryChangeCount = 0;
 		}
+		if (fabs(camera->camera_position.x) > 30.0 && fabs(camera->camera_position.z) > 35.5f){
+			exit(0);
+		}
+		glutPostRedisplay();
 }
 
 void mouse(int btn, int state, int x, int y)

@@ -186,13 +186,16 @@ bool Camera::checkInvalidMove(Mesh3D* m,CameraDirection dir){
 	}else if (dir == RIGHT){
 		cP = camera_position + camera_direction.cross(camera_up).vectorMultiplyr(camera_scaleX);
 	}
+	if (cP.z <= -35.5){
+		return true;
+	}
 	// N
 	if (availableDirections[0]){
 		for (int i = 0; i < m->faces.size();i++){
 			if (checkFBHit(m->faces[i],cP,dir)) return true;
 			if (checkLRHit(m->faces[i],cP,dir)) return true;
 		}
-		// If you angle it causes problems
+
 	}else if (availableDirections[1]){
 		for (int i = 0; i < m->faces.size();i++){
 			if (checkFBHit(m->faces[i],cP,dir)) return true;
