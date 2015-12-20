@@ -100,7 +100,7 @@ public:
 	// w is angle you are rotating, x,y,z are components defining axis
 	// rotationMatrix holds on to the rotation matrix that corresponds to the quaternion
 	float w,x,y,z;
-	float* rotationMatrix;
+	float rotationMatrix[16];
 };
 
 struct face3D{

@@ -208,6 +208,7 @@ quaternion::quaternion(){
 	x = 0.0;
 	y = 0.0;
 	z = 0.0;
+	//rotationMatrix = new float[16];
 
 	updateRotationMatrix();
 }
@@ -218,17 +219,16 @@ quaternion::quaternion(float w,float x, float y, float z){
 	this->x = x;
 	this->y = y;
 	this->z = z;
+	//rotationMatrix = float[16];
 	updateRotationMatrix();
 }
 
 quaternion::~quaternion(){
-
 }
 
 // updates rotation matrix that quaternion associates with
+// delete memory alocation
 void quaternion::updateRotationMatrix(){
-	rotationMatrix = new float[16];
-
 	rotationMatrix[0] = pow(w,2)+pow(x,2)-pow(y,2)-pow(z,2);
 	rotationMatrix[1] = 2*x*y - 2*w*z;
 	rotationMatrix[2] = 2*x*z + 2*w*y;

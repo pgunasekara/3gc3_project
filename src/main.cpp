@@ -13,15 +13,10 @@
 #include <math.h>
 #include "camera.h"
 #include "Hitbox.h"
-//#include "../lib/SceneGraph/structs.h"
+
 #include "math3D.h"
 //#include "SOIL.h"
 
-//sceneGraph
-//#include "../lib/SceneGraph/sceneGraph.h"
-//#include "../lib/SceneGraph/nodeGroup.h"
-//#include "../lib/SceneGraph/nodeModel.h"
-//#include "../lib/SceneGraph/nodeTransform.h"
 #include "Mesh3D.h"
 #include "ParticleSystem.h"
 #include <vector>
@@ -37,19 +32,11 @@ float angle = 0.005f;
 bool PlaneExist = false;
 Camera* camera;
 bool moveable = true;
-
-//Texture information
-int width, height;
-unsigned char *hedgeTexture;
-GLuint textureID[1];
+GLubyte* img, *ground;
+int height,width,maxAmount;
 
 //node ids
 int masterID = 0;
-
-//Vector3D ip;
-//Vector3D translation;
-//Vector4D rotation;
-//Vector3D scale;
 
 int getID()
 {
@@ -61,14 +48,63 @@ double* finish = new double[3];
 
 ParticleSystem rain;
 
-void loadTexture()
+GLubyte* LoadPPM(char* file, int* width, int* height, int* max)
 {
-	//hedgeTexture = SOIL_load_image("hedge.png",&width,&height,0,SOIL_LOAD_RGB);
-	//glGenTextures(1, &textureID[0]);
-	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, hedgeTexture);
-	//glGenerateMipmap(GL_TEXTURE_2D);
-	//SOIL_free_image_data(hedgeTexture);
-	//glBindTexture(GL_TEXTURE_2D, 0);
+	GLubyte* img;
+	FILE *fd;
+	int n, m;
+	int  k, nm;
+	char c;
+	int i;
+	char b[100];
+	float s;
+	int red, green, blue;
+
+	/* first open file and check if it's an ASCII PPM (indicated by P3 at the start) */
+	fd = fopen(file, "r");
+	fscanf(fd,"%[^\n] ",b);
+	if(b[0]!='P'|| b[1] != '3')
+	{
+		printf("%s is not a PPM file!\n",file);
+		exit(0);
+	}
+	//printf("%s is a PPM file\n", file);
+	fscanf(fd, "%c",&c);
+
+	/* next, skip past the comments - any line starting with #*/
+	while(c == '#')
+	{
+		fscanf(fd, "%[^\n] ", b);
+		printf("%s\n",b);
+		fscanf(fd, "%c",&c);
+	}
+	ungetc(c,fd);
+
+	/* now get the dimensions and max colour value from the image */
+	fscanf(fd, "%d %d %d", &n, &m, &k);
+
+	//printf("%d rows  %d columns  max value= %d\n",n,m,k);
+
+	/* calculate number of pixels and allocate storage for this */
+	nm = n*m;
+	img = (GLubyte*)malloc(3*sizeof(GLuint)*nm);
+	s=255.0/k;
+
+	/* for every pixel, grab the read green and blue values, storing them in the image data array */
+	for(i=0;i<nm;i++)
+	{
+		fscanf(fd,"%d %d %d",&red, &green, &blue );
+		img[3*nm-3*i-3]=red*s;
+		img[3*nm-3*i-2]=green*s;
+		img[3*nm-3*i-1]=blue*s;
+	}
+
+	/* finally, set the "return parameters" (width, height, max) and return the image array */
+	*width = n;
+	*height = m;
+	*max = k;
+
+	return img;
 }
 
 //SceneGraph *SG;
@@ -102,7 +138,7 @@ void initLighting()
 
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, amb0);
 
-	glLightf(GL_LIGHT0,GL_SPOT_CUTOFF,50.0f);
+	glLightf(GL_LIGHT0,GL_SPOT_CUTOFF,80.0f);
 	glLightf(GL_LIGHT0,GL_SPOT_EXPONENT,120.0f);
 
 	light_pos_tmp = camera->camera_position.returnArray4L();
@@ -110,27 +146,12 @@ void initLighting()
 
 	spot_direction = camera->spot_direction.returnArray();
 	glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION,spot_direction);
+	delete spot_direction;
 
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, diff0);
 	glLightfv(GL_LIGHT0, GL_AMBIENT, amb0);
 	glLightfv(GL_LIGHT0, GL_SPECULAR, spec0);
 }
-
-//function which will populate a sample graph
-/*
-void initGraph()
-{
-	//Initial Transformation node
-	//This is node 1, every time a node is created the masterId will incremenet by 2
-	//NODE 0 is Root
-
-	//DELETE THE ENTIRE GROUP NODE, WHEN CLEARING THE SCENE
-	//The masterID for this first node will always be 1
-	//When clearing, reset masterID to 0
-	SG->insertChildNodeHere(new NodeGroup());
-	printf("\nFIRST NODE %i\n", SG->currentNode->nodeType);
-}
-*/
 
 void initFog()
 {
@@ -144,16 +165,24 @@ void initFog()
 
 void init(void)
 {
-	//GLuint id = 1;
 	camera = new Camera();
 	rain = ParticleSystem();
 
-	//init our scenegraph
-	//SG = new SceneGraph();
+	//glEnable(GL_TEXTURE_2D);
 
-	//add various nodes
-	//initializing our world
-	//initGraph();
+	GLuint textures[1] = {*img};
+	glGenTextures(1,textures);
+	glBindTexture(GL_TEXTURE_2D, textures[0]);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, img);
+
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 /*********************************INIT FUNCTION*********************************/
@@ -179,10 +208,6 @@ void display()
 	test->drawMesh();
 	glPopMatrix();
 	rain.drawRainParticles();
-	//for (int i =0; i < test->faces.size();i++){
-	//	test->faces[i].lHit->draw();
-	//	test->faces[i].rHit->draw();
-	//}
 
 	//swap buffers - rendering is done to the back buffer, bring it forward to display
 	glutSwapBuffers();
@@ -304,7 +329,7 @@ int main(int argc, char **argv)
 	glutInit(&argc, argv);
 	glutInitWindowSize(1200, 1200);
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
-	init();
+	img = LoadPPM("src/hedge_ascii.ppm",&width,&height,&maxAmount);
 	glutCreateWindow("Spinning Cube");
 
 	//enable Z buffer test, otherwise things appear in the order they're drawn
@@ -312,12 +337,11 @@ int main(int argc, char **argv)
 	glEnable(GL_TEXTURE_2D);
 	glShadeModel(GL_SMOOTH);
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+	init();
 	//glEnable(GL_CULL_FACE);
 	//glCullFace(GL_BACK);
 
 	//Enable Blending for water particles
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glEnable( GL_BLEND );
 
 	//register glut callbacks
 	glutCallbacks();
