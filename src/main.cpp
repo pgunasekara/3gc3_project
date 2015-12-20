@@ -25,7 +25,7 @@ using namespace std;
 // global variables for scene graph and camera
 float mouseX,mouseY,globalW,globalH;
 bool buttonDown = false;
-float pos[] = {34.5,1.5,-30};
+float pos[] = {34.5,1.5,-33};
 float *light_pos_tmp, *spot_direction;
 float lookAt[] = {34.5,1.5,0};
 float angle = 0.005f;
@@ -41,7 +41,7 @@ vector<Hitbox*> hitBoxes;
 // change these so they work with your camera position
 vec3D near,far,distanceRay;
 Plane entrance;
-int BatteryLife = 70;
+int BatteryLife = 10;
 int batteryChangeCount = 0;
 vector<int> batteriesAcquired;
 
@@ -91,7 +91,6 @@ int Intersect(int x, int y){
 		ID_tmp = hitBoxes[i]->Intersect(near,distanceRay);
 		if(ID_tmp != -1 && !(find(batteriesAcquired.begin(), batteriesAcquired.end(), ID_tmp) != batteriesAcquired.end()))
 		{
-			printf("You have found Batteries\n");
 			return ID_tmp;
 		}
 	}
@@ -343,7 +342,6 @@ void reshape(int w, int h)
 	globalW = w;
 	globalH = h;
 	gluLookAt(pos[0], pos[1], pos[2], lookAt[0], lookAt[1], lookAt[2], 0, 1, 0);
-	//gluLookAt(70, 70, 70, 0, 0, 0, 0, 1, 0);
 }
 
 void keyboard(unsigned char key, int x, int y)
@@ -366,9 +364,6 @@ void keyboard(unsigned char key, int x, int y)
 			camera->Move(RIGHT,test);
 			batteryChangeCount++;
 			break;
-		case 'k':
-		case 'K':
-			//printf("You have %i keys\n",keyCount);
 			break;
 		case 'q':
 		case 27:
@@ -380,11 +375,11 @@ void keyboard(unsigned char key, int x, int y)
 			exit (0);
 			break;
 		}
-		if (batteryChangeCount > 30){
+		if (batteryChangeCount > 100){
 			BatteryLife -= 5;
 			batteryChangeCount = 0;
 		}
-		if (fabs(camera->camera_position.x) > 30.0 && fabs(camera->camera_position.z) > 35.5f){
+		if (camera->camera_position.x < -32.5 && camera->camera_position.z > 38.0f){
 			exit(0);
 		}
 		glutPostRedisplay();
@@ -408,11 +403,6 @@ void mouse(int btn, int state, int x, int y)
 	}
 }
 
-void motion(int x, int y)
-{
-
-}
-
 void passive(int x,int y){
 	if (moveable){
 		if ((x - mouseX) > 0){
@@ -434,17 +424,11 @@ void passive(int x,int y){
 	glutPostRedisplay();
 }
 
-void special(int key, int x, int y)
-{
-
-}
-
 void glutCallbacks()
 {
 	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);
 	glutKeyboardFunc(keyboard);
-	glutSpecialFunc(special);
 	glutMouseFunc(mouse);
 	glutPassiveMotionFunc(passive);
 }
