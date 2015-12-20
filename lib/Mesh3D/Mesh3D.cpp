@@ -201,22 +201,22 @@ void Mesh3D::drawMesh(){
 
 			glPushMatrix();
 			//glTexCoord2f(vertexTexture.at(faceTexCoords.at(i).v1- 1).a, vertexTexture.at(faceTexCoords.at(i).v1- 1).b);
-			glTexCoord2f(0, 0);
+			//glTexCoord2f(0, 0);
 			glNormal3f(vertNorms[vertexNormIndex1].x,vertNorms[vertexNormIndex1].y, vertNorms[vertexNormIndex1].z);
 			glVertex3f(verts[vertexIndex1].x,verts[vertexIndex1].y,verts[vertexIndex1].z);
 
 			//glTexCoord2f(vertexTexture.at(faceTexCoords.at(i).v2- 1).a, vertexTexture.at(faceTexCoords.at(i).v2- 1).b);
-			glTexCoord2f(0, 1);
+			//glTexCoord2f(0, 1);
 			glNormal3f(vertNorms[vertexNormIndex2].x,vertNorms[vertexNormIndex2].y, vertNorms[vertexNormIndex2].z);
 			glVertex3f(verts[vertexIndex2].x,verts[vertexIndex2].y,verts[vertexIndex2].z);
 			
 			//glTexCoord2f(vertexTexture.at(faceTexCoords.at(i).v3- 1).a, vertexTexture.at(faceTexCoords.at(i).v3- 1).b);
-			glTexCoord2f(1, 1);
+			//glTexCoord2f(1, 1);
 			glNormal3f(vertNorms[vertexNormIndex3].x,vertNorms[vertexNormIndex3].y, vertNorms[vertexNormIndex3].z);
 			glVertex3f(verts[vertexIndex3].x,verts[vertexIndex3].y,verts[vertexIndex3].z);
 
 			//glTexCoord2f(vertexTexture.at(faceTexCoords.at(i).v4- 1).a, vertexTexture.at(faceTexCoords.at(i).v4- 1).b);
-			glTexCoord2f(1, 0);
+			//glTexCoord2f(1, 0);
 			glNormal3f(vertNorms[vertexNormIndex4].x,vertNorms[vertexNormIndex4].y, vertNorms[vertexNormIndex4].z);
 			glVertex3f(verts[vertexIndex4].x,verts[vertexIndex4].y,verts[vertexIndex4].z);
 
