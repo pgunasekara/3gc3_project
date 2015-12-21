@@ -457,8 +457,9 @@ int main(int argc, char **argv)
 		<< "Use the mouse to rotate the camera around\n\tLEFT CLICK to stop the camera from moving, \n\tOnce clicked, the camera will stop responding to the mouse, this will allow you to move the cursor into a more comfortable spot\n\tmaking it easier to navigate."
 		<< "\nOnce the user is done positioning the mouse, LEFT CLICK again, the capture the mouse."
 		<< "\n(UPPERCASE)W A S D: Translate the camera, move forwards, backwards, left, and right."
-		<< "\nRIGHT CLICK: Ray picking, for picking up keys.\n"
-		<< "\nPicking up keys will increase the battery life og your flashlight.\n"
+		<< "\nRIGHT CLICK: Ray picking, for picking up Batteries (These are the boxes found through out the maze).\n"
+		<< "You start off with low battery life so you should pick up the battery that is near the entrance\n"
+		<< "\nPicking up Batteries will increase the battery life of your flashlight.\n"
 		<< "\nAfter taking a certain amount of steps, the battery will start to degrade."
 		<< "b or B: See current battery level in command line.\n"
 		<< "(LOWERCASE) q: quit.\n";

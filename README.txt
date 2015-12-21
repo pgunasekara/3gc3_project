@@ -33,24 +33,28 @@ Implemented Features:
 	-Advanced Camera Control (A quaternion based camera was created to navigate around the maze using the mouse and keyboard)
 
 CLI Comments:
-	cout << "\nCOMP SCI 3GC3 Final Project\n\n"
-		<< "Group: \n\tPasindu Gunasekara\n\t\tgunasepi\n\t\t1412155"
-		<< "\n\tRoberto Temelkovski\n\t\ttemelkr\n\t\t1418731"
-		<< "\n\tColin Gillespie\n\t\tgillescj\n\t\t1330655"
-		<< "\n\tPeter Kalnoki\n\t\tkalnokp\n\t\t1160986"
-		<< "\n\nInstructions:\n"
-		<< "Use the mouse to rotate the camera around\n\tLEFT CLICK to stop the camera from moving, \n\tOnce clicked, the camera will stop responding to the mouse, this will allow you to move the cursor into a more comfortable spot\n\tmaking it easier to navigate."
-		<< "\n"
-		<< "\n(UPPERCASE)W A S D: Translate the camera, move forwards, backwards, left, and right."
-		<< "\nRIGHT CLICK: Ray picking, for picking up keys.\n"
-		<< "\n3 Keys are required to be picked up before exitting the maze.\n"
-		<< "\nPicking up keys will also increase the battery life og your flashlight.\n"
-		<< "b or B: See current battery level in command line.\n"
-		<< "(LOWERCASE) q: quit.\n"
+cout << "\nCOMP SCI 3GC3 Final Project\n\n"
+	<< "\n\nNOTE: On initial startup, click inside the window to properly position the camera.\n\n"
+	<< "Group: \n\tPasindu Gunasekara\n\t\tgunasepi\n\t\t1412155"
+	<< "\n\tRoberto Temelkovski\n\t\ttemelkr\n\t\t1418731"
+	<< "\n\tColin Gillespie\n\t\tgillescj\n\t\t1330655"
+	<< "\n\tPeter Kalnoki\n\t\tkalnokp\n\t\t1160986"
+	<< "\n\nInstructions:\n"
+	<< "Use the mouse to rotate the camera around\n\tLEFT CLICK to stop the camera from moving, \n\tOnce clicked, the camera will stop responding to the mouse, this will allow you to move the cursor into a more comfortable spot\n\tmaking it easier to navigate."
+	<< "\nOnce the user is done positioning the mouse, LEFT CLICK again, the capture the mouse."
+	<< "\n(UPPERCASE)W A S D: Translate the camera, move forwards, backwards, left, and right."
+	<< "\nRIGHT CLICK: Ray picking, for picking up Batteries (These are the boxes found through out the maze).\n"
+	<< "You start off with low battery life so you should pick up the battery that is near the entrance\n"
+	<< "\nPicking up Batteries will increase the battery life of your flashlight.\n"
+	<< "\nAfter taking a certain amount of steps, the battery will start to degrade."
+	<< "b or B: See current battery level in command line.\n"
+	<< "(LOWERCASE) q: quit.\n";
 
 Known Issues:
 	Camera sometimes DOES NOT start at the right position
 		-To fix this, all you have to do is LEFT CLICK inside the window to fix it.
-	
+		-On OSX this problem can be fixed by rotating the camera until you are viewing the right spot_direction by clicking and readjusting your current position
+
 Sources:
 	Help with the particle system from NeHe - http://nehe.gamedev.net/article/particle_systems/15008/
+	Help with the quaternion based Camera system - http://www.cprogramming.com/tutorial/3d/quaternions.html
