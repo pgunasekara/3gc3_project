@@ -5,6 +5,11 @@ COMP SCI 3GC3 Final Project
 Description:
 Maze exploration game created in C++ and OpenGL. The objective of the game is to leave the maze before your flashlight runs out. As you go through the maze, there are FIVE small keys(boxes), of which THREE must be collected by the player to walk through the exit of the maze. Most of the maze will be dark as you walk through it, with only a flashlight to light the way, which eventually runs out.
 
+NOTE: main.cpp is in the src/ folder, include files are in include/ and the libraries and classes are in lib/
+See makefile for complete paths
+
+Tested on Linux(arch), OSX, and Windows
+
 Group:
 	Pasindu Gunasekara
 		gunasepi
@@ -34,9 +39,13 @@ CLI Comments:
 		<< "\n\tColin Gillespie\n\t\tgillescj\n\t\t1330655"
 		<< "\n\tPeter Kalnoki\n\t\tkalnokp\n\t\t1160986"
 		<< "\n\nInstructions:\n"
-		<< "Use the mouse to rotate the camera around\n\tLEFT CLICK to stop the camera from moving, \n\tuse this to move the mouse pointer to a more comfortable position."
+		<< "Use the mouse to rotate the camera around\n\tLEFT CLICK to stop the camera from moving, \n\tOnce clicked, the camera will stop responding to the mouse, this will allow you to move the cursor into a more comfortable spot\n\tmaking it easier to navigate."
+		<< "\n"
 		<< "\n(UPPERCASE)W A S D: Translate the camera, move forwards, backwards, left, and right."
 		<< "\nRIGHT CLICK: Ray picking, for picking up keys.\n"
+		<< "\n3 Keys are required to be picked up before exitting the maze.\n"
+		<< "\nPicking up keys will also increase the battery life og your flashlight.\n"
+		<< "b or B: See current battery level in command line.\n"
 		<< "(LOWERCASE) q: quit.\n"
 
 Known Issues:

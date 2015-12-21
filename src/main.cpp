@@ -278,10 +278,10 @@ void display()
 			glPopMatrix();
 	glPopMatrix();
 
-	for (int i =0; i < test->faces.size();i++){
+	/*for (int i =0; i < test->faces.size();i++){
 		test->faces[i].lHit->draw();
 		test->faces[i].rHit->draw();
-	}
+	}*/
 
 	if (!(find(batteriesAcquired.begin(), batteriesAcquired.end(), 1) != batteriesAcquired.end())){
 		glPushMatrix();
@@ -453,9 +453,13 @@ int main(int argc, char **argv)
 		<< "\n\tColin Gillespie\n\t\tgillescj\n\t\t1330655"
 		<< "\n\tPeter Kalnoki\n\t\tkalnokp\n\t\t1160986"
 		<< "\n\nInstructions:\n"
-		<< "Use the mouse to rotate the camera around\n\tLEFT CLICK to stop the camera from moving, \n\tuse this to move the mouse pointer to a more comfortable position."
+		<< "Use the mouse to rotate the camera around\n\tLEFT CLICK to stop the camera from moving, \n\tOnce clicked, the camera will stop responding to the mouse, this will allow you to move the cursor into a more comfortable spot\n\tmaking it easier to navigate."
+		<< "\n"
 		<< "\n(UPPERCASE)W A S D: Translate the camera, move forwards, backwards, left, and right."
 		<< "\nRIGHT CLICK: Ray picking, for picking up keys.\n"
+		<< "\n3 Keys are required to be picked up before exitting the maze.\n"
+		<< "\nPicking up keys will also increase the battery life og your flashlight.\n"
+		<< "b or B: See current battery level in command line.\n"
 		<< "(LOWERCASE) q: quit.\n";
 
 	//enable Z buffer test, otherwise things appear in the order they're drawn
