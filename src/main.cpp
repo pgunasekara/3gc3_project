@@ -458,6 +458,7 @@ int main(int argc, char **argv)
 		<< "\n(UPPERCASE)W A S D: Translate the camera, move forwards, backwards, left, and right."
 		<< "\nRIGHT CLICK: Ray picking, for picking up keys.\n"
 		<< "\nPicking up keys will increase the battery life og your flashlight.\n"
+		<< "\nAfter taking a certain amount of steps, the battery will start to degrade."
 		<< "b or B: See current battery level in command line.\n"
 		<< "(LOWERCASE) q: quit.\n";
 
