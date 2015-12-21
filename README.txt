@@ -3,7 +3,7 @@
 COMP SCI 3GC3 Final Project
 
 Description:
-Maze exploration game created in C++ and OpenGL. The objective of the game is to leave the maze before your flashlight runs out. As you go through the maze, there are FIVE small keys(boxes), of which THREE must be collected by the player to walk through the exit of the maze. Most of the maze will be dark as you walk through it, with only a flashlight to light the way, which eventually runs out.
+Maze exploration game created in C++ and OpenGL. The objective of the game is to leave the maze before your flashlight runs out. As you go through the maze, there are FIVE small keys(boxes, these keys will increase the battery life on your flashlight. Most of the maze will be dark as you walk through it, with only a flashlight to light the way, which eventually runs out.
 
 NOTE: main.cpp is in the src/ folder, include files are in include/ and the libraries and classes are in lib/
 See makefile for complete paths
