@@ -49,6 +49,8 @@ CLI Comments:
 		<< "(LOWERCASE) q: quit.\n"
 
 Known Issues:
+	Camera sometimes DOES NOT start at the right position
+		-To fix this, all you have to do is LEFT CLICK inside the window to fix it.
 	
 Sources:
 	Help with the particle system from NeHe - http://nehe.gamedev.net/article/particle_systems/15008/

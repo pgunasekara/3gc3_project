@@ -448,6 +448,7 @@ int main(int argc, char **argv)
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
 	glutCreateWindow("COMP SCI 3GC3 Final Project");
 	cout << "\nCOMP SCI 3GC3 Final Project\n\n"
+		<< "\n\nNOTE: On initial startup, click inside the window to properly position the camera.\n\n"
 		<< "Group: \n\tPasindu Gunasekara\n\t\tgunasepi\n\t\t1412155"
 		<< "\n\tRoberto Temelkovski\n\t\ttemelkr\n\t\t1418731"
 		<< "\n\tColin Gillespie\n\t\tgillescj\n\t\t1330655"
