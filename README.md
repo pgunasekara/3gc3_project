@@ -23,15 +23,15 @@ make clean
 
 
 ### Implemented Bonus Features:
-...* All the basic parts of a game, object loading, first person camera, surface normals and texture coordinates.
-...* Texturing (on the walls, the floor, and the keys)
-...* Lighting (The flashlight moves with the player and points in the direction the player faces)
-...* Particle Systems(There is a particle system for rain, which spawns 2000 particles max)
-...* Picking (ray picking was implemented to pick up items, RIGHT CLICK must be used to ray pick)
-...* Advanced Camera Control (A quaternion based camera was created to navigate around the maze using the mouse and keyboard)
+  * All the basic parts of a game, object loading, first person camera, surface normals and texture coordinates.
+  * Texturing (on the walls, the floor, and the keys)
+  * Lighting (The flashlight moves with the player and points in the direction the player faces)
+  * Particle Systems(There is a particle system for rain, which spawns 2000 particles max)
+  * Picking (ray picking was implemented to pick up items, RIGHT CLICK must be used to ray pick)
+  * Advanced Camera Control (A quaternion based camera was created to navigate around the maze using the mouse and keyboard)
 
 
 ### Known Issues:
 * Camera sometimes DOES NOT start at the right position
-...* To fix this, all you have to do is LEFT CLICK inside the window to fix it.
-...* On OSX this problem can be fixed by rotating the camera until you are viewing the right spot_direction by clicking and re-adjusting your current position
+  * To fix this, all you have to do is LEFT CLICK inside the window to fix it.
+  * On OSX this problem can be fixed by rotating the camera until you are viewing the right spot_direction by clicking and re-adjusting your current position
